@@ -1,9 +1,8 @@
 import org.jglr.sbm.SBMReader;
-import org.jglr.sbm.visitors.CodeReader;
-import org.jglr.sbm.visitors.HeaderReader;
+import org.jglr.sbm.visitors.CodeCollector;
+import org.jglr.sbm.visitors.HeaderCollector;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
@@ -161,18 +160,18 @@ public class TestReading {
 
     @Test
     public void readHeader() throws IOException {
-        SBMReader reader = new SBMReader(new ByteArrayInputStream(vertShaderCode));
+        SBMReader reader = new SBMReader(vertShaderCode);
         assertEquals(ByteOrder.BIG_ENDIAN, reader.getEndianness());
-        HeaderReader headerReader = (HeaderReader) reader.visitHeader();
-        assertEquals(0x10000, headerReader.getSpirVersion());
-        assertEquals(524289, headerReader.getGeneratorNumber());
-        assertEquals(0, headerReader.getSchema());
-        assertEquals(30, headerReader.getBound());
+        HeaderCollector headerCollector = (HeaderCollector) reader.visitHeader();
+        assertEquals(0x10000, headerCollector.getSpirVersion());
+        assertEquals(524289, headerCollector.getGeneratorNumber());
+        assertEquals(0, headerCollector.getSchema());
+        assertEquals(30, headerCollector.getBound());
     }
 
     @Test
     public void readCode() throws IOException {
-        SBMReader reader = new SBMReader(new ByteArrayInputStream(vertShaderCode));
-        CodeReader codeReader = (CodeReader) reader.visitCode();
+        SBMReader reader = new SBMReader(vertShaderCode);
+        CodeCollector codeCollector = (CodeCollector) reader.visitCode();
     }
 }

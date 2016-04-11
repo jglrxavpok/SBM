@@ -5,7 +5,7 @@ import org.jglr.sbm.SBMReader;
 
 import java.io.IOException;
 
-public class HeaderReader implements SBMHeaderVisitor {
+public class HeaderCollector implements SBMHeaderVisitor {
     private int generatorNumber;
     private int spirVersion;
     private int schema;
