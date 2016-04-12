@@ -1,6 +1,6 @@
-import org.jglr.sbm.SBMReader;
 import org.jglr.sbm.visitors.CodeCollector;
 import org.jglr.sbm.visitors.HeaderCollector;
+import org.jglr.sbm.visitors.SBMReader;
 import org.junit.Test;
 
 import java.io.IOException;

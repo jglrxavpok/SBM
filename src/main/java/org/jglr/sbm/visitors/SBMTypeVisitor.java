@@ -1,14 +1,14 @@
-package org.jglr.sbm;
+package org.jglr.sbm.visitors;
 
+import org.jglr.sbm.AccessQualifier;
+import org.jglr.sbm.StorageClass;
 import org.jglr.sbm.image.Dimensionality;
 import org.jglr.sbm.image.ImageDepth;
 import org.jglr.sbm.image.ImageFormat;
 import org.jglr.sbm.image.Sampling;
 import org.jglr.sbm.types.Type;
 
-public interface SBMCodeVisitor {
-
-    // Types
+public interface SBMTypeVisitor {
     void visitVoidType(int resultID);
     void visitBoolType(int resultID);
     void visitFloatType(int resultID, int width);
@@ -29,13 +29,5 @@ public interface SBMCodeVisitor {
     void visitReserveIDType(int resultID);
     void visitQueueType(int resultID);
     void visitPipeType(int resultID, AccessQualifier accessQualifier);
-    void visitForwardType(int resultID, StorageClass storageClass, Type type);
-
-    // source info
-    void visitSource(SourceLanguage language, int version, int filenameStringID, String sourceCode);
-    void visitLine(int filenameID, int line, int column);
-
-    void visitName(int target, String name);
-    void visitMemberName(Type structureType, int target, String name);
-    void visitString(int resultID, String value);
+    void visitForwardType(Type type, StorageClass storageClass);
 }

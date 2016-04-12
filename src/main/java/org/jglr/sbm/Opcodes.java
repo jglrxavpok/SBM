@@ -19,6 +19,16 @@ public interface Opcodes {
 
         NO_LINE = 317,
 
+        DECORATE = 71,
+        MEMBER_DECORATE = 72,
+
+        CAPABILITY = 17,
+        EXTENSION = 10,
+        EXT_INST_IMPORT = 11,
+        EXT_INT = 12,
+        MEMORY_MODEL = 14,
+        ENTRY_POINT = 15,
+
 
         TYPE_VOID = 19,
         TYPE_BOOL = 20,

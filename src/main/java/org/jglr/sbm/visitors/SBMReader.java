@@ -1,15 +1,16 @@
-package org.jglr.sbm;
+package org.jglr.sbm.visitors;
 
+import org.jglr.sbm.*;
 import org.jglr.sbm.image.Dimensionality;
 import org.jglr.sbm.image.ImageDepth;
 import org.jglr.sbm.image.ImageFormat;
 import org.jglr.sbm.image.Sampling;
 import org.jglr.sbm.types.*;
-import org.jglr.sbm.visitors.CodeCollector;
-import org.jglr.sbm.visitors.HeaderCollector;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,7 +81,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
         Map<Integer, Type> types = new HashMap<>();
         while (position < input.length) {
             int opcodeFull = nextWord();
-            int wordCount = opcodeFull >> 16;
+            int wordCount = opcodeFull >> 16 & 0xFFFF;
             int opcodeID = opcodeFull & 0xFFFF;
             switch (opcodeID) {
                 case NOP:
@@ -217,20 +218,102 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
+                case TYPE_FUNCTION: {
+                    int resultID = nextWord();
+                    Type returnType = nextType(types);
+                    int parameterCount = wordCount-3;
+                    Type[] parameters = new Type[parameterCount];
+                    for (int i = 0; i < parameterCount; i++) {
+                        parameters[i] = nextType(types);
+                    }
+                    visitor.visitFunctionType(resultID, returnType, parameters);
+                    types.put(resultID, new FunctionType(returnType, parameters));
+                }
+                break;
+
+                case TYPE_EVENT: {
+                    int resultID = nextWord();
+                    visitor.visitEventType(resultID);
+                    types.put(resultID, new Type("event"));
+                }
+                break;
+
+                case TYPE_DEVICE_EVENT: {
+                    int resultID = nextWord();
+                    visitor.visitDeviceEventType(resultID);
+                    types.put(resultID, new Type("deviceEvent"));
+                }
+                break;
+
+                case TYPE_RESERVED_ID: {
+                    int resultID = nextWord();
+                    visitor.visitReserveIDType(resultID);
+                    types.put(resultID, new Type("reservationID"));
+                }
+                break;
+
+                case TYPE_QUEUE: {
+                    int resultID = nextWord();
+                    visitor.visitQueueType(resultID);
+                    types.put(resultID, new Type("queue"));
+                }
+                break;
+
+                case TYPE_PIPE: {
+                    int resultID = nextWord();
+                    AccessQualifier qualifier = nextEnumValue(AccessQualifier.values());
+                    visitor.visitPipeType(resultID, qualifier);
+                    types.put(resultID, new PipeType(qualifier));
+                }
+                break;
+
+                case TYPE_FORWARD_POINTER: {
+                    Type pointerType = nextType(types);
+                    StorageClass storageClass = nextEnumValue(StorageClass.values());
+                    visitor.visitForwardType(pointerType, storageClass);
+                }
+                break;
+
+                case CONSTANT_FALSE:
+                case CONSTANT_TRUE: {
+                    Type type = nextType(types);
+                    if(!type.getName().equals("bool")) {
+                        throw new IllegalArgumentException("Invalid boolean constant type while loading constant: "+type);
+                    }
+                    int resultID = nextWord();
+                    if(opcodeID == CONSTANT_FALSE)
+                        visitor.visitFalseConstant(resultID);
+                    else
+                        visitor.visitTrueConstant(resultID);
+                }
+                break;
+
                 case SOURCE: {
                     SourceLanguage language = nextEnumValue(SourceLanguage.values());
                     int version = nextWord();
                     int filenameStringID = -1;
                     String sourceCode = null;
-                    if(wordCount >= 3) {
+                    if(wordCount > 3) {
                         filenameStringID = nextWord();
-                        if(wordCount >= 4) {
+                        if(wordCount > 4) {
                             sourceCode = nextString(wordCount-4);
                         }
                     }
                     visitor.visitSource(language, version, filenameStringID, sourceCode);
                 }
                 break;
+
+                /*case SOURCE_CONTINUED: {
+                    String source = nextString();
+                    visitor.visitSourceContinued(source);
+                }
+                break;
+
+                case SOURCE_EXTENSION: {
+                    String source = nextString(wordCount-1);
+                    visitor.visitSourceExtension(source);
+                }
+                break;*/
 
                 case NAME: {
                     int target = nextWord();
@@ -265,16 +348,202 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
+                case DECORATE: {
+                    int target = nextWord();
+                    Decoration decoration = nextEnumValue(Decoration.values());
+                    visitDecoration(visitor, decoration, target, wordCount);
+                }
+                break;
+
+                case MEMBER_DECORATE: {
+                    Type structureType = nextType(types);
+                    int member = nextWord();
+                    Decoration decoration = nextEnumValue(Decoration.values());
+                    visitMemberDecoration(visitor, decoration, structureType, member, wordCount);
+                }
+                break;
+
+                case ENTRY_POINT: {
+                    int savedPosition = position;
+                    ExecutionModel model = nextEnumValue(ExecutionModel.values());
+                    int entryPoint = nextWord();
+                    String name = nextString();
+                    int strSize = (position-savedPosition)/4-1;
+                    System.out.println(">> name size: "+strSize);
+                    int interfaceCount = wordCount-strSize;
+                    int[] interfaces = new int[interfaceCount];
+                    for (int i = 0; i < interfaceCount; i++) {
+                        interfaces[i] = nextWord();
+                    }
+                    System.out.println("entry: "+name+" ("+interfaceCount+" interfaces: "+ Arrays.toString(interfaces)+")");
+                    visitor.visitEntryPoint(model, entryPoint, name, interfaces);
+                }
+                break;
+
+                case EXTENSION: {
+                    int strSize = wordCount-1;
+                    System.out.println(">>size:"+strSize);
+                    String extension = nextString(strSize);
+                    System.out.println("uses "+extension);
+                }
+                break;
+
+                case CAPABILITY: {
+                    Capability cap = nextEnumValue(Capability.values());
+                    visitor.visitCapability(cap);
+                }
+                break;
+
+                case EXT_INST_IMPORT: {
+                    int resultID = nextWord();
+                    String name = nextString(wordCount-2);
+                    visitor.visitExtendedInstructionSetImport(resultID, name);
+                }
+                break;
+
+                case EXT_INT: {
+                    Type resultType = nextType(types);
+                    int resultID = nextWord();
+                    int set = nextWord();
+                    int instruction = nextWord();
+                    int operandCount = wordCount-5;
+                    int[] operands = new int[operandCount];
+                    for (int i = 0; i < operandCount; i++) {
+                        operands[i] = nextWord();
+                    }
+                    visitor.visitExecExtendedInstruction(resultType, resultID, set, instruction, operands);
+                }
+                break;
+
+                case MEMORY_MODEL: {
+                    AddressingModel addressingModel = nextEnumValue(AddressingModel.values());
+                    MemoryModel memoryModel = nextEnumValue(MemoryModel.values());
+                    visitor.visitMemoryModel(addressingModel, memoryModel);
+                }
+                break;
+
                 default:
                     System.out.println("Unhandled: " + Opcodes.getName(opcodeID)+" "+opcodeID);
-                    break;
+                    continue;
             }
+
+            System.out.println("Read: " + Opcodes.getName(opcodeID));
         }
         System.out.println("=== TYPES ===");
         types.values().forEach(System.out::println);
         System.out.println("=============");
         // TODO: do the visit
         return visitor;
+    }
+
+    private String nextString() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        for (;;) {
+            int word = nextWord();
+
+            // characters are encoded in little endian
+            byte b3 = (byte) (word >> 24 & 0xFF);
+            byte b2 = (byte) (word >> 16 & 0xFF);
+            byte b1 = (byte) (word >> 8 & 0xFF);
+            byte b0 = (byte) (word & 0xFF);
+
+            baos.write(new byte[] {b0,b1,b2,b3});
+            if(b3 == '\0') {
+                break;
+            }
+
+        }
+        baos.flush();
+        baos.close();
+        byte[] bytes = baos.toByteArray();
+        // -1 to remove the null character
+        return new String(bytes, "UTF-8");
+    }
+
+    private void visitDecoration(SBMCodeVisitor visitor, Decoration decoration, int target, int wordCount) throws IOException {
+        switch (decoration) {
+            case SpecId:
+            case ArrayStride:
+            case MatrixStride:
+            case BuiltIn:
+            case Stream:
+            case Location:
+            case Component:
+            case Index:
+            case Binding:
+            case DescriptorSet:
+            case Offset:
+            case XfbBuffer:
+            case XfbStride:
+            case InputAttachmentIndex:
+            case Alignment:
+                visitor.visitIntDecoration(decoration, target, nextWord());
+                break;
+
+            case FuncParamAttr:
+                visitor.visitFunctionParameterAttributeDecoration(target, nextEnumValue(FunctionParameterAttribute.values()));
+                break;
+
+            case FPRoundingMode:
+                visitor.visitFPRoundingModeDecoration(target, nextEnumValue(FPRoundingMode.values()));
+                break;
+
+            case FPFastMathMode:
+                visitor.visitFPFastMathModeDecoration(target, new FPFastMathMode(nextWord()));
+                break;
+
+            case LinkageAttributes:
+                int strSize = wordCount-2;
+                visitor.visitLinkageAttributesDecoration(target, nextString(strSize), nextEnumValue(LinkageType.values()));
+                break;
+
+            default:
+                visitor.visitDecoration(target, decoration);
+                break;
+        }
+    }
+
+    private void visitMemberDecoration(SBMCodeVisitor visitor, Decoration decoration, Type structureType, int member, int wordCount) throws IOException {
+        switch (decoration) {
+            case SpecId:
+            case ArrayStride:
+            case MatrixStride:
+            case BuiltIn:
+            case Stream:
+            case Location:
+            case Component:
+            case Index:
+            case Binding:
+            case DescriptorSet:
+            case Offset:
+            case XfbBuffer:
+            case XfbStride:
+            case InputAttachmentIndex:
+            case Alignment:
+                visitor.visitIntMemberDecoration(decoration, structureType, member, nextWord());
+                break;
+
+            case FuncParamAttr:
+                visitor.visitFunctionParameterAttributeMemberDecoration(structureType, member, nextEnumValue(FunctionParameterAttribute.values()));
+                break;
+
+            case FPRoundingMode:
+                visitor.visitFPRoundingModeMemberDecoration(structureType, member, nextEnumValue(FPRoundingMode.values()));
+                break;
+
+            case FPFastMathMode:
+                visitor.visitFPFastMathModeMemberDecoration(structureType, member, new FPFastMathMode(nextWord()));
+                break;
+
+            case LinkageAttributes:
+                int strSize = wordCount-2;
+                visitor.visitLinkageAttributesMemberDecoration(structureType, member, nextString(strSize), nextEnumValue(LinkageType.values()));
+                break;
+
+            default:
+                visitor.visitMemberDecoration(structureType, member, decoration);
+                break;
+        }
     }
 
     private String nextString(int wordCount) throws IOException {

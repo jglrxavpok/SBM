@@ -1,4 +1,4 @@
-package org.jglr.sbm;
+package org.jglr.sbm.visitors;
 
 import java.io.IOException;
 

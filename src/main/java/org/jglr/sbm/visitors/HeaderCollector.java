@@ -1,10 +1,5 @@
 package org.jglr.sbm.visitors;
 
-import org.jglr.sbm.SBMHeaderVisitor;
-import org.jglr.sbm.SBMReader;
-
-import java.io.IOException;
-
 public class HeaderCollector implements SBMHeaderVisitor {
     private int generatorNumber;
     private int spirVersion;
