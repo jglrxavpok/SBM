@@ -81,356 +81,397 @@ public class SBMReader implements SBMVisitor, Opcodes {
         Map<Integer, Type> types = new HashMap<>();
         while (position < input.length) {
             int opcodeFull = nextWord();
-            int wordCount = opcodeFull >> 16 & 0xFFFF;
+            int wordCount = (opcodeFull >> 16) & 0xFFFF;
             int opcodeID = opcodeFull & 0xFFFF;
-            switch (opcodeID) {
-                case NOP:
+            try {
+                switch (opcodeID) {
+                    case NOP:
+                        break;
+
+                    case UNDEF: {
+                        Type resultType = nextType(types);
+                        int resultID = nextWord();
+                        System.out.println("UNDEF! " + resultType);
+                    }
                     break;
 
-                case UNDEF: {
-                    Type resultType = nextType(types);
-                    int resultID = nextWord();
-                    System.out.println("UNDEF! "+resultType);
-                }
-                break;
-
-                case TYPE_VOID: {
-                    int resultID = nextWord();
-                    visitor.visitVoidType(resultID);
-                    types.put(resultID, new Type("void"));
-                }
-                break;
-
-                case TYPE_BOOL: {
-                    int resultID = nextWord();
-                    visitor.visitBoolType(resultID);
-                    types.put(resultID, new Type("bool"));
-                }
-                break;
-
-                case TYPE_INT: {
-                    int resultID = nextWord();
-                    int width = nextWord();
-                    boolean isSigned = toBoolean(nextWord());
-                    visitor.visitIntType(resultID, width, isSigned);
-                    types.put(resultID, new IntType(width, isSigned));
-                }
-                break;
-
-                case TYPE_FLOAT: {
-                    int resultID = nextWord();
-                    int width = nextWord();
-                    visitor.visitFloatType(resultID, width);
-                    types.put(resultID, new FloatType(width));
-                }
-                break;
-
-                case TYPE_VEC: {
-                    int resultID = nextWord();
-                    Type componentType = nextType(types);
-                    int componentCount = nextWord();
-                    visitor.visitVectorType(resultID, componentType, componentCount);
-                    types.put(resultID, new VectorType(componentType, componentCount));
-                }
-                break;
-
-                case TYPE_MATRIX: {
-                    int resultID = nextWord();
-                    Type columnType = nextType(types);
-                    int columnCount = nextWord();
-                    visitor.visitMatrixType(resultID, columnType, columnCount);
-                    types.put(resultID, new MatrixType(columnType, columnCount));
-                }
-                break;
-
-                case TYPE_IMAGE: {
-                    int resultID = nextWord();
-                    Type sampledType = nextType(types);
-                    Dimensionality dimensionality = nextEnumValue(Dimensionality.values());
-                    ImageDepth depth = nextEnumValue(ImageDepth.values());
-                    boolean arrayed = toBoolean(nextWord());
-                    boolean multisampled = toBoolean(nextWord());
-                    Sampling sampling = nextEnumValue(Sampling.values());
-                    ImageFormat format = nextEnumValue(ImageFormat.values());
-                    AccessQualifier qualifier = nextEnumValue(AccessQualifier.values());
-                    visitor.visitImageType(resultID, sampledType, dimensionality, depth, arrayed, multisampled, sampling, format, qualifier);
-                    types.put(resultID, new ImageType(sampledType, dimensionality, depth, arrayed, multisampled, sampling, format, qualifier));
-                }
-                break;
-
-                case TYPE_SAMPLER: {
-                    int resultID = nextWord();
-                    visitor.visitSamplerType(resultID);
-                    types.put(resultID, new Type("sampler"));
-                }
-                break;
-
-                case TYPE_SAMPLED_IMAGE: {
-                    int resultID = nextWord();
-                    Type imageType = nextType(types);
-                    visitor.visitSampledImageType(resultID, imageType);
-                    types.put(resultID, new SampledImageType(imageType));
-                }
-                break;
-
-                case TYPE_ARRAY: {
-                    int resultID = nextWord();
-                    Type elementType = nextType(types);
-                    int length = nextWord();
-                    visitor.visitArrayType(resultID, elementType, length);
-                    types.put(resultID, new ArrayType(elementType, length));
-                }
-                break;
-
-                case TYPE_RUNTIME_ARRAY: {
-                    int resultID = nextWord();
-                    Type elementType = nextType(types);
-                    visitor.visitRuntimeArrayType(resultID, elementType);
-                    types.put(resultID, new RuntimeArrayType(elementType));
-                }
-                break;
-
-                case TYPE_STRUCT: {
-                    int resultID = nextWord();
-                    Type[] structMembers = new Type[wordCount - 2];
-                    for (int i = 0; i < wordCount - 2; i++) {
-                        structMembers[i] = nextType(types);
+                    case TYPE_VOID: {
+                        int resultID = nextWord();
+                        visitor.visitVoidType(resultID);
+                        types.put(resultID, new Type("void"));
                     }
-                    visitor.visitStructType(resultID, structMembers);
-                    types.put(resultID, new StructType(structMembers));
-                }
-                break;
+                    break;
 
-                case TYPE_OPAQUE: {
-                    int resultID = nextWord();
-                    String name = nextString(wordCount - 2);
-                    visitor.visitOpaqueType(resultID, name);
-                    types.put(resultID, new OpaqueType(name));
-                }
-                break;
-
-                case TYPE_POINTER: {
-                    int resultID = nextWord();
-                    StorageClass storageClass = nextEnumValue(StorageClass.values());
-                    Type type = nextType(types);
-                    visitor.visitPointerType(resultID, storageClass, type);
-                    types.put(resultID, new PointerType(storageClass, type));
-                }
-                break;
-
-                case TYPE_FUNCTION: {
-                    int resultID = nextWord();
-                    Type returnType = nextType(types);
-                    int parameterCount = wordCount-3;
-                    Type[] parameters = new Type[parameterCount];
-                    for (int i = 0; i < parameterCount; i++) {
-                        parameters[i] = nextType(types);
+                    case TYPE_BOOL: {
+                        int resultID = nextWord();
+                        visitor.visitBoolType(resultID);
+                        types.put(resultID, new Type("bool"));
                     }
-                    visitor.visitFunctionType(resultID, returnType, parameters);
-                    types.put(resultID, new FunctionType(returnType, parameters));
-                }
-                break;
+                    break;
 
-                case TYPE_EVENT: {
-                    int resultID = nextWord();
-                    visitor.visitEventType(resultID);
-                    types.put(resultID, new Type("event"));
-                }
-                break;
-
-                case TYPE_DEVICE_EVENT: {
-                    int resultID = nextWord();
-                    visitor.visitDeviceEventType(resultID);
-                    types.put(resultID, new Type("deviceEvent"));
-                }
-                break;
-
-                case TYPE_RESERVED_ID: {
-                    int resultID = nextWord();
-                    visitor.visitReserveIDType(resultID);
-                    types.put(resultID, new Type("reservationID"));
-                }
-                break;
-
-                case TYPE_QUEUE: {
-                    int resultID = nextWord();
-                    visitor.visitQueueType(resultID);
-                    types.put(resultID, new Type("queue"));
-                }
-                break;
-
-                case TYPE_PIPE: {
-                    int resultID = nextWord();
-                    AccessQualifier qualifier = nextEnumValue(AccessQualifier.values());
-                    visitor.visitPipeType(resultID, qualifier);
-                    types.put(resultID, new PipeType(qualifier));
-                }
-                break;
-
-                case TYPE_FORWARD_POINTER: {
-                    Type pointerType = nextType(types);
-                    StorageClass storageClass = nextEnumValue(StorageClass.values());
-                    visitor.visitForwardType(pointerType, storageClass);
-                }
-                break;
-
-                case CONSTANT_FALSE:
-                case CONSTANT_TRUE: {
-                    Type type = nextType(types);
-                    if(!type.getName().equals("bool")) {
-                        throw new IllegalArgumentException("Invalid boolean constant type while loading constant: "+type);
+                    case TYPE_INT: {
+                        int resultID = nextWord();
+                        int width = nextWord();
+                        boolean isSigned = toBoolean(nextWord());
+                        visitor.visitIntType(resultID, width, isSigned);
+                        types.put(resultID, new IntType(width, isSigned));
                     }
-                    int resultID = nextWord();
-                    if(opcodeID == CONSTANT_FALSE)
-                        visitor.visitFalseConstant(resultID);
-                    else
-                        visitor.visitTrueConstant(resultID);
-                }
-                break;
+                    break;
 
-                case SOURCE: {
-                    SourceLanguage language = nextEnumValue(SourceLanguage.values());
-                    int version = nextWord();
-                    int filenameStringID = -1;
-                    String sourceCode = null;
-                    if(wordCount > 3) {
-                        filenameStringID = nextWord();
-                        if(wordCount > 4) {
-                            sourceCode = nextString(wordCount-4);
+                    case TYPE_FLOAT: {
+                        int resultID = nextWord();
+                        int width = nextWord();
+                        visitor.visitFloatType(resultID, width);
+                        types.put(resultID, new FloatType(width));
+                    }
+                    break;
+
+                    case TYPE_VEC: {
+                        int resultID = nextWord();
+                        Type componentType = nextType(types);
+                        int componentCount = nextWord();
+                        visitor.visitVectorType(resultID, componentType, componentCount);
+                        types.put(resultID, new VectorType(componentType, componentCount));
+                    }
+                    break;
+
+                    case TYPE_MATRIX: {
+                        int resultID = nextWord();
+                        Type columnType = nextType(types);
+                        int columnCount = nextWord();
+                        visitor.visitMatrixType(resultID, columnType, columnCount);
+                        types.put(resultID, new MatrixType(columnType, columnCount));
+                    }
+                    break;
+
+                    case TYPE_IMAGE: {
+                        int resultID = nextWord();
+                        Type sampledType = nextType(types);
+                        Dimensionality dimensionality = nextEnumValue(Dimensionality.values());
+                        ImageDepth depth = nextEnumValue(ImageDepth.values());
+                        boolean arrayed = toBoolean(nextWord());
+                        boolean multisampled = toBoolean(nextWord());
+                        Sampling sampling = nextEnumValue(Sampling.values());
+                        ImageFormat format = nextEnumValue(ImageFormat.values());
+                        AccessQualifier qualifier = nextEnumValue(AccessQualifier.values());
+                        visitor.visitImageType(resultID, sampledType, dimensionality, depth, arrayed, multisampled, sampling, format, qualifier);
+                        types.put(resultID, new ImageType(sampledType, dimensionality, depth, arrayed, multisampled, sampling, format, qualifier));
+                    }
+                    break;
+
+                    case TYPE_SAMPLER: {
+                        int resultID = nextWord();
+                        visitor.visitSamplerType(resultID);
+                        types.put(resultID, new Type("sampler"));
+                    }
+                    break;
+
+                    case TYPE_SAMPLED_IMAGE: {
+                        int resultID = nextWord();
+                        Type imageType = nextType(types);
+                        visitor.visitSampledImageType(resultID, imageType);
+                        types.put(resultID, new SampledImageType(imageType));
+                    }
+                    break;
+
+                    case TYPE_ARRAY: {
+                        int resultID = nextWord();
+                        Type elementType = nextType(types);
+                        int length = nextWord();
+                        visitor.visitArrayType(resultID, elementType, length);
+                        types.put(resultID, new ArrayType(elementType, length));
+                    }
+                    break;
+
+                    case TYPE_RUNTIME_ARRAY: {
+                        int resultID = nextWord();
+                        Type elementType = nextType(types);
+                        visitor.visitRuntimeArrayType(resultID, elementType);
+                        types.put(resultID, new RuntimeArrayType(elementType));
+                    }
+                    break;
+
+                    case TYPE_STRUCT: {
+                        int resultID = nextWord();
+                        Type[] structMembers = new Type[wordCount - 2];
+                        for (int i = 0; i < wordCount - 2; i++) {
+                            structMembers[i] = nextType(types);
                         }
+                        visitor.visitStructType(resultID, structMembers);
+                        types.put(resultID, new StructType(structMembers));
                     }
-                    visitor.visitSource(language, version, filenameStringID, sourceCode);
-                }
-                break;
+                    break;
 
-                /*case SOURCE_CONTINUED: {
-                    String source = nextString();
-                    visitor.visitSourceContinued(source);
-                }
-                break;
-
-                case SOURCE_EXTENSION: {
-                    String source = nextString(wordCount-1);
-                    visitor.visitSourceExtension(source);
-                }
-                break;*/
-
-                case NAME: {
-                    int target = nextWord();
-                    int stringSize = wordCount-2;
-                    String name = nextString(stringSize);
-                    visitor.visitName(target, name);
-                }
-                break;
-
-                case MEMBER_NAME: {
-                    Type type = nextType(types);
-                    int target = nextWord();
-                    int stringSize = wordCount-3;
-                    String name = nextString(stringSize);
-                    visitor.visitMemberName(type, target, name);
-                }
-                break;
-
-                case STRING: {
-                    int resultID = nextWord();
-                    String value = nextString(wordCount-2);
-                    visitor.visitString(resultID, value);
-                    System.out.println(">>Str: "+value);
-                }
-                break;
-
-                case LINE: {
-                    int filenameID = nextWord();
-                    int line = nextWord();
-                    int column = nextWord();
-                    visitor.visitLine(filenameID, line, column);
-                }
-                break;
-
-                case DECORATE: {
-                    int target = nextWord();
-                    Decoration decoration = nextEnumValue(Decoration.values());
-                    visitDecoration(visitor, decoration, target, wordCount);
-                }
-                break;
-
-                case MEMBER_DECORATE: {
-                    Type structureType = nextType(types);
-                    int member = nextWord();
-                    Decoration decoration = nextEnumValue(Decoration.values());
-                    visitMemberDecoration(visitor, decoration, structureType, member, wordCount);
-                }
-                break;
-
-                case ENTRY_POINT: {
-                    int savedPosition = position;
-                    ExecutionModel model = nextEnumValue(ExecutionModel.values());
-                    int entryPoint = nextWord();
-                    String name = nextString();
-                    int strSize = (position-savedPosition)/4-1;
-                    System.out.println(">> name size: "+strSize);
-                    int interfaceCount = wordCount-strSize;
-                    int[] interfaces = new int[interfaceCount];
-                    for (int i = 0; i < interfaceCount; i++) {
-                        interfaces[i] = nextWord();
+                    case TYPE_OPAQUE: {
+                        int resultID = nextWord();
+                        String name = nextString(wordCount - 2);
+                        visitor.visitOpaqueType(resultID, name);
+                        types.put(resultID, new OpaqueType(name));
                     }
-                    System.out.println("entry: "+name+" ("+interfaceCount+" interfaces: "+ Arrays.toString(interfaces)+")");
-                    visitor.visitEntryPoint(model, entryPoint, name, interfaces);
-                }
-                break;
+                    break;
 
-                case EXTENSION: {
-                    int strSize = wordCount-1;
-                    System.out.println(">>size:"+strSize);
-                    String extension = nextString(strSize);
-                    System.out.println("uses "+extension);
-                }
-                break;
-
-                case CAPABILITY: {
-                    Capability cap = nextEnumValue(Capability.values());
-                    visitor.visitCapability(cap);
-                }
-                break;
-
-                case EXT_INST_IMPORT: {
-                    int resultID = nextWord();
-                    String name = nextString(wordCount-2);
-                    visitor.visitExtendedInstructionSetImport(resultID, name);
-                }
-                break;
-
-                case EXT_INT: {
-                    Type resultType = nextType(types);
-                    int resultID = nextWord();
-                    int set = nextWord();
-                    int instruction = nextWord();
-                    int operandCount = wordCount-5;
-                    int[] operands = new int[operandCount];
-                    for (int i = 0; i < operandCount; i++) {
-                        operands[i] = nextWord();
+                    case TYPE_POINTER: {
+                        int resultID = nextWord();
+                        StorageClass storageClass = nextEnumValue(StorageClass.values());
+                        Type type = nextType(types);
+                        visitor.visitPointerType(resultID, storageClass, type);
+                        types.put(resultID, new PointerType(storageClass, type));
                     }
-                    visitor.visitExecExtendedInstruction(resultType, resultID, set, instruction, operands);
-                }
-                break;
+                    break;
 
-                case MEMORY_MODEL: {
-                    AddressingModel addressingModel = nextEnumValue(AddressingModel.values());
-                    MemoryModel memoryModel = nextEnumValue(MemoryModel.values());
-                    visitor.visitMemoryModel(addressingModel, memoryModel);
-                }
-                break;
+                    case TYPE_FUNCTION: {
+                        int resultID = nextWord();
+                        Type returnType = nextType(types);
+                        int parameterCount = wordCount - 3;
+                        Type[] parameters = new Type[parameterCount];
+                        for (int i = 0; i < parameterCount; i++) {
+                            parameters[i] = nextType(types);
+                        }
+                        visitor.visitFunctionType(resultID, returnType, parameters);
+                        types.put(resultID, new FunctionType(returnType, parameters));
+                    }
+                    break;
 
-                default:
-                    System.out.println("Unhandled: " + Opcodes.getName(opcodeID)+" "+opcodeID);
-                    continue;
+                    case TYPE_EVENT: {
+                        int resultID = nextWord();
+                        visitor.visitEventType(resultID);
+                        types.put(resultID, new Type("event"));
+                    }
+                    break;
+
+                    case TYPE_DEVICE_EVENT: {
+                        int resultID = nextWord();
+                        visitor.visitDeviceEventType(resultID);
+                        types.put(resultID, new Type("deviceEvent"));
+                    }
+                    break;
+
+                    case TYPE_RESERVED_ID: {
+                        int resultID = nextWord();
+                        visitor.visitReserveIDType(resultID);
+                        types.put(resultID, new Type("reservationID"));
+                    }
+                    break;
+
+                    case TYPE_QUEUE: {
+                        int resultID = nextWord();
+                        visitor.visitQueueType(resultID);
+                        types.put(resultID, new Type("queue"));
+                    }
+                    break;
+
+                    case TYPE_PIPE: {
+                        int resultID = nextWord();
+                        AccessQualifier qualifier = nextEnumValue(AccessQualifier.values());
+                        visitor.visitPipeType(resultID, qualifier);
+                        types.put(resultID, new PipeType(qualifier));
+                    }
+                    break;
+
+                    case TYPE_FORWARD_POINTER: {
+                        Type pointerType = nextType(types);
+                        StorageClass storageClass = nextEnumValue(StorageClass.values());
+                        visitor.visitForwardType(pointerType, storageClass);
+                    }
+                    break;
+
+                    case CONSTANT_FALSE:
+                    case CONSTANT_TRUE: {
+                        Type type = nextType(types);
+                        if (!type.getName().equals("bool")) {
+                            throw new IllegalArgumentException("Invalid boolean constant type while loading constant: " + type);
+                        }
+                        int resultID = nextWord();
+                        if (opcodeID == CONSTANT_FALSE)
+                            visitor.visitFalseConstant(resultID);
+                        else
+                            visitor.visitTrueConstant(resultID);
+                    }
+                    break;
+
+                    case SOURCE: {
+                        SourceLanguage language = nextEnumValue(SourceLanguage.values());
+                        int version = nextWord();
+                        int filenameStringID = -1;
+                        String sourceCode = null;
+                        if (wordCount > 3) {
+                            filenameStringID = nextWord();
+                            if (wordCount > 4) {
+                                sourceCode = nextString(wordCount - 4);
+                            }
+                        }
+                        visitor.visitSource(language, version, filenameStringID, sourceCode);
+                    }
+                    break;
+
+                    case SOURCE_CONTINUED: {
+                        String source = nextString();
+                        visitor.visitSourceContinued(source);
+                    }
+                    break;
+
+                    case SOURCE_EXTENSION: {
+                        String source = nextString(wordCount - 1);
+                        visitor.visitSourceExtension(source);
+                    }
+                    break;
+
+                    case NAME: {
+                        int target = nextWord();
+                        int stringSize = wordCount - 2;
+                        String name = nextString(stringSize);
+                        visitor.visitName(target, name);
+                    }
+                    break;
+
+                    case MEMBER_NAME: {
+                        Type type = nextType(types);
+                        int target = nextWord();
+                        int stringSize = wordCount - 3;
+                        String name = nextString(stringSize);
+                        visitor.visitMemberName(type, target, name);
+                    }
+                    break;
+
+                    case STRING: {
+                        int resultID = nextWord();
+                        String value = nextString(wordCount - 2);
+                        visitor.visitString(resultID, value);
+                        System.out.println(">>Str: " + value);
+                    }
+                    break;
+
+                    case LINE: {
+                        int filenameID = nextWord();
+                        int line = nextWord();
+                        int column = nextWord();
+                        visitor.visitLine(filenameID, line, column);
+                    }
+                    break;
+
+                    case DECORATE: {
+                        int target = nextWord();
+                        Decoration decoration = nextEnumValue(Decoration.values());
+                        visitDecoration(visitor, decoration, target, wordCount);
+                    }
+                    break;
+
+                    case MEMBER_DECORATE: {
+                        Type structureType = nextType(types);
+                        int member = nextWord();
+                        Decoration decoration = nextEnumValue(Decoration.values());
+                        visitMemberDecoration(visitor, decoration, structureType, member, wordCount);
+                    }
+                    break;
+
+                    case ENTRY_POINT: {
+                        int savedPosition = position;
+                        ExecutionModel model = nextEnumValue(ExecutionModel.values());
+                        int entryPoint = nextWord();
+                        String name = nextString();
+                        int strSize = (position - savedPosition) / 4;
+                        System.out.println(">> name size: " + (strSize - 2));
+                        int interfaceCount = wordCount - strSize - 1;
+                        int[] interfaces = new int[interfaceCount];
+                        for (int i = 0; i < interfaceCount; i++) {
+                            interfaces[i] = nextWord();
+                        }
+                        visitor.visitEntryPoint(model, entryPoint, name, interfaces);
+                    }
+                    break;
+
+                    case EXTENSION: {
+                        int strSize = wordCount - 1;
+                        System.out.println(">>size:" + strSize);
+                        String extension = nextString(strSize);
+                        System.out.println("uses " + extension);
+                    }
+                    break;
+
+                    case CAPABILITY: {
+                        Capability cap = nextEnumValue(Capability.values());
+                        visitor.visitCapability(cap);
+                    }
+                    break;
+
+                    case EXT_INST_IMPORT: {
+                        int resultID = nextWord();
+                        String name = nextString(wordCount - 2);
+                        visitor.visitExtendedInstructionSetImport(resultID, name);
+                    }
+                    break;
+
+                    case EXT_INT: {
+                        Type resultType = nextType(types);
+                        int resultID = nextWord();
+                        int set = nextWord();
+                        int instruction = nextWord();
+                        int operandCount = wordCount - 5;
+                        int[] operands = new int[operandCount];
+                        for (int i = 0; i < operandCount; i++) {
+                            operands[i] = nextWord();
+                        }
+                        visitor.visitExecExtendedInstruction(resultType, resultID, set, instruction, operands);
+                    }
+                    break;
+
+                    case MEMORY_MODEL: {
+                        AddressingModel addressingModel = nextEnumValue(AddressingModel.values());
+                        MemoryModel memoryModel = nextEnumValue(MemoryModel.values());
+                        visitor.visitMemoryModel(addressingModel, memoryModel);
+                    }
+                    break;
+
+                    case VARIABLE: {
+                        Type resultType = nextType(types);
+                        int resultID = nextWord();
+                        StorageClass storageClass = nextEnumValue(StorageClass.values());
+                        int initializer = -1;
+                        if (wordCount > 4)
+                            initializer = nextWord();
+                        visitor.visitVariable(resultType, resultID, storageClass, initializer);
+                    }
+                    break;
+
+                    case CONSTANT: {
+                        Type type = nextType(types);
+                        int resultID = nextWord();
+                        int[] bitPattern = new int[wordCount - 3];
+                        for (int i = 0; i < bitPattern.length; i++) {
+                            bitPattern[i] = nextWord();
+                        }
+                        visitor.visitConstant(type, resultID, bitPattern);
+                    }
+                    break;
+
+                    case FUNCTION: {
+                        Type resultType = nextType(types);
+                        int resultID = nextWord();
+                        FunctionControl control = new FunctionControl(nextWord());
+                        Type funcType = nextType(types);
+                        visitor.visitFunction(resultType, resultID, control, funcType);
+                    }
+                    break;
+
+                    case FUNCTION_END: {
+                        visitor.visitFunctionEnd();
+                    }
+                    break;
+
+                    default:
+                        System.out.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);
+                        continue;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            System.out.println("Read: " + Opcodes.getName(opcodeID));
+            System.out.println("Read: " + Opcodes.getName(opcodeID)+", words: "+wordCount);
         }
         System.out.println("=== TYPES ===");
-        types.values().forEach(System.out::println);
+        types.entrySet().forEach(e-> {
+            System.out.println(e.getValue()+" ("+e.getKey()+")");
+        });
         System.out.println("=============");
         // TODO: do the visit
         return visitor;

@@ -7,7 +7,27 @@ import org.jglr.sbm.image.ImageDepth;
 import org.jglr.sbm.image.ImageFormat;
 import org.jglr.sbm.image.Sampling;
 
+import java.util.Arrays;
+import java.util.HashMap;
+
 public class CodeCollector implements SBMCodeVisitor {
+
+    private final HashMap<Integer, String> strings;
+    private final HashMap<Integer, String> names;
+
+    public CodeCollector() {
+        strings = new HashMap<>();
+        names = new HashMap<>();
+    }
+
+    private String getName(int id) {
+        return names.getOrDefault(id, null);
+    }
+
+    private String getString(int id) {
+        return strings.getOrDefault(id, null);
+    }
+
     @Override
     public void visitVoidType(int resultID) {
 
@@ -115,7 +135,8 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitSource(SourceLanguage language, int version, int filenameStringID, String sourceCode) {
-        System.out.println("Source: "+language+" v"+version+", id: "+filenameStringID+", code: "+sourceCode);
+        String filename = getString(filenameStringID);
+        System.out.println("Source: "+language+" v"+version+", filename: "+filename+", code: "+sourceCode);
     }
 
     @Override
@@ -135,17 +156,18 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitName(int target, String name) {
-
+        names.put(target, name);
+        System.out.println("Name at index "+target+": "+name);
     }
 
     @Override
     public void visitMemberName(Type structureType, int target, String name) {
-
+        System.out.println("MemberName at index "+target+": "+name+", for type "+structureType);
     }
 
     @Override
     public void visitString(int resultID, String value) {
-
+        strings.put(resultID, value);
     }
 
     @Override
@@ -160,7 +182,7 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitCapability(Capability cap) {
-
+        System.out.println("Capability: "+cap.name());
     }
 
     @Override
@@ -170,7 +192,7 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitExecExtendedInstruction(Type resultType, int resultID, int set, int instruction, int[] operands) {
-
+        System.out.println("Extended: "+resultType+", resultID: "+resultID+", set: "+set+", instruction: "+instruction+", operands: "+Arrays.toString(operands));
     }
 
     @Override
@@ -180,7 +202,27 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitEntryPoint(ExecutionModel model, int entryPoint, String name, int[] interfaces) {
-        System.out.println("entry point: "+model+", point: "+entryPoint+", name: "+name);
+        System.out.println("entry point: "+model+", point: "+entryPoint+", name: "+name+", interfaces: "+Arrays.toString(interfaces));
+    }
+
+    @Override
+    public void visitVariable(Type resultType, int resultID, StorageClass storageClass, int initializer) {
+        System.out.println("New var of type "+resultType+" at index "+resultID+", name: "+getName(resultID)+", init: "+initializer);
+    }
+
+    @Override
+    public void visitConstant(Type type, int resultID, int[] bitPattern) {
+        System.out.println("New constant of type "+type+" at index "+resultID+", pattern: "+ Arrays.toString(bitPattern));
+    }
+
+    @Override
+    public void visitFunction(Type resultType, int resultID, FunctionControl control, Type funcType) {
+        System.out.println("New function: "+resultType+", index: "+resultID+", type: "+funcType+", name: "+getName(resultID));
+    }
+
+    @Override
+    public void visitFunctionEnd() {
+
     }
 
     @Override

@@ -33,4 +33,11 @@ public interface SBMCodeVisitor extends SBMTypeVisitor, SBMDecorationVisitor {
 
     void visitEntryPoint(ExecutionModel model, int entryPoint, String name, int[] interfaces);
 
+    void visitVariable(Type resultType, int resultID, StorageClass storageClass, int initializer);
+
+    void visitConstant(Type type, int resultID, int[] bitPattern);
+
+    void visitFunction(Type resultType, int resultID, FunctionControl control, Type funcType);
+
+    void visitFunctionEnd();
 }

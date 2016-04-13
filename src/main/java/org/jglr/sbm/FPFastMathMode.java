@@ -1,12 +1,12 @@
 package org.jglr.sbm;
 
-public class FPFastMathMode {
+public class FPFastMathMode extends MaskValue {
 
-    public static int FLAG_NOT_NAN = 0x1;
-    public static int FLAG_NOT_INF = 0x2;
-    public static int FLAG_INSIGNIFIENT_ZERO_SIGN = 0x4;
-    public static int FLAG_ALLOW_RECIPROCAL = 0x8;
-    public static int FLAG_FAST = 0x10;
+    public static final int FLAG_NOT_NAN = 0x1;
+    public static final int FLAG_NOT_INF = 0x2;
+    public static final int FLAG_INSIGNIFIENT_ZERO_SIGN = 0x4;
+    public static final int FLAG_ALLOW_RECIPROCAL = 0x8;
+    public static final int FLAG_FAST = 0x10;
     private int mask;
     private boolean assumeNotNaN;
     private boolean assumeNotInf;
@@ -15,7 +15,7 @@ public class FPFastMathMode {
     private boolean fast;
 
     public FPFastMathMode(int mask) {
-        setFromMask(mask);
+        super(mask);
     }
 
     public int getMask() {
@@ -68,7 +68,7 @@ public class FPFastMathMode {
     }
 
     public void setFromMask(int mask) {
-        this.mask = mask;
+        super.setFromMask(mask);
         assumeNotNaN = has(FLAG_NOT_NAN);
         assumeNotInf = has(FLAG_NOT_INF);
         insignificantZeroSign = has(FLAG_INSIGNIFIENT_ZERO_SIGN);
@@ -76,7 +76,7 @@ public class FPFastMathMode {
         fast = has(FLAG_FAST);
     }
 
-    private void updateMask() {
+    protected void updateMask() {
         int newMask = 0;
         if(assumeNotNaN())
             newMask |= 0x1;
@@ -91,7 +91,4 @@ public class FPFastMathMode {
         mask = newMask;
     }
 
-    private boolean has(int bitPattern) {
-        return (mask & bitPattern) != 0;
-    }
 }

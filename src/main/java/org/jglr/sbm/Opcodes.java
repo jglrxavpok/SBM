@@ -19,6 +19,7 @@ public interface Opcodes {
 
         NO_LINE = 317,
 
+
         DECORATE = 71,
         MEMBER_DECORATE = 72,
 
@@ -28,6 +29,13 @@ public interface Opcodes {
         EXT_INT = 12,
         MEMORY_MODEL = 14,
         ENTRY_POINT = 15,
+
+        CONSTANT = 43,
+        FUNCTION = 54,
+        VARIABLE = 59,
+        LABEL = 248,
+        FUNCTION_END = 56,
+        FUNCTION_CALL = 57,
 
 
         TYPE_VOID = 19,
