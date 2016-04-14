@@ -16,13 +16,21 @@ import java.util.Map;
 public class SBMReader implements SBMVisitor, Opcodes {
 
     public static final long SPIRV_MAGIC_NUMBER = 0x07230203;
-    private final byte[] input;
+    private final int[] input;
     private final ByteOrder endianness;
     private int position;
 
     public SBMReader(byte[] input) throws IOException {
-        this.input = input;
+        this.input = toUnsignedBytes(input);
         endianness = findEndianness();
+    }
+
+    private int[] toUnsignedBytes(byte[] input) {
+        int[] result = new int[input.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = input[i] & 0xFF;
+        }
+        return result;
     }
 
     private ByteOrder findEndianness() throws IOException {
@@ -465,7 +473,21 @@ public class SBMReader implements SBMVisitor, Opcodes {
                         for (int i = 0; i < indexes.length; i++) {
                             indexes[i] = nextWord();
                         }
-                        System.out.println("Access chain: "+resultType);
+                        visitor.visitAccessChain(resultType, resultID, base, indexes);
+                    }
+                    break;
+
+                    case STORE: {
+                        long pointer = nextWord();
+                        long object = nextWord();
+                        // TODO: Memory Access
+                        visitor.visitStore(pointer, object);
+                    }
+                    break;
+
+                    case LABEL: {
+                        long resultID = nextWord();
+                        visitor.visitLabel(resultID);
                     }
                     break;
 

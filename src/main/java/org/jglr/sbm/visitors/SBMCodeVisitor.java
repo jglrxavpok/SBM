@@ -40,4 +40,10 @@ public interface SBMCodeVisitor extends SBMTypeVisitor, SBMDecorationVisitor {
     void visitFunction(Type resultType, long resultID, FunctionControl control, Type funcType);
 
     void visitFunctionEnd();
+
+    void visitStore(long pointer, long object);
+
+    void visitAccessChain(Type resultType, long resultID, long base, long[] indexes);
+
+    void visitLabel(long resultID);
 }
