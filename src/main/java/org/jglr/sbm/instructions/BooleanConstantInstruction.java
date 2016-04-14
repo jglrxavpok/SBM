@@ -1,0 +1,41 @@
+package org.jglr.sbm.instructions;
+
+import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.types.Type;
+
+public class BooleanConstantInstruction extends ResultInstruction implements ResolvableInstruction {
+    private final boolean value;
+    private final long typeID;
+    private Type type;
+
+    public BooleanConstantInstruction(long typeID, long resultID, boolean value) {
+        super(value ? CONSTANT_TRUE : CONSTANT_FALSE, 2, resultID);
+        this.typeID = typeID;
+        this.value = value;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public long getTypeID() {
+        return typeID;
+    }
+
+    public boolean getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return "BooleanConstantInstruction "+value;
+    }
+
+    @Override
+    public void onVisitEnd(ConstantPool constantPool) {
+        type = constantPool.getType(typeID);
+        if(!type.getName().equals("bool")) {
+            throw new IllegalArgumentException("Invalid type for boolean constant: "+type.getName());
+        }
+    }
+}

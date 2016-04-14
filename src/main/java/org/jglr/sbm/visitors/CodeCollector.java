@@ -1,89 +1,80 @@
 package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
-import org.jglr.sbm.types.Type;
+import org.jglr.sbm.instructions.*;
 import org.jglr.sbm.image.Dimensionality;
 import org.jglr.sbm.image.ImageDepth;
 import org.jglr.sbm.image.ImageFormat;
 import org.jglr.sbm.image.Sampling;
+import org.jglr.sbm.types.*;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class CodeCollector implements SBMCodeVisitor {
 
-    private final HashMap<Long, String> strings;
-    private final HashMap<Long, String> names;
     private final StringBuffer buffer;
+    private final List<SpvInstruction> instructions;
+    private ConstantPool constantPool;
 
     public CodeCollector() {
-        strings = new HashMap<>();
-        names = new HashMap<>();
         buffer = new StringBuffer();
-    }
-
-    private String getName(long id) {
-        return names.getOrDefault(id, null);
-    }
-
-    private String getString(long id) {
-        return strings.getOrDefault(id, null);
+        instructions = new LinkedList<>();
+        constantPool = new ConstantPool();
     }
 
     @Override
     public void visitSource(SourceLanguage language, long version, long filenameStringID, String sourceCode) {
-        String filename = getString(filenameStringID);
-        buffer.append("Source: ").append(language).append(" v").append(version).append(", filename: ").append(filename).append(", code: ").append(sourceCode).append('\n');
+        addInstruction(new SourceInstruction(language, version, filenameStringID, sourceCode));
     }
 
     @Override
     public void visitSourceContinued(String source) {
-        buffer.append("Source continued: ").append(source).append('\n');
+        addInstruction(new SourceContinuedInstruction(source));
     }
 
     @Override
-    public void visitSourceExtension(String source) {
-        buffer.append("Extension: ").append(source).append('\n');
+    public void visitSourceExtension(String extension) {
+        addInstruction(new ExtensionImportInstruction(extension));
     }
 
     @Override
     public void visitLine(long filenameID, long line, long column) {
-        buffer.append("Line (").append(line).append(", ").append(column).append(")").append('\n');
+        addInstruction(new LineInstruction(filenameID, line, column));
     }
 
     @Override
     public void visitName(long target, String name) {
-        names.put(target, name);
-        System.out.println("Name at index "+target+": "+name);
-        buffer.append("Name: ").append(name).append(" for %").append(target).append('\n');
+        constantPool.registerName(target, name);
+        addInstruction(new NameInstruction(target, name));
     }
 
     @Override
     public void visitMemberName(long structureType, long target, String name) {
-        System.out.println("MemberName at index "+target+": "+name+", for type %"+structureType);
-        buffer.append("MemberName: ").append(name).append(" for %").append(target).append(" inside %").append(structureType).append('\n');
+        constantPool.registerMemberName(structureType, target, name);
+        addInstruction(new MemberNameInstruction(structureType, target, name));
     }
 
     @Override
     public void visitString(long resultID, String value) {
-        strings.put(resultID, value);
-        buffer.append("%").append(resultID).append(" = String: ").append(value).append('\n');
+        constantPool.registerString(resultID, value);
+        addInstruction(new StringInstruction(resultID, value));
     }
 
     @Override
     public void visitTrueConstant(long type, long resultID) {
-        buffer.append("%").append(resultID).append(" = TrueConstant").append('\n');
+        addInstruction(new BooleanConstantInstruction(type, resultID, true));
     }
 
     @Override
     public void visitFalseConstant(long type, long resultID) {
-        buffer.append("%").append(resultID).append(" = FalseConstant").append('\n');
+        addInstruction(new BooleanConstantInstruction(type, resultID, false));
     }
 
     @Override
     public void visitCapability(Capability cap) {
-        System.out.println("Capability: "+cap.name());
-        buffer.append("Capability: ").append(cap.name()).append('\n');
+        addInstruction(new CapabilityInstruction(cap));
     }
 
     @Override
@@ -111,25 +102,22 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitVariable(long resultType, long resultID, StorageClass storageClass, long initializer) {
-        System.out.println("New var of type "+resultType+" at index "+resultID+", name: "+getName(resultID)+", init: "+initializer);
-        buffer.append("%").append(resultID).append(" = Variable ").append(storageClass).append(' ').append(getName(resultID)).append('\n');
+        addInstruction(new VariableInstruction(resultType, resultID, storageClass, initializer));
     }
 
     @Override
     public void visitConstant(long type, long resultID, long[] bitPattern) {
-        System.out.println("New constant of type "+type+" at index "+resultID+", pattern: "+ Arrays.toString(bitPattern));
-        buffer.append("%").append(resultID).append(" = Constant %").append(type).append(" ").append(Arrays.toString(bitPattern)).append('\n');
+        addInstruction(new ConstantInstruction(type, resultID, bitPattern));
     }
 
     @Override
     public void visitFunction(long resultType, long resultID, FunctionControl control, long funcType) {
-        System.out.println("New function: "+resultType+", index: "+resultID+", type: "+funcType+", name: "+getName(resultID));
-        buffer.append("%").append(resultID).append(" = Function %").append(resultType).append(" / %").append(funcType).append(" 0x").append(Long.toHexString(control.getMask())).append('\n');
+        addInstruction(new FunctionInstruction(resultType, resultID, control, funcType));
     }
 
     @Override
     public void visitFunctionEnd() {
-        buffer.append("FunctionEnd").append('\n');
+        addInstruction(new FunctionEndInstruction());
     }
 
     @Override
@@ -194,50 +182,56 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitVoidType(long resultID) {
-        buffer.append("%").append(resultID).append(" = void").append('\n');
+        addInstruction(new VoidTypeInstruction(resultID));
+        constantPool.registerType(resultID, new Type("void"));
     }
 
     @Override
     public void visitBoolType(long resultID) {
-        buffer.append("%").append(resultID).append(" = bool").append('\n');
+        addInstruction(new BoolTypeInstruction(resultID));
+        constantPool.registerType(resultID, new Type("bool"));
     }
 
     @Override
     public void visitFloatType(long resultID, long width) {
-        buffer.append("%").append(resultID).append(" = float").append(width).append('\n');
+        addInstruction(new FloatTypeInstruction(resultID, width));
+        constantPool.registerType(resultID, new FloatType(width));
     }
 
     @Override
     public void visitIntType(long resultID, long width, boolean isSigned) {
-        buffer.append("%").append(resultID).append(" = ");
-        if(!isSigned)
-            buffer.append('u');
-        buffer.append("int").append(width).append('\n');
+        addInstruction(new IntTypeInstruction(resultID, width, isSigned));
+        constantPool.registerType(resultID, new IntType(width, isSigned));
     }
 
     @Override
     public void visitVectorType(long resultID, long componentType, long componentCount) {
-        buffer.append("%").append(resultID).append(" = vec").append(componentCount).append("(%").append(componentType).append(")").append('\n');
+        addInstruction(new VectorTypeInstruction(resultID, componentType, componentCount));
+        constantPool.registerType(resultID, new VectorType(constantPool.getType(componentType), componentCount));
     }
 
     @Override
     public void visitMatrixType(long resultID, long columnType, long columnCount) {
-        buffer.append("%").append(resultID).append(" = mat").append(columnCount).append("(%").append(columnType).append(")").append('\n');
+        addInstruction(new MatrixTypeInstruction(resultID, columnType, columnCount));
+        constantPool.registerType(resultID, new MatrixType(constantPool.getType(columnType), columnCount));
     }
 
     @Override
     public void visitImageType(long resultID, long sampledType, Dimensionality dim, ImageDepth depth, boolean arrayed, boolean multisampled, Sampling sampling, ImageFormat format, AccessQualifier access) {
-
+        addInstruction(new ImageTypeInstruction(resultID, sampledType, dim, depth, arrayed, multisampled, sampling, format, access));
+        constantPool.registerType(resultID, new ImageType(constantPool.getType(sampledType), dim, depth, arrayed, multisampled, sampling, format, access));
     }
 
     @Override
     public void visitSamplerType(long resultID) {
-        buffer.append("%").append(resultID).append(" = sampler").append('\n');
+        addInstruction(new SamplerTypeInstruction(resultID));
+        constantPool.registerType(resultID, new Type("sampler"));
     }
 
     @Override
     public void visitSampledImageType(long resultID, long imageType) {
-
+        addInstruction(new SampledImageTypeInstruction(resultID, imageType));
+        constantPool.registerType(resultID, new SampledImageType(constantPool.getType(imageType)));
     }
 
     @Override
@@ -267,7 +261,8 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitFunctionType(long resultID, long returnType, long[] parameterTypes) {
-
+        addInstruction(new FunctionTypeInstruction(resultID, returnType, parameterTypes));
+        constantPool.registerType(resultID, new FunctionType(constantPool.getType(returnType), constantPool.getTypes(parameterTypes)));
     }
 
     @Override
@@ -312,22 +307,47 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitLabel(long resultID) {
-        buffer.append('%').append(resultID).append(" = Label").append('\n');
+        addInstruction(new LabelInstruction(resultID));
     }
 
     @Override
     public void visitExtension(String extension) {
-        buffer.append("Extension: ").append(extension);
+        addInstruction(new ExtensionUseInstruction(extension));
     }
 
     @Override
     public void visitReturn() {
-        buffer.append("Return").append('\n');
+        addInstruction(new ReturnInstruction());
+    }
+
+    private void addInstruction(SpvInstruction instruction) {
+        // TODO: check if visit ended?
+        instructions.add(instruction);
     }
 
     @Override
     public void visitLoad(long resultType, long resultID, long pointer, MemoryAccess memoryAccess) {
         buffer.append('%').append(resultID).append(" = OpLoad %").append(pointer).append(" (").append(Long.toHexString(memoryAccess.getMask())).append(")").append('\n');
+    }
+
+    @Override
+    public void visitEnd() {
+        instructions.stream()
+                .filter(i -> i instanceof ResolvableInstruction)
+                .map(i -> (ResolvableInstruction)i)
+                .forEach(i -> {
+                    i.onVisitEnd(constantPool);
+                });
+    }
+
+    @Override
+    public void reset() {
+        instructions.clear();
+        constantPool.empty();
+    }
+
+    public List<SpvInstruction> getInstructions() {
+        return instructions;
     }
 
     public String getResult() {

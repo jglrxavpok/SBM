@@ -179,7 +179,7 @@ public class TestReading {
     public void readCode() throws IOException {
         SBMReader reader = new SBMReader(vertShaderCode);
         CodeCollector codeCollector = (CodeCollector) reader.visitCode();
-        System.out.println(codeCollector.getResult());
+        codeCollector.getInstructions().forEach(System.out::println);
     }
 
 }

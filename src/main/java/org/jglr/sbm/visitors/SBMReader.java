@@ -153,7 +153,9 @@ public class SBMReader implements SBMVisitor, Opcodes {
                         boolean multisampled = toBoolean(nextWord());
                         Sampling sampling = nextEnumValue(Sampling.values());
                         ImageFormat format = nextEnumValue(ImageFormat.values());
-                        AccessQualifier qualifier = nextEnumValue(AccessQualifier.values());
+                        AccessQualifier qualifier = null;
+                        if(wordCount > 9)
+                            qualifier = nextEnumValue(AccessQualifier.values());
                         visitor.visitImageType(resultID, sampledType, dimensionality, depth, arrayed, multisampled, sampling, format, qualifier);
                     }
                     break;
@@ -499,6 +501,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
 
             System.out.println("Read: " + Opcodes.getName(opcodeID)+", words: "+wordCount);
         }
+        visitor.visitEnd();
         return visitor;
     }
 
