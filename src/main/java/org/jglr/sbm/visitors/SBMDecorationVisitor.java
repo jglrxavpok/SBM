@@ -23,15 +23,15 @@ public interface SBMDecorationVisitor {
      */
     void visitDecoration(long target, Decoration decoration);
 
-    void visitIntMemberDecoration(Decoration decoration, Type structureType, long member, long value);
+    void visitIntMemberDecoration(Decoration decoration, long structureType, long member, long value);
 
-    void visitFunctionParameterAttributeMemberDecoration(Type structureType, long member, FunctionParameterAttribute attribute);
+    void visitFunctionParameterAttributeMemberDecoration(long structureType, long member, FunctionParameterAttribute attribute);
 
-    void visitFPRoundingModeMemberDecoration(Type structureType, long member, FPRoundingMode roundingMode);
+    void visitFPRoundingModeMemberDecoration(long structureType, long member, FPRoundingMode roundingMode);
 
-    void visitFPFastMathModeMemberDecoration(Type structureType, long member, FPFastMathMode mathMode);
+    void visitFPFastMathModeMemberDecoration(long structureType, long member, FPFastMathMode mathMode);
 
-    void visitLinkageAttributesMemberDecoration(Type structureType, long member, String name, LinkageType linkageType);
+    void visitLinkageAttributesMemberDecoration(long structureType, long member, String name, LinkageType linkageType);
 
-    void visitMemberDecoration(Type structureType, long member, Decoration decoration);
+    void visitMemberDecoration(long structureType, long member, Decoration decoration);
 }

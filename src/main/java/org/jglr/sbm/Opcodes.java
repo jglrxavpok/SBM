@@ -42,6 +42,8 @@ public interface Opcodes {
         COPY_MEMORY_SIZED = 64,
         ACCESS_CHAIN = 65,
 
+        RETURN = 253,
+
 
         TYPE_VOID = 19,
         TYPE_BOOL = 20,

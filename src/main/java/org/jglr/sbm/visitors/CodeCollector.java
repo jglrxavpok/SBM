@@ -59,9 +59,9 @@ public class CodeCollector implements SBMCodeVisitor {
     }
 
     @Override
-    public void visitMemberName(Type structureType, long target, String name) {
-        System.out.println("MemberName at index "+target+": "+name+", for type "+structureType);
-        buffer.append("MemberName: ").append(name).append(" for %").append(target).append(" inside ").append(structureType).append('\n');
+    public void visitMemberName(long structureType, long target, String name) {
+        System.out.println("MemberName at index "+target+": "+name+", for type %"+structureType);
+        buffer.append("MemberName: ").append(name).append(" for %").append(target).append(" inside %").append(structureType).append('\n');
     }
 
     @Override
@@ -71,12 +71,12 @@ public class CodeCollector implements SBMCodeVisitor {
     }
 
     @Override
-    public void visitTrueConstant(long resultID) {
+    public void visitTrueConstant(long type, long resultID) {
         buffer.append("%").append(resultID).append(" = TrueConstant").append('\n');
     }
 
     @Override
-    public void visitFalseConstant(long resultID) {
+    public void visitFalseConstant(long type, long resultID) {
         buffer.append("%").append(resultID).append(" = FalseConstant").append('\n');
     }
 
@@ -93,8 +93,8 @@ public class CodeCollector implements SBMCodeVisitor {
     }
 
     @Override
-    public void visitExecExtendedInstruction(Type resultType, long resultID, long set, long instruction, long[] operands) {
-        System.out.println("Extended: "+resultType+", resultID: "+resultID+", set: "+set+", instruction: "+instruction+", operands: "+Arrays.toString(operands));
+    public void visitExecExtendedInstruction(long resultType, long resultID, long set, long instruction, long[] operands) {
+        System.out.println("Extended: %"+resultType+", resultID: "+resultID+", set: "+set+", instruction: "+instruction+", operands: "+Arrays.toString(operands));
         buffer.append("%").append(resultID).append(" ExtIsn = ").append(set).append(".").append(instruction).append(Arrays.toString(operands)).append('\n');
     }
 
@@ -110,21 +110,21 @@ public class CodeCollector implements SBMCodeVisitor {
     }
 
     @Override
-    public void visitVariable(Type resultType, long resultID, StorageClass storageClass, long initializer) {
+    public void visitVariable(long resultType, long resultID, StorageClass storageClass, long initializer) {
         System.out.println("New var of type "+resultType+" at index "+resultID+", name: "+getName(resultID)+", init: "+initializer);
         buffer.append("%").append(resultID).append(" = Variable ").append(storageClass).append(' ').append(getName(resultID)).append('\n');
     }
 
     @Override
-    public void visitConstant(Type type, long resultID, long[] bitPattern) {
+    public void visitConstant(long type, long resultID, long[] bitPattern) {
         System.out.println("New constant of type "+type+" at index "+resultID+", pattern: "+ Arrays.toString(bitPattern));
-        buffer.append("%").append(resultID).append(" = Constant ").append(type).append(" ").append(Arrays.toString(bitPattern)).append('\n');
+        buffer.append("%").append(resultID).append(" = Constant %").append(type).append(" ").append(Arrays.toString(bitPattern)).append('\n');
     }
 
     @Override
-    public void visitFunction(Type resultType, long resultID, FunctionControl control, Type funcType) {
+    public void visitFunction(long resultType, long resultID, FunctionControl control, long funcType) {
         System.out.println("New function: "+resultType+", index: "+resultID+", type: "+funcType+", name: "+getName(resultID));
-        buffer.append("%").append(resultID).append(" = Function ").append(resultType).append(" / ").append(funcType).append(" 0x").append(Long.toHexString(control.getMask())).append('\n');
+        buffer.append("%").append(resultID).append(" = Function %").append(resultType).append(" / %").append(funcType).append(" 0x").append(Long.toHexString(control.getMask())).append('\n');
     }
 
     @Override
@@ -163,32 +163,32 @@ public class CodeCollector implements SBMCodeVisitor {
     }
 
     @Override
-    public void visitIntMemberDecoration(Decoration decoration, Type structureType, long member, long value) {
+    public void visitIntMemberDecoration(Decoration decoration, long structureType, long member, long value) {
 
     }
 
     @Override
-    public void visitFunctionParameterAttributeMemberDecoration(Type structureType, long member, FunctionParameterAttribute attribute) {
+    public void visitFunctionParameterAttributeMemberDecoration(long structureType, long member, FunctionParameterAttribute attribute) {
 
     }
 
     @Override
-    public void visitFPRoundingModeMemberDecoration(Type structureType, long member, FPRoundingMode roundingMode) {
+    public void visitFPRoundingModeMemberDecoration(long structureType, long member, FPRoundingMode roundingMode) {
 
     }
 
     @Override
-    public void visitFPFastMathModeMemberDecoration(Type structureType, long member, FPFastMathMode mathMode) {
+    public void visitFPFastMathModeMemberDecoration(long structureType, long member, FPFastMathMode mathMode) {
 
     }
 
     @Override
-    public void visitLinkageAttributesMemberDecoration(Type structureType, long member, String name, LinkageType linkageType) {
+    public void visitLinkageAttributesMemberDecoration(long structureType, long member, String name, LinkageType linkageType) {
 
     }
 
     @Override
-    public void visitMemberDecoration(Type structureType, long member, Decoration decoration) {
+    public void visitMemberDecoration(long structureType, long member, Decoration decoration) {
 
     }
 
@@ -216,17 +216,17 @@ public class CodeCollector implements SBMCodeVisitor {
     }
 
     @Override
-    public void visitVectorType(long resultID, Type componentType, long componentCount) {
-        buffer.append("%").append(resultID).append(" = vec").append(componentCount).append("(").append(componentType).append(")").append('\n');
+    public void visitVectorType(long resultID, long componentType, long componentCount) {
+        buffer.append("%").append(resultID).append(" = vec").append(componentCount).append("(%").append(componentType).append(")").append('\n');
     }
 
     @Override
-    public void visitMatrixType(long resultID, Type columnType, long columnCount) {
-        buffer.append("%").append(resultID).append(" = mat").append(columnCount).append("(").append(columnType).append(")").append('\n');
+    public void visitMatrixType(long resultID, long columnType, long columnCount) {
+        buffer.append("%").append(resultID).append(" = mat").append(columnCount).append("(%").append(columnType).append(")").append('\n');
     }
 
     @Override
-    public void visitImageType(long resultID, Type sampledType, Dimensionality dim, ImageDepth depth, boolean arrayed, boolean multisampled, Sampling sampling, ImageFormat format, AccessQualifier access) {
+    public void visitImageType(long resultID, long sampledType, Dimensionality dim, ImageDepth depth, boolean arrayed, boolean multisampled, Sampling sampling, ImageFormat format, AccessQualifier access) {
 
     }
 
@@ -236,22 +236,22 @@ public class CodeCollector implements SBMCodeVisitor {
     }
 
     @Override
-    public void visitSampledImageType(long resultID, Type imageType) {
+    public void visitSampledImageType(long resultID, long imageType) {
 
     }
 
     @Override
-    public void visitArrayType(long resultID, Type elementType, long length) {
+    public void visitArrayType(long resultID, long elementType, long length) {
 
     }
 
     @Override
-    public void visitRuntimeArrayType(long resultID, Type elementType) {
+    public void visitRuntimeArrayType(long resultID, long elementType) {
 
     }
 
     @Override
-    public void visitStructType(long resultID, Type[] memberTypes) {
+    public void visitStructType(long resultID, long[] memberTypes) {
 
     }
 
@@ -261,12 +261,12 @@ public class CodeCollector implements SBMCodeVisitor {
     }
 
     @Override
-    public void visitPointerType(long resultID, StorageClass storageClass, Type type) {
+    public void visitPointerType(long resultID, StorageClass storageClass, long type) {
 
     }
 
     @Override
-    public void visitFunctionType(long resultID, Type returnType, Type[] parameterTypes) {
+    public void visitFunctionType(long resultID, long returnType, long[] parameterTypes) {
 
     }
 
@@ -296,23 +296,38 @@ public class CodeCollector implements SBMCodeVisitor {
     }
 
     @Override
-    public void visitForwardType(Type type, StorageClass storageClass) {
+    public void visitForwardType(long type, StorageClass storageClass) {
 
     }
 
     @Override
-    public void visitStore(long pointer, long object) {
+    public void visitStore(long pointer, long object, MemoryAccess memoryAccess) {
         buffer.append("Store %").append(object).append(" -> %").append(pointer).append('\n');
     }
 
     @Override
-    public void visitAccessChain(Type resultType, long resultID, long base, long[] indexes) {
-        buffer.append("%").append(resultID).append(" = AccessChain ").append(resultType).append(" %").append(base).append(' ').append(Arrays.toString(indexes)).append('\n');
+    public void visitAccessChain(long resultType, long resultID, long base, long[] indexes) {
+        buffer.append("%").append(resultID).append(" = AccessChain %").append(resultType).append(" %").append(base).append(' ').append(Arrays.toString(indexes)).append('\n');
     }
 
     @Override
     public void visitLabel(long resultID) {
         buffer.append('%').append(resultID).append(" = Label").append('\n');
+    }
+
+    @Override
+    public void visitExtension(String extension) {
+        buffer.append("Extension: ").append(extension);
+    }
+
+    @Override
+    public void visitReturn() {
+        buffer.append("Return").append('\n');
+    }
+
+    @Override
+    public void visitLoad(long resultType, long resultID, long pointer, MemoryAccess memoryAccess) {
+        buffer.append('%').append(resultID).append(" = OpLoad %").append(pointer).append(" (").append(Long.toHexString(memoryAccess.getMask())).append(")").append('\n');
     }
 
     public String getResult() {
