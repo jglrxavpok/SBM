@@ -24,9 +24,17 @@ public class MemberNameInstruction extends SpvInstruction implements ResolvableI
         return target;
     }
 
+    public Type getStructureType() {
+        return structureType;
+    }
+
+    public long getStructureTypeID() {
+        return structureTypeID;
+    }
+
     @Override
     public String toString() {
-        return "MemberName for "+target+" inside"+nameOrID(structureTypeID, structureType)+": "+name;
+        return "MemberName for "+target+" inside "+nameOrID(structureTypeID, structureType)+": "+name;
     }
 
     @Override

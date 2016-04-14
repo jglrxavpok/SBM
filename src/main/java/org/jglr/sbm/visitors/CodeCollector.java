@@ -256,7 +256,8 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitPointerType(long resultID, StorageClass storageClass, long type) {
-
+        addInstruction(new PointerTypeInstruction(resultID, storageClass, type));
+        constantPool.registerType(resultID, new PointerType(storageClass, constantPool.getType(type)));
     }
 
     @Override
