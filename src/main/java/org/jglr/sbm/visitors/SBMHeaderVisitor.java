@@ -2,12 +2,12 @@ package org.jglr.sbm.visitors;
 
 public interface SBMHeaderVisitor {
 
-    void visitSpirVersion(int value);
+    void visitSpirVersion(long value);
 
-    void visitGeneratorMagicNumber(int value);
+    void visitGeneratorMagicNumber(long value);
 
-    void visitBound(int value);
+    void visitBound(long value);
 
-    void visitInstructionSchema(int value);
+    void visitInstructionSchema(long value);
 
 }

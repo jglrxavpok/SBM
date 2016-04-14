@@ -11,33 +11,33 @@ import org.jglr.sbm.visitors.SBMTypeVisitor;
 public interface SBMCodeVisitor extends SBMTypeVisitor, SBMDecorationVisitor {
 
     // source info
-    void visitSource(SourceLanguage language, int version, int filenameStringID, String sourceCode);
+    void visitSource(SourceLanguage language, long version, long filenameStringID, String sourceCode);
     void visitSourceContinued(String source);
     void visitSourceExtension(String source);
-    void visitLine(int filenameID, int line, int column);
+    void visitLine(long filenameID, long line, long column);
 
-    void visitName(int target, String name);
-    void visitMemberName(Type structureType, int target, String name);
+    void visitName(long target, String name);
+    void visitMemberName(Type structureType, long target, String name);
 
-    void visitString(int resultID, String value);
-    void visitTrueConstant(int resultID);
+    void visitString(long resultID, String value);
+    void visitTrueConstant(long resultID);
 
-    void visitFalseConstant(int resultID);
+    void visitFalseConstant(long resultID);
 
     void visitCapability(Capability cap);
-    void visitExtendedInstructionSetImport(int resultID, String name);
+    void visitExtendedInstructionSetImport(long resultID, String name);
 
-    void visitExecExtendedInstruction(Type resultType, int resultID, int set, int instruction, int[] operands);
+    void visitExecExtendedInstruction(Type resultType, long resultID, long set, long instruction, long[] operands);
 
     void visitMemoryModel(AddressingModel addressingModel, MemoryModel memoryModel);
 
-    void visitEntryPoint(ExecutionModel model, int entryPoint, String name, int[] interfaces);
+    void visitEntryPoint(ExecutionModel model, long entryPoint, String name, long[] interfaces);
 
-    void visitVariable(Type resultType, int resultID, StorageClass storageClass, int initializer);
+    void visitVariable(Type resultType, long resultID, StorageClass storageClass, long initializer);
 
-    void visitConstant(Type type, int resultID, int[] bitPattern);
+    void visitConstant(Type type, long resultID, long[] bitPattern);
 
-    void visitFunction(Type resultType, int resultID, FunctionControl control, Type funcType);
+    void visitFunction(Type resultType, long resultID, FunctionControl control, Type funcType);
 
     void visitFunctionEnd();
 }

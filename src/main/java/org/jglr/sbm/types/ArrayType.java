@@ -2,9 +2,9 @@ package org.jglr.sbm.types;
 
 public class ArrayType extends Type {
     private final Type elementType;
-    private final int length;
+    private final long length;
 
-    public ArrayType(Type elementType, int length) {
+    public ArrayType(Type elementType, long length) {
         super(elementType+"["+length+"]");
         this.elementType = elementType;
         this.length = length;
@@ -14,7 +14,7 @@ public class ArrayType extends Type {
         return elementType;
     }
 
-    public int getLength() {
+    public long getLength() {
         return length;
     }
 }

@@ -36,6 +36,11 @@ public interface Opcodes {
         LABEL = 248,
         FUNCTION_END = 56,
         FUNCTION_CALL = 57,
+        LOAD = 61,
+        STORE = 62,
+        COPY_MEMORY = 63,
+        COPY_MEMORY_SIZED = 64,
+        ACCESS_CHAIN = 65,
 
 
         TYPE_VOID = 19,

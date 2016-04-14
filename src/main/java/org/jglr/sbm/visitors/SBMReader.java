@@ -10,13 +10,12 @@ import org.jglr.sbm.types.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SBMReader implements SBMVisitor, Opcodes {
 
-    public static final int SPIRV_MAGIC_NUMBER = 0x07230203;
+    public static final long SPIRV_MAGIC_NUMBER = 0x07230203;
     private final byte[] input;
     private final ByteOrder endianness;
     private int position;
@@ -27,33 +26,33 @@ public class SBMReader implements SBMVisitor, Opcodes {
     }
 
     private ByteOrder findEndianness() throws IOException {
-        int bigEndianWord = readWord(ByteOrder.BIG_ENDIAN);
+        long bigEndianWord = readWord(ByteOrder.BIG_ENDIAN);
         if(bigEndianWord == SPIRV_MAGIC_NUMBER) {
             return ByteOrder.BIG_ENDIAN;
         }
         position = 0;
-        int littleEndianWord = readWord(ByteOrder.LITTLE_ENDIAN);
+        long littleEndianWord = readWord(ByteOrder.LITTLE_ENDIAN);
         if(littleEndianWord == SPIRV_MAGIC_NUMBER) {
             return ByteOrder.LITTLE_ENDIAN;
         }
-        throw new IOException("Magic number (0x"+Integer.toHexString(SPIRV_MAGIC_NUMBER)+") not found, found: 0x"+Integer.toHexString(bigEndianWord)+" and 0x"+Integer.toHexString(littleEndianWord));
+        throw new IOException("Magic number (0x"+Long.toHexString(SPIRV_MAGIC_NUMBER)+") not found, found: 0x"+Long.toHexString(bigEndianWord)+" and 0x"+Long.toHexString(littleEndianWord));
     }
 
-    public int nextWord() throws IOException {
+    public long nextWord() throws IOException {
         return readWord(endianness);
     }
 
-    protected int readWord(ByteOrder endianness) throws IOException {
-        int result = readIntFromArray(endianness);
+    protected long readWord(ByteOrder endianness) throws IOException {
+        long result = readWordFromArray(endianness) & 0x00000000FFFFFFFFL;
         position += 4;
         return result;
     }
 
-    private int readIntFromArray(ByteOrder endianness) {
+    private long readWordFromArray(ByteOrder endianness) {
         if(endianness == ByteOrder.BIG_ENDIAN) {
-            return (input[3+position] << 24) | (input[2+position] << 16) | (input[1+position] << 8) | (input[position]);
+            return ((input[3 + position] << 24) | (input[2 + position] << 16) | (input[1 + position] << 8) | (input[position]));
         } else {
-            return (input[position] << 24) | (input[1+position] << 16) | (input[2+position] << 8) | (input[3+position]);
+            return ((input[position] << 24) | (input[1+position] << 16) | (input[2+position] << 8) | (input[3+position]));
         }
     }
 
@@ -76,13 +75,13 @@ public class SBMReader implements SBMVisitor, Opcodes {
     }
 
     public SBMCodeVisitor visitCode() throws IOException {
-        position = 5*4;
+        position = 5*4; // skip the header (20 bytes long)
         SBMCodeVisitor visitor = newCodeVisitor();
-        Map<Integer, Type> types = new HashMap<>();
+        Map<Long, Type> types = new HashMap<>();
         while (position < input.length) {
-            int opcodeFull = nextWord();
-            int wordCount = (opcodeFull >> 16) & 0xFFFF;
-            int opcodeID = opcodeFull & 0xFFFF;
+            long opcodeFull = nextWord();
+            int wordCount = (int) (opcodeFull >> 16);
+            int opcodeID = (int) (opcodeFull & 0xFFFF);
             try {
                 switch (opcodeID) {
                     case NOP:
@@ -90,28 +89,28 @@ public class SBMReader implements SBMVisitor, Opcodes {
 
                     case UNDEF: {
                         Type resultType = nextType(types);
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         System.out.println("UNDEF! " + resultType);
                     }
                     break;
 
                     case TYPE_VOID: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         visitor.visitVoidType(resultID);
                         types.put(resultID, new Type("void"));
                     }
                     break;
 
                     case TYPE_BOOL: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         visitor.visitBoolType(resultID);
                         types.put(resultID, new Type("bool"));
                     }
                     break;
 
                     case TYPE_INT: {
-                        int resultID = nextWord();
-                        int width = nextWord();
+                        long resultID = nextWord();
+                        long width = nextWord();
                         boolean isSigned = toBoolean(nextWord());
                         visitor.visitIntType(resultID, width, isSigned);
                         types.put(resultID, new IntType(width, isSigned));
@@ -119,33 +118,33 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     break;
 
                     case TYPE_FLOAT: {
-                        int resultID = nextWord();
-                        int width = nextWord();
+                        long resultID = nextWord();
+                        long width = nextWord();
                         visitor.visitFloatType(resultID, width);
                         types.put(resultID, new FloatType(width));
                     }
                     break;
 
                     case TYPE_VEC: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         Type componentType = nextType(types);
-                        int componentCount = nextWord();
+                        long componentCount = nextWord();
                         visitor.visitVectorType(resultID, componentType, componentCount);
                         types.put(resultID, new VectorType(componentType, componentCount));
                     }
                     break;
 
                     case TYPE_MATRIX: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         Type columnType = nextType(types);
-                        int columnCount = nextWord();
+                        long columnCount = nextWord();
                         visitor.visitMatrixType(resultID, columnType, columnCount);
                         types.put(resultID, new MatrixType(columnType, columnCount));
                     }
                     break;
 
                     case TYPE_IMAGE: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         Type sampledType = nextType(types);
                         Dimensionality dimensionality = nextEnumValue(Dimensionality.values());
                         ImageDepth depth = nextEnumValue(ImageDepth.values());
@@ -160,14 +159,14 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     break;
 
                     case TYPE_SAMPLER: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         visitor.visitSamplerType(resultID);
                         types.put(resultID, new Type("sampler"));
                     }
                     break;
 
                     case TYPE_SAMPLED_IMAGE: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         Type imageType = nextType(types);
                         visitor.visitSampledImageType(resultID, imageType);
                         types.put(resultID, new SampledImageType(imageType));
@@ -175,16 +174,16 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     break;
 
                     case TYPE_ARRAY: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         Type elementType = nextType(types);
-                        int length = nextWord();
+                        long length = nextWord();
                         visitor.visitArrayType(resultID, elementType, length);
                         types.put(resultID, new ArrayType(elementType, length));
                     }
                     break;
 
                     case TYPE_RUNTIME_ARRAY: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         Type elementType = nextType(types);
                         visitor.visitRuntimeArrayType(resultID, elementType);
                         types.put(resultID, new RuntimeArrayType(elementType));
@@ -192,7 +191,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     break;
 
                     case TYPE_STRUCT: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         Type[] structMembers = new Type[wordCount - 2];
                         for (int i = 0; i < wordCount - 2; i++) {
                             structMembers[i] = nextType(types);
@@ -203,7 +202,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     break;
 
                     case TYPE_OPAQUE: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         String name = nextString(wordCount - 2);
                         visitor.visitOpaqueType(resultID, name);
                         types.put(resultID, new OpaqueType(name));
@@ -211,7 +210,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     break;
 
                     case TYPE_POINTER: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         StorageClass storageClass = nextEnumValue(StorageClass.values());
                         Type type = nextType(types);
                         visitor.visitPointerType(resultID, storageClass, type);
@@ -220,7 +219,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     break;
 
                     case TYPE_FUNCTION: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         Type returnType = nextType(types);
                         int parameterCount = wordCount - 3;
                         Type[] parameters = new Type[parameterCount];
@@ -233,35 +232,35 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     break;
 
                     case TYPE_EVENT: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         visitor.visitEventType(resultID);
                         types.put(resultID, new Type("event"));
                     }
                     break;
 
                     case TYPE_DEVICE_EVENT: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         visitor.visitDeviceEventType(resultID);
                         types.put(resultID, new Type("deviceEvent"));
                     }
                     break;
 
                     case TYPE_RESERVED_ID: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         visitor.visitReserveIDType(resultID);
                         types.put(resultID, new Type("reservationID"));
                     }
                     break;
 
                     case TYPE_QUEUE: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         visitor.visitQueueType(resultID);
                         types.put(resultID, new Type("queue"));
                     }
                     break;
 
                     case TYPE_PIPE: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         AccessQualifier qualifier = nextEnumValue(AccessQualifier.values());
                         visitor.visitPipeType(resultID, qualifier);
                         types.put(resultID, new PipeType(qualifier));
@@ -281,7 +280,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                         if (!type.getName().equals("bool")) {
                             throw new IllegalArgumentException("Invalid boolean constant type while loading constant: " + type);
                         }
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         if (opcodeID == CONSTANT_FALSE)
                             visitor.visitFalseConstant(resultID);
                         else
@@ -291,8 +290,8 @@ public class SBMReader implements SBMVisitor, Opcodes {
 
                     case SOURCE: {
                         SourceLanguage language = nextEnumValue(SourceLanguage.values());
-                        int version = nextWord();
-                        int filenameStringID = -1;
+                        long version = nextWord();
+                        long filenameStringID = -1;
                         String sourceCode = null;
                         if (wordCount > 3) {
                             filenameStringID = nextWord();
@@ -317,7 +316,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     break;
 
                     case NAME: {
-                        int target = nextWord();
+                        long target = nextWord();
                         int stringSize = wordCount - 2;
                         String name = nextString(stringSize);
                         visitor.visitName(target, name);
@@ -326,7 +325,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
 
                     case MEMBER_NAME: {
                         Type type = nextType(types);
-                        int target = nextWord();
+                        long target = nextWord();
                         int stringSize = wordCount - 3;
                         String name = nextString(stringSize);
                         visitor.visitMemberName(type, target, name);
@@ -334,7 +333,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     break;
 
                     case STRING: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         String value = nextString(wordCount - 2);
                         visitor.visitString(resultID, value);
                         System.out.println(">>Str: " + value);
@@ -342,15 +341,15 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     break;
 
                     case LINE: {
-                        int filenameID = nextWord();
-                        int line = nextWord();
-                        int column = nextWord();
+                        long filenameID = nextWord();
+                        long line = nextWord();
+                        long column = nextWord();
                         visitor.visitLine(filenameID, line, column);
                     }
                     break;
 
                     case DECORATE: {
-                        int target = nextWord();
+                        long target = nextWord();
                         Decoration decoration = nextEnumValue(Decoration.values());
                         visitDecoration(visitor, decoration, target, wordCount);
                     }
@@ -358,7 +357,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
 
                     case MEMBER_DECORATE: {
                         Type structureType = nextType(types);
-                        int member = nextWord();
+                        long member = nextWord();
                         Decoration decoration = nextEnumValue(Decoration.values());
                         visitMemberDecoration(visitor, decoration, structureType, member, wordCount);
                     }
@@ -367,12 +366,12 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     case ENTRY_POINT: {
                         int savedPosition = position;
                         ExecutionModel model = nextEnumValue(ExecutionModel.values());
-                        int entryPoint = nextWord();
+                        long entryPoint = nextWord();
                         String name = nextString();
                         int strSize = (position - savedPosition) / 4;
                         System.out.println(">> name size: " + (strSize - 2));
                         int interfaceCount = wordCount - strSize - 1;
-                        int[] interfaces = new int[interfaceCount];
+                        long[] interfaces = new long[interfaceCount];
                         for (int i = 0; i < interfaceCount; i++) {
                             interfaces[i] = nextWord();
                         }
@@ -395,7 +394,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     break;
 
                     case EXT_INST_IMPORT: {
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         String name = nextString(wordCount - 2);
                         visitor.visitExtendedInstructionSetImport(resultID, name);
                     }
@@ -403,11 +402,11 @@ public class SBMReader implements SBMVisitor, Opcodes {
 
                     case EXT_INT: {
                         Type resultType = nextType(types);
-                        int resultID = nextWord();
-                        int set = nextWord();
-                        int instruction = nextWord();
+                        long resultID = nextWord();
+                        long set = nextWord();
+                        long instruction = nextWord();
                         int operandCount = wordCount - 5;
-                        int[] operands = new int[operandCount];
+                        long[] operands = new long[operandCount];
                         for (int i = 0; i < operandCount; i++) {
                             operands[i] = nextWord();
                         }
@@ -424,9 +423,9 @@ public class SBMReader implements SBMVisitor, Opcodes {
 
                     case VARIABLE: {
                         Type resultType = nextType(types);
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         StorageClass storageClass = nextEnumValue(StorageClass.values());
-                        int initializer = -1;
+                        long initializer = -1;
                         if (wordCount > 4)
                             initializer = nextWord();
                         visitor.visitVariable(resultType, resultID, storageClass, initializer);
@@ -435,8 +434,8 @@ public class SBMReader implements SBMVisitor, Opcodes {
 
                     case CONSTANT: {
                         Type type = nextType(types);
-                        int resultID = nextWord();
-                        int[] bitPattern = new int[wordCount - 3];
+                        long resultID = nextWord();
+                        long[] bitPattern = new long[wordCount - 3];
                         for (int i = 0; i < bitPattern.length; i++) {
                             bitPattern[i] = nextWord();
                         }
@@ -446,7 +445,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
 
                     case FUNCTION: {
                         Type resultType = nextType(types);
-                        int resultID = nextWord();
+                        long resultID = nextWord();
                         FunctionControl control = new FunctionControl(nextWord());
                         Type funcType = nextType(types);
                         visitor.visitFunction(resultType, resultID, control, funcType);
@@ -458,29 +457,38 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     }
                     break;
 
+                    case ACCESS_CHAIN: {
+                        Type resultType = nextType(types);
+                        long resultID = nextWord();
+                        long base = nextWord();
+                        long[] indexes = new long[wordCount-4];
+                        for (int i = 0; i < indexes.length; i++) {
+                            indexes[i] = nextWord();
+                        }
+                        System.out.println("Access chain: "+resultType);
+                    }
+                    break;
+
                     default:
                         System.out.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);
                         continue;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                new RuntimeException("Error while handling opcode: "+Opcodes.getName(opcodeID)+" with "+wordCount+" words", e).printStackTrace();
             }
 
             System.out.println("Read: " + Opcodes.getName(opcodeID)+", words: "+wordCount);
         }
         System.out.println("=== TYPES ===");
-        types.entrySet().forEach(e-> {
-            System.out.println(e.getValue()+" ("+e.getKey()+")");
-        });
+        types.entrySet().forEach(e -> System.out.println(e.getValue()+" ("+e.getKey()+")"));
         System.out.println("=============");
-        // TODO: do the visit
         return visitor;
     }
 
     private String nextString() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         for (;;) {
-            int word = nextWord();
+            long word = nextWord();
 
             // characters are encoded in little endian
             byte b3 = (byte) (word >> 24 & 0xFF);
@@ -489,7 +497,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
             byte b0 = (byte) (word & 0xFF);
 
             baos.write(new byte[] {b0,b1,b2,b3});
-            if(b3 == '\0') {
+            if(b3 == 0) {
                 break;
             }
 
@@ -501,7 +509,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
         return new String(bytes, "UTF-8");
     }
 
-    private void visitDecoration(SBMCodeVisitor visitor, Decoration decoration, int target, int wordCount) throws IOException {
+    private void visitDecoration(SBMCodeVisitor visitor, Decoration decoration, long target, int wordCount) throws IOException {
         switch (decoration) {
             case SpecId:
             case ArrayStride:
@@ -544,7 +552,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
         }
     }
 
-    private void visitMemberDecoration(SBMCodeVisitor visitor, Decoration decoration, Type structureType, int member, int wordCount) throws IOException {
+    private void visitMemberDecoration(SBMCodeVisitor visitor, Decoration decoration, Type structureType, long member, int wordCount) throws IOException {
         switch (decoration) {
             case SpecId:
             case ArrayStride:
@@ -590,7 +598,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
     private String nextString(int wordCount) throws IOException {
         byte[] data = new byte[wordCount*4];
         for (int i = 0; i < wordCount; i++) {
-            int word = nextWord();
+            long word = nextWord();
 
             // characters are encoded in little endian
             byte b3 = (byte) (word >> 24 & 0xFF);
@@ -611,18 +619,18 @@ public class SBMReader implements SBMVisitor, Opcodes {
     }
 
     private <T> T nextEnumValue(T[] values) throws IOException {
-        int index = nextWord();
-        return values[index];
+        long index = nextWord();
+        return values[(int) index];
     }
 
-    private Type nextType(Map<Integer, Type> types) throws IOException {
-        int id = nextWord();
+    private Type nextType(Map<Long, Type> types) throws IOException {
+        long id = nextWord();
         if(types.containsKey(id))
             return types.get(id);
         return new Type("Waiting"+id);
     }
 
-    private boolean toBoolean(int value) {
+    private boolean toBoolean(long value) {
         if(value != 0 && value != 1)
             throw new IllegalArgumentException("Must be 0 or 1 to convert to boolean (was "+value+")");
         return value != 0;

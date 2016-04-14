@@ -3,6 +3,8 @@ import org.jglr.sbm.visitors.HeaderCollector;
 import org.jglr.sbm.visitors.SBMReader;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
@@ -160,6 +162,10 @@ public class TestReading {
 
     @Test
     public void readHeader() throws IOException {
+        FileOutputStream out = new FileOutputStream(new File("shader.spirv"));
+        out.write(vertShaderCode);
+        out.flush();
+        out.close();
         SBMReader reader = new SBMReader(vertShaderCode);
         assertEquals(ByteOrder.BIG_ENDIAN, reader.getEndianness());
         HeaderCollector headerCollector = (HeaderCollector) reader.visitHeader();

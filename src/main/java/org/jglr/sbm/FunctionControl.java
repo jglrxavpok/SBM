@@ -11,12 +11,12 @@ public class FunctionControl extends MaskValue {
     private boolean pure;
     private boolean constFunc;
 
-    public FunctionControl(int mask) {
+    public FunctionControl(long mask) {
         super(mask);
     }
 
     @Override
-    public void setFromMask(int mask) {
+    public void setFromMask(long mask) {
         super.setFromMask(mask);
         inline = has(FLAG_INLINE);
         dontInline = has(FLAG_DONT_INLINE);
@@ -62,7 +62,7 @@ public class FunctionControl extends MaskValue {
 
     @Override
     protected void updateMask() {
-        int newMask = 0;
+        long newMask = 0;
         if(inline())
             newMask |= 0x1;
         if(dontInline())

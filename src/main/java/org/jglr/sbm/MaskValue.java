@@ -2,23 +2,23 @@ package org.jglr.sbm;
 
 public abstract class MaskValue {
 
-    protected int mask;
+    protected long mask;
 
-    public MaskValue(int mask) {
+    public MaskValue(long mask) {
         setFromMask(mask);
     }
 
-    public int getMask() {
+    public long getMask() {
         return mask;
     }
 
-    public void setFromMask(int mask) {
+    public void setFromMask(long mask) {
         this.mask = mask;
     }
 
     protected abstract void updateMask();
 
-    protected final boolean has(int bitPattern) {
+    protected final boolean has(long bitPattern) {
         return (mask & bitPattern) != 0;
     }
 }

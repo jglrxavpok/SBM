@@ -1,44 +1,44 @@
 package org.jglr.sbm.visitors;
 
 public class HeaderCollector implements SBMHeaderVisitor {
-    private int generatorNumber;
-    private int spirVersion;
-    private int schema;
-    private int bound;
+    private long generatorNumber;
+    private long spirVersion;
+    private long schema;
+    private long bound;
 
     @Override
-    public void visitSpirVersion(int value) {
+    public void visitSpirVersion(long value) {
         spirVersion = value;
     }
 
     @Override
-    public void visitGeneratorMagicNumber(int value) {
+    public void visitGeneratorMagicNumber(long value) {
         generatorNumber = value;
     }
 
     @Override
-    public void visitBound(int value) {
+    public void visitBound(long value) {
         bound = value;
     }
 
     @Override
-    public void visitInstructionSchema(int value) {
+    public void visitInstructionSchema(long value) {
         schema = value;
     }
 
-    public int getGeneratorNumber() {
+    public long getGeneratorNumber() {
         return generatorNumber;
     }
 
-    public int getSpirVersion() {
+    public long getSpirVersion() {
         return spirVersion;
     }
 
-    public int getBound() {
+    public long getBound() {
         return bound;
     }
 
-    public int getSchema() {
+    public long getSchema() {
         return schema;
     }
 }

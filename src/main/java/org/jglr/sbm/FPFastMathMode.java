@@ -7,18 +7,17 @@ public class FPFastMathMode extends MaskValue {
     public static final int FLAG_INSIGNIFIENT_ZERO_SIGN = 0x4;
     public static final int FLAG_ALLOW_RECIPROCAL = 0x8;
     public static final int FLAG_FAST = 0x10;
-    private int mask;
     private boolean assumeNotNaN;
     private boolean assumeNotInf;
     private boolean insignificantZeroSign;
     private boolean allowReciprocal;
     private boolean fast;
 
-    public FPFastMathMode(int mask) {
+    public FPFastMathMode(long mask) {
         super(mask);
     }
 
-    public int getMask() {
+    public long getMask() {
         return mask;
     }
 
@@ -67,7 +66,7 @@ public class FPFastMathMode extends MaskValue {
         updateMask();
     }
 
-    public void setFromMask(int mask) {
+    public void setFromMask(long mask) {
         super.setFromMask(mask);
         assumeNotNaN = has(FLAG_NOT_NAN);
         assumeNotInf = has(FLAG_NOT_INF);
@@ -77,7 +76,7 @@ public class FPFastMathMode extends MaskValue {
     }
 
     protected void updateMask() {
-        int newMask = 0;
+        long newMask = 0;
         if(assumeNotNaN())
             newMask |= 0x1;
         if(assumeNotInf())
