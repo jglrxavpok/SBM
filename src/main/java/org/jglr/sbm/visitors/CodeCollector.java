@@ -79,25 +79,23 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitExtendedInstructionSetImport(long resultID, String name) {
-        System.out.println(">> ext: "+name);
-        buffer.append("%").append(resultID).append(" ExtImport = ").append(name).append('\n');
+        addInstruction(new ExtendedInstructionSetImportInstruction(resultID, name));
+        constantPool.registerSet(resultID, name);
     }
 
     @Override
     public void visitExecExtendedInstruction(long resultType, long resultID, long set, long instruction, long[] operands) {
-        System.out.println("Extended: %"+resultType+", resultID: "+resultID+", set: "+set+", instruction: "+instruction+", operands: "+Arrays.toString(operands));
-        buffer.append("%").append(resultID).append(" ExtIsn = ").append(set).append(".").append(instruction).append(Arrays.toString(operands)).append('\n');
+        addInstruction(new ExtendedInstructionSetCallInstruction(resultType, resultID, set, instruction, operands));
     }
 
     @Override
     public void visitMemoryModel(AddressingModel addressingModel, MemoryModel memoryModel) {
-        buffer.append("MemoryModel = ").append(addressingModel).append(", ").append(memoryModel).append('\n');
+        addInstruction(new MemoryModelInstruction(addressingModel, memoryModel));
     }
 
     @Override
     public void visitEntryPoint(ExecutionModel model, long entryPoint, String name, long[] interfaces) {
-        System.out.println("entry point: "+model+", point: "+entryPoint+", name: "+name+", interfaces: "+Arrays.toString(interfaces));
-        buffer.append("EntryPoint = %").append(entryPoint).append("\"").append(name).append("\"").append(Arrays.toString(interfaces)).append('\n');
+        addInstruction(new EntryPointInstruction(model, entryPoint, name, interfaces));
     }
 
     @Override
@@ -122,7 +120,7 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitIntDecoration(Decoration decoration, long target, long value) {
-
+        addInstruction(new IntDecorationInstruction(decoration, target, value));
     }
 
     @Override
@@ -147,7 +145,7 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitDecoration(long target, Decoration decoration) {
-
+        addInstruction(new DecorationInstruction(2, decoration, target));
     }
 
     @Override
@@ -298,12 +296,12 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitStore(long pointer, long object, MemoryAccess memoryAccess) {
-        buffer.append("Store %").append(object).append(" -> %").append(pointer).append('\n');
+        addInstruction(new StoreInstruction(pointer, object, memoryAccess));
     }
 
     @Override
     public void visitAccessChain(long resultType, long resultID, long base, long[] indexes) {
-        buffer.append("%").append(resultID).append(" = AccessChain %").append(resultType).append(" %").append(base).append(' ').append(Arrays.toString(indexes)).append('\n');
+        addInstruction(new AccessChainInstruction(resultType, resultID, base, indexes));
     }
 
     @Override
@@ -328,7 +326,7 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitLoad(long resultType, long resultID, long pointer, MemoryAccess memoryAccess) {
-        buffer.append('%').append(resultID).append(" = OpLoad %").append(pointer).append(" (").append(Long.toHexString(memoryAccess.getMask())).append(")").append('\n');
+        addInstruction(new LoadInstruction(resultType, resultID, pointer, memoryAccess));
     }
 
     @Override

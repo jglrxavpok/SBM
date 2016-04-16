@@ -2,6 +2,7 @@ package org.jglr.sbm;
 
 import org.jglr.sbm.types.Type;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,12 +13,14 @@ public class ConstantPool {
     private final Map<Long, String> nameMap;
     private final Map<Long, Map<Long, String>> memberNameMap;
     private final Map<Long, Type> typeMap;
+    private final Map<Long, String> sets;
 
     public ConstantPool() {
         stringMap = new HashMap<>();
         memberNameMap = new HashMap<>();
         nameMap = new HashMap<>();
         typeMap = new HashMap<>();
+        sets = new HashMap<>();
     }
 
     public void empty() {
@@ -29,11 +32,15 @@ public class ConstantPool {
     }
 
     public String getName(long nameID) {
-        return nameMap.getOrDefault(nameID, "name"+nameID);
+        String result = nameMap.getOrDefault(nameID, ""+nameID);
+        if(result.replace(" ", "").replace("\0", "").isEmpty()) {
+            return ""+nameID;
+        }
+        return result;
     }
 
     public String getMemberName(long structureTypeID, long nameID) {
-        return memberNameMap.getOrDefault(structureTypeID, Collections.emptyMap()).getOrDefault(nameID, "name"+nameID+","+structureTypeID);
+        return memberNameMap.getOrDefault(structureTypeID, Collections.emptyMap()).getOrDefault(nameID, ""+nameID+","+structureTypeID);
     }
 
     public Type getType(long typeID) {
@@ -64,5 +71,21 @@ public class ConstantPool {
             result[i] = getType(typeIDs[i]);
         }
         return result;
+    }
+
+    public String[] getNames(long[] typeIDs) {
+        String[] result = new String[typeIDs.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = getName(typeIDs[i]);
+        }
+        return result;
+    }
+
+    public void registerSet(long resultID, String name) {
+        sets.put(resultID, name);
+    }
+
+    public String getSet(long resultID) {
+        return sets.get(resultID);
     }
 }

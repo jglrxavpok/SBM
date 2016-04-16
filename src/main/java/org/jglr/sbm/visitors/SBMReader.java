@@ -10,7 +10,6 @@ import org.jglr.sbm.types.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.util.HashMap;
 import java.util.Map;
 
 public class SBMReader implements SBMVisitor, Opcodes {
@@ -383,7 +382,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     }
                     break;
 
-                    case EXT_INT: {
+                    case EXT_INST: {
                         long resultType = nextWord();
                         long resultID = nextWord();
                         long set = nextWord();

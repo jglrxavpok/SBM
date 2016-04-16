@@ -26,7 +26,7 @@ public interface Opcodes {
         CAPABILITY = 17,
         EXTENSION = 10,
         EXT_INST_IMPORT = 11,
-        EXT_INT = 12,
+        EXT_INST = 12,
         MEMORY_MODEL = 14,
         ENTRY_POINT = 15,
 

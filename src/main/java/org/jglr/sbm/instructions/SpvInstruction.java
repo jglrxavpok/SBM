@@ -25,7 +25,7 @@ public abstract class SpvInstruction implements Opcodes {
     }
 
     public String nameOrID(long id, String name) {
-        return name == null ? "%"+id : name;
+        return "%"+ (name == null ? id : name);
     }
 
     public String nameOrID(long id, Type type) {
