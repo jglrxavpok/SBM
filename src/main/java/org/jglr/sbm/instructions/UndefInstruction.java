@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.types.Type;
 
 public class UndefInstruction extends ResultInstruction implements ResolvableInstruction {
@@ -21,8 +21,8 @@ public class UndefInstruction extends ResultInstruction implements ResolvableIns
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        resultType = constantPool.getType(resultTypeID);
+    public void onVisitEnd(InfoPool infoPool) {
+        resultType = infoPool.getType(resultTypeID);
     }
 
     @Override

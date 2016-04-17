@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.types.Type;
 
 import java.util.Arrays;
@@ -45,10 +45,10 @@ public class AccessChainInstruction extends ResultInstruction implements Resolva
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        baseName = constantPool.getName(baseID);
-        indexNames = constantPool.getNames(indexIDs);
-        resultType = constantPool.getType(resultTypeID);
+    public void onVisitEnd(InfoPool infoPool) {
+        baseName = infoPool.getName(baseID);
+        indexNames = infoPool.getNames(indexIDs);
+        resultType = infoPool.getType(resultTypeID);
     }
 
     @Override

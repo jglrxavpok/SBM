@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.types.Type;
 
 public class SampledImageTypeInstruction extends ResultInstruction implements ResolvableInstruction {
@@ -21,8 +21,8 @@ public class SampledImageTypeInstruction extends ResultInstruction implements Re
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        imageType = constantPool.getType(imageTypeID);
+    public void onVisitEnd(InfoPool infoPool) {
+        imageType = infoPool.getType(imageTypeID);
     }
 
     @Override

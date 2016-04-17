@@ -1,7 +1,7 @@
 package org.jglr.sbm.instructions;
 
 import org.jglr.sbm.AccessQualifier;
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.image.Dimensionality;
 import org.jglr.sbm.image.ImageDepth;
 import org.jglr.sbm.image.ImageFormat;
@@ -75,8 +75,8 @@ public class ImageTypeInstruction extends ResultInstruction implements Resolvabl
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        sampledType = constantPool.getType(sampledTypeID);
+    public void onVisitEnd(InfoPool infoPool) {
+        sampledType = infoPool.getType(sampledTypeID);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
-import org.jglr.sbm.types.Type;
+import org.jglr.sbm.decorations.Decoration;
 
 public interface SBMDecorationVisitor {
 

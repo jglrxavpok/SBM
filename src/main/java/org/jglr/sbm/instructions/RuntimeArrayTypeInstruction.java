@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.types.Type;
 
 public class RuntimeArrayTypeInstruction extends ResultInstruction implements ResolvableInstruction {
@@ -13,8 +13,8 @@ public class RuntimeArrayTypeInstruction extends ResultInstruction implements Re
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        elementType = constantPool.getType(elementTypeID);
+    public void onVisitEnd(InfoPool infoPool) {
+        elementType = infoPool.getType(elementTypeID);
     }
 
     @Override

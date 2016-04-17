@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.types.Type;
 
 public class MatrixTypeInstruction extends ResultInstruction implements ResolvableInstruction {
@@ -27,8 +27,8 @@ public class MatrixTypeInstruction extends ResultInstruction implements Resolvab
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        columnType = constantPool.getType(columnTypeID);
+    public void onVisitEnd(InfoPool infoPool) {
+        columnType = infoPool.getType(columnTypeID);
     }
 
     @Override

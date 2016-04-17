@@ -5,7 +5,7 @@ import org.jglr.sbm.types.Type;
 
 import java.util.*;
 
-public class ConstantPool {
+public class InfoPool {
 
     private final Map<Long, String> stringMap;
     private final Map<Long, String> nameMap;
@@ -15,7 +15,7 @@ public class ConstantPool {
     private final Map<Long, List<DecorationValue>> decorations;
     private final Map<Long, Map<Long, List<DecorationValue>>> memberDecorations;
 
-    public ConstantPool() {
+    public InfoPool() {
         stringMap = new HashMap<>();
         memberNameMap = new HashMap<>();
         nameMap = new HashMap<>();

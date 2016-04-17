@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.types.Type;
 
 import java.util.Arrays;
@@ -29,8 +29,8 @@ public class ConstantInstruction extends ResultInstruction implements Resolvable
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        type = constantPool.getType(typeID);
+    public void onVisitEnd(InfoPool infoPool) {
+        type = infoPool.getType(typeID);
     }
 
     @Override

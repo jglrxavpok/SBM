@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.SourceLanguage;
 
 public class SourceInstruction extends SpvInstruction implements ResolvableInstruction {
@@ -49,7 +49,7 @@ public class SourceInstruction extends SpvInstruction implements ResolvableInstr
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        filename = constantPool.getString(filenameStringID);
+    public void onVisitEnd(InfoPool infoPool) {
+        filename = infoPool.getString(filenameStringID);
     }
 }

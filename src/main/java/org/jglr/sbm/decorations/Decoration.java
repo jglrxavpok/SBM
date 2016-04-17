@@ -1,4 +1,4 @@
-package org.jglr.sbm;
+package org.jglr.sbm.decorations;
 
 public enum Decoration {
     RelaxedPrecision,

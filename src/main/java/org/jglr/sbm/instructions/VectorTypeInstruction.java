@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.types.Type;
 
 public class VectorTypeInstruction extends ResultInstruction implements ResolvableInstruction {
@@ -27,8 +27,8 @@ public class VectorTypeInstruction extends ResultInstruction implements Resolvab
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        componentType = constantPool.getType(componentTypeID);
+    public void onVisitEnd(InfoPool infoPool) {
+        componentType = infoPool.getType(componentTypeID);
     }
 
     @Override

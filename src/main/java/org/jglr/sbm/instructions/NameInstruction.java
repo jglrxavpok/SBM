@@ -1,7 +1,5 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
-
 public class NameInstruction extends SpvInstruction {
     private final long target;
     private final String name;

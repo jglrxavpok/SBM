@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.FunctionControl;
 import org.jglr.sbm.types.Type;
 
@@ -44,10 +44,10 @@ public class FunctionInstruction extends ResultInstruction implements Resolvable
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        name = constantPool.getName(getResultID());
-        funcType = constantPool.getType(funcTypeID);
-        resultType = constantPool.getType(resultTypeID);
+    public void onVisitEnd(InfoPool infoPool) {
+        name = infoPool.getName(getResultID());
+        funcType = infoPool.getType(funcTypeID);
+        resultType = infoPool.getType(resultTypeID);
     }
 
     @Override

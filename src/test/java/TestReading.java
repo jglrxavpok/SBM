@@ -161,11 +161,7 @@ public class TestReading {
     };
 
     @Test
-    public void readHeader() throws IOException {
-        FileOutputStream out = new FileOutputStream(new File("shader.spirv"));
-        out.write(vertShaderCode);
-        out.flush();
-        out.close();
+    public void readVertHeader() throws IOException {
         SBMReader reader = new SBMReader(vertShaderCode);
         assertEquals(ByteOrder.BIG_ENDIAN, reader.getEndianness());
         HeaderCollector headerCollector = (HeaderCollector) reader.visitHeader();
@@ -176,8 +172,26 @@ public class TestReading {
     }
 
     @Test
-    public void readCode() throws IOException {
+    public void readVertCode() throws IOException {
         SBMReader reader = new SBMReader(vertShaderCode);
+        CodeCollector codeCollector = (CodeCollector) reader.visitCode();
+        codeCollector.getInstructions().forEach(System.out::println);
+    }
+
+    @Test
+    public void readFragHeader() throws IOException {
+        SBMReader reader = new SBMReader(fragShaderCode);
+        assertEquals(ByteOrder.BIG_ENDIAN, reader.getEndianness());
+        HeaderCollector headerCollector = (HeaderCollector) reader.visitHeader();
+        assertEquals(0x10000, headerCollector.getSpirVersion());
+        assertEquals(524289, headerCollector.getGeneratorNumber());
+        assertEquals(0, headerCollector.getSchema());
+        assertEquals(20, headerCollector.getBound());
+    }
+
+    @Test
+    public void readFragCode() throws IOException {
+        SBMReader reader = new SBMReader(fragShaderCode);
         CodeCollector codeCollector = (CodeCollector) reader.visitCode();
         codeCollector.getInstructions().forEach(System.out::println);
     }

@@ -1,7 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
-import org.jglr.sbm.Decoration;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.decorations.DecorationValue;
 
 public class DecorationInstruction extends SpvInstruction implements ResolvableInstruction {
@@ -24,8 +23,8 @@ public class DecorationInstruction extends SpvInstruction implements ResolvableI
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        targetName = constantPool.getName(target);
+    public void onVisitEnd(InfoPool infoPool) {
+        targetName = infoPool.getName(target);
     }
 
     public DecorationValue getDecoration() {

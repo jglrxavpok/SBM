@@ -1,6 +1,5 @@
 package org.jglr.sbm.decorations;
 
-import org.jglr.sbm.Decoration;
 import org.jglr.sbm.LinkageType;
 
 public class LinkageDecorationValue extends DecorationValue {

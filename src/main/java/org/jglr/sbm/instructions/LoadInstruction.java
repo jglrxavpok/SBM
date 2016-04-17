@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.MemoryAccess;
 import org.jglr.sbm.types.Type;
 
@@ -39,9 +39,9 @@ public class LoadInstruction extends ResultInstruction implements ResolvableInst
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        resultType = constantPool.getType(resultTypeID);
-        pointerName = constantPool.getName(pointer);
+    public void onVisitEnd(InfoPool infoPool) {
+        resultType = infoPool.getType(resultTypeID);
+        pointerName = infoPool.getName(pointer);
     }
 
     @Override

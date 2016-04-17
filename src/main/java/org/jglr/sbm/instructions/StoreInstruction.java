@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.MemoryAccess;
 
 public class StoreInstruction extends SpvInstruction implements ResolvableInstruction {
@@ -30,9 +30,9 @@ public class StoreInstruction extends SpvInstruction implements ResolvableInstru
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        objectName = constantPool.getName(object);
-        pointerName = constantPool.getName(pointer);
+    public void onVisitEnd(InfoPool infoPool) {
+        objectName = infoPool.getName(object);
+        pointerName = infoPool.getName(pointer);
     }
 
     @Override

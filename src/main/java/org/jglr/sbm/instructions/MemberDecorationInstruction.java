@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.decorations.DecorationValue;
 import org.jglr.sbm.types.Type;
 
@@ -46,7 +46,7 @@ public class MemberDecorationInstruction extends SpvInstruction implements Resol
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        structureType = constantPool.getType(structureTypeID);
+    public void onVisitEnd(InfoPool infoPool) {
+        structureType = infoPool.getType(structureTypeID);
     }
 }

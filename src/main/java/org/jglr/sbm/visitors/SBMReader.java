@@ -1,6 +1,7 @@
 package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
+import org.jglr.sbm.decorations.Decoration;
 import org.jglr.sbm.image.Dimensionality;
 import org.jglr.sbm.image.ImageDepth;
 import org.jglr.sbm.image.ImageFormat;

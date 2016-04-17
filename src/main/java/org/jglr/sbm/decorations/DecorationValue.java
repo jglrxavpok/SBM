@@ -1,7 +1,5 @@
 package org.jglr.sbm.decorations;
 
-import org.jglr.sbm.Decoration;
-
 public class DecorationValue {
 
     private final Decoration type;

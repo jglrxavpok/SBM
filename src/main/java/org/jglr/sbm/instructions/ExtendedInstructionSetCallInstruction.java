@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.types.Type;
 
 import java.util.Arrays;
@@ -22,9 +22,9 @@ public class ExtendedInstructionSetCallInstruction extends ResultInstruction imp
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        resultType = constantPool.getType(resultTypeID);
-        set = constantPool.getSet(setID);
+    public void onVisitEnd(InfoPool infoPool) {
+        resultType = infoPool.getType(resultTypeID);
+        set = infoPool.getSet(setID);
     }
 
     @Override

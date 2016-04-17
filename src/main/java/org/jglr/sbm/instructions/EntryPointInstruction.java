@@ -1,8 +1,7 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.ExecutionModel;
-import org.jglr.sbm.types.Type;
 
 import java.util.Arrays;
 
@@ -22,8 +21,8 @@ public class EntryPointInstruction extends SpvInstruction implements ResolvableI
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        interfaces = constantPool.getNames(interfaceIDs);
+    public void onVisitEnd(InfoPool infoPool) {
+        interfaces = infoPool.getNames(interfaceIDs);
     }
 
     @Override

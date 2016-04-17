@@ -15,12 +15,12 @@ import java.util.List;
 public class CodeCollector implements SBMCodeVisitor {
 
     private final List<SpvInstruction> instructions;
-    private ConstantPool constantPool;
+    private InfoPool infoPool;
     private boolean visitFinished;
 
     public CodeCollector() {
         instructions = new LinkedList<>();
-        constantPool = new ConstantPool();
+        infoPool = new InfoPool();
     }
 
     @Override
@@ -45,19 +45,19 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitName(long target, String name) {
-        constantPool.registerName(target, name);
+        infoPool.registerName(target, name);
         addInstruction(new NameInstruction(target, name));
     }
 
     @Override
     public void visitMemberName(long structureType, long target, String name) {
-        constantPool.registerMemberName(structureType, target, name);
+        infoPool.registerMemberName(structureType, target, name);
         addInstruction(new MemberNameInstruction(structureType, target, name));
     }
 
     @Override
     public void visitString(long resultID, String value) {
-        constantPool.registerString(resultID, value);
+        infoPool.registerString(resultID, value);
         addInstruction(new StringInstruction(resultID, value));
     }
 
@@ -79,7 +79,7 @@ public class CodeCollector implements SBMCodeVisitor {
     @Override
     public void visitExtendedInstructionSetImport(long resultID, String name) {
         addInstruction(new ExtendedInstructionSetImportInstruction(resultID, name));
-        constantPool.registerSet(resultID, name);
+        infoPool.registerSet(resultID, name);
     }
 
     @Override
@@ -120,35 +120,35 @@ public class CodeCollector implements SBMCodeVisitor {
     @Override
     public void visitIntDecoration(Decoration decoration, long target, long value) {
         DecorationValue decorationValue = new IntDecorationValue(decoration, value);
-        constantPool.addDecoration(target, decorationValue);
+        infoPool.addDecoration(target, decorationValue);
         addInstruction(new DecorationInstruction(3, decorationValue, target));
     }
 
     @Override
     public void visitFunctionParameterAttributeDecoration(long target, FunctionParameterAttribute attribute) {
         DecorationValue decorationValue = new FunctionParameterAttributeDecorationValue(attribute);
-        constantPool.addDecoration(target, decorationValue);
+        infoPool.addDecoration(target, decorationValue);
         addInstruction(new DecorationInstruction(3, decorationValue, target));
     }
 
     @Override
     public void visitFPRoundingModeDecoration(long target, FPRoundingMode roundingMode) {
         DecorationValue decorationValue = new RoundingModeDecorationValue(roundingMode);
-        constantPool.addDecoration(target, decorationValue);
+        infoPool.addDecoration(target, decorationValue);
         addInstruction(new DecorationInstruction(3, decorationValue, target));
     }
 
     @Override
     public void visitFPFastMathModeDecoration(long target, FPFastMathMode fastMathMode) {
         DecorationValue decorationValue = new FastMathDecorationValue(fastMathMode);
-        constantPool.addDecoration(target, decorationValue);
+        infoPool.addDecoration(target, decorationValue);
         addInstruction(new DecorationInstruction(3, decorationValue, target));
     }
 
     @Override
     public void visitLinkageAttributesDecoration(long target, String name, LinkageType type) {
         DecorationValue decorationValue = new LinkageDecorationValue(name, type);
-        constantPool.addDecoration(target, decorationValue);
+        infoPool.addDecoration(target, decorationValue);
         addInstruction(new DecorationInstruction(4 + name.length()/4, decorationValue, target));
     }
 
@@ -161,162 +161,162 @@ public class CodeCollector implements SBMCodeVisitor {
     public void visitIntMemberDecoration(Decoration decoration, long structureType, long member, long value) {
         DecorationValue decorationValue = new IntDecorationValue(decoration, value);
         addInstruction(new MemberDecorationInstruction(5, decorationValue, structureType, member));
-        constantPool.addMemberDecoration(structureType, member, decorationValue);
+        infoPool.addMemberDecoration(structureType, member, decorationValue);
     }
 
     @Override
     public void visitFunctionParameterAttributeMemberDecoration(long structureType, long member, FunctionParameterAttribute attribute) {
         DecorationValue decorationValue = new FunctionParameterAttributeDecorationValue(attribute);
         addInstruction(new MemberDecorationInstruction(5, decorationValue, structureType, member));
-        constantPool.addMemberDecoration(structureType, member, decorationValue);
+        infoPool.addMemberDecoration(structureType, member, decorationValue);
     }
 
     @Override
     public void visitFPRoundingModeMemberDecoration(long structureType, long member, FPRoundingMode roundingMode) {
         DecorationValue decorationValue = new RoundingModeDecorationValue(roundingMode);
         addInstruction(new MemberDecorationInstruction(5, decorationValue, structureType, member));
-        constantPool.addMemberDecoration(structureType, member, decorationValue);
+        infoPool.addMemberDecoration(structureType, member, decorationValue);
     }
 
     @Override
     public void visitFPFastMathModeMemberDecoration(long structureType, long member, FPFastMathMode mathMode) {
         DecorationValue decorationValue = new FastMathDecorationValue(mathMode);
         addInstruction(new MemberDecorationInstruction(5, decorationValue, structureType, member));
-        constantPool.addMemberDecoration(structureType, member, decorationValue);
+        infoPool.addMemberDecoration(structureType, member, decorationValue);
     }
 
     @Override
     public void visitLinkageAttributesMemberDecoration(long structureType, long member, String name, LinkageType linkageType) {
         DecorationValue decorationValue = new LinkageDecorationValue(name, linkageType);
         addInstruction(new MemberDecorationInstruction(6 + name.length()/4, decorationValue, structureType, member));
-        constantPool.addMemberDecoration(structureType, member, decorationValue);
+        infoPool.addMemberDecoration(structureType, member, decorationValue);
     }
 
     @Override
     public void visitMemberDecoration(long structureType, long member, Decoration decoration) {
         DecorationValue decorationValue = new DecorationValue(decoration);
         addInstruction(new MemberDecorationInstruction(4, decorationValue, structureType, member));
-        constantPool.addMemberDecoration(structureType, member, decorationValue);
+        infoPool.addMemberDecoration(structureType, member, decorationValue);
     }
 
     @Override
     public void visitVoidType(long resultID) {
         addInstruction(new VoidTypeInstruction(resultID));
-        constantPool.registerType(resultID, new Type("void"));
+        infoPool.registerType(resultID, new Type("void"));
     }
 
     @Override
     public void visitBoolType(long resultID) {
         addInstruction(new BoolTypeInstruction(resultID));
-        constantPool.registerType(resultID, new Type("bool"));
+        infoPool.registerType(resultID, new Type("bool"));
     }
 
     @Override
     public void visitFloatType(long resultID, long width) {
         addInstruction(new FloatTypeInstruction(resultID, width));
-        constantPool.registerType(resultID, new FloatType(width));
+        infoPool.registerType(resultID, new FloatType(width));
     }
 
     @Override
     public void visitIntType(long resultID, long width, boolean isSigned) {
         addInstruction(new IntTypeInstruction(resultID, width, isSigned));
-        constantPool.registerType(resultID, new IntType(width, isSigned));
+        infoPool.registerType(resultID, new IntType(width, isSigned));
     }
 
     @Override
     public void visitVectorType(long resultID, long componentType, long componentCount) {
         addInstruction(new VectorTypeInstruction(resultID, componentType, componentCount));
-        constantPool.registerType(resultID, new VectorType(constantPool.getType(componentType), componentCount));
+        infoPool.registerType(resultID, new VectorType(infoPool.getType(componentType), componentCount));
     }
 
     @Override
     public void visitMatrixType(long resultID, long columnType, long columnCount) {
         addInstruction(new MatrixTypeInstruction(resultID, columnType, columnCount));
-        constantPool.registerType(resultID, new MatrixType(constantPool.getType(columnType), columnCount));
+        infoPool.registerType(resultID, new MatrixType(infoPool.getType(columnType), columnCount));
     }
 
     @Override
     public void visitImageType(long resultID, long sampledType, Dimensionality dim, ImageDepth depth, boolean arrayed, boolean multisampled, Sampling sampling, ImageFormat format, AccessQualifier access) {
         addInstruction(new ImageTypeInstruction(resultID, sampledType, dim, depth, arrayed, multisampled, sampling, format, access));
-        constantPool.registerType(resultID, new ImageType(constantPool.getType(sampledType), dim, depth, arrayed, multisampled, sampling, format, access));
+        infoPool.registerType(resultID, new ImageType(infoPool.getType(sampledType), dim, depth, arrayed, multisampled, sampling, format, access));
     }
 
     @Override
     public void visitSamplerType(long resultID) {
         addInstruction(new SamplerTypeInstruction(resultID));
-        constantPool.registerType(resultID, new Type("sampler"));
+        infoPool.registerType(resultID, new Type("sampler"));
     }
 
     @Override
     public void visitSampledImageType(long resultID, long imageType) {
         addInstruction(new SampledImageTypeInstruction(resultID, imageType));
-        constantPool.registerType(resultID, new SampledImageType(constantPool.getType(imageType)));
+        infoPool.registerType(resultID, new SampledImageType(infoPool.getType(imageType)));
     }
 
     @Override
     public void visitArrayType(long resultID, long elementType, long length) {
         addInstruction(new ArrayTypeInstruction(resultID, elementType, length));
-        constantPool.registerType(resultID, new ArrayType(constantPool.getType(elementType), length));
+        infoPool.registerType(resultID, new ArrayType(infoPool.getType(elementType), length));
     }
 
     @Override
     public void visitRuntimeArrayType(long resultID, long elementType) {
         addInstruction(new RuntimeArrayTypeInstruction(resultID, elementType));
-        constantPool.registerType(resultID, new RuntimeArrayType(constantPool.getType(elementType)));
+        infoPool.registerType(resultID, new RuntimeArrayType(infoPool.getType(elementType)));
     }
 
     @Override
     public void visitStructType(long resultID, long[] memberTypes) {
         addInstruction(new StructTypeInstruction(resultID, memberTypes));
-        constantPool.registerType(resultID, new StructType(constantPool.getTypes(memberTypes)));
+        infoPool.registerType(resultID, new StructType(infoPool.getTypes(memberTypes)));
     }
 
     @Override
     public void visitOpaqueType(long resultID, String name) {
         addInstruction(new OpaqueTypeInstruction(resultID, name));
-        constantPool.registerType(resultID, new OpaqueType(name));
+        infoPool.registerType(resultID, new OpaqueType(name));
     }
 
     @Override
     public void visitPointerType(long resultID, StorageClass storageClass, long type) {
         addInstruction(new PointerTypeInstruction(resultID, storageClass, type));
-        constantPool.registerType(resultID, new PointerType(storageClass, constantPool.getType(type)));
+        infoPool.registerType(resultID, new PointerType(storageClass, infoPool.getType(type)));
     }
 
     @Override
     public void visitFunctionType(long resultID, long returnType, long[] parameterTypes) {
         addInstruction(new FunctionTypeInstruction(resultID, returnType, parameterTypes));
-        constantPool.registerType(resultID, new FunctionType(constantPool.getType(returnType), constantPool.getTypes(parameterTypes)));
+        infoPool.registerType(resultID, new FunctionType(infoPool.getType(returnType), infoPool.getTypes(parameterTypes)));
     }
 
     @Override
     public void visitEventType(long resultID) {
         addInstruction(new EventTypeInstruction(resultID));
-        constantPool.registerType(resultID, new Type("event"));
+        infoPool.registerType(resultID, new Type("event"));
     }
 
     @Override
     public void visitDeviceEventType(long resultID) {
         addInstruction(new DeviceEventTypeInstruction(resultID));
-        constantPool.registerType(resultID, new Type("deviceEvent"));
+        infoPool.registerType(resultID, new Type("deviceEvent"));
     }
 
     @Override
     public void visitReserveIDType(long resultID) {
         addInstruction(new EventTypeInstruction(resultID));
-        constantPool.registerType(resultID, new Type("reserveID"));
+        infoPool.registerType(resultID, new Type("reserveID"));
     }
 
     @Override
     public void visitQueueType(long resultID) {
         addInstruction(new QueueTypeInstruction(resultID));
-        constantPool.registerType(resultID, new Type("queue"));
+        infoPool.registerType(resultID, new Type("queue"));
     }
 
     @Override
     public void visitPipeType(long resultID, AccessQualifier accessQualifier) {
         addInstruction(new PipeTypeInstruction(resultID, accessQualifier));
-        constantPool.registerType(resultID, new PipeType(accessQualifier));
+        infoPool.registerType(resultID, new PipeType(accessQualifier));
     }
 
     @Override
@@ -367,14 +367,14 @@ public class CodeCollector implements SBMCodeVisitor {
         instructions.stream()
                 .filter(i -> i instanceof ResolvableInstruction)
                 .map(i -> (ResolvableInstruction)i)
-                .forEach(i -> i.onVisitEnd(constantPool));
+                .forEach(i -> i.onVisitEnd(infoPool));
     }
 
     @Override
     public void reset() {
         visitFinished = false;
         instructions.clear();
-        constantPool.empty();
+        infoPool.empty();
     }
 
     @Override

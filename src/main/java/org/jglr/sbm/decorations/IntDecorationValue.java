@@ -1,8 +1,6 @@
 package org.jglr.sbm.decorations;
 
 import org.jglr.sbm.BuiltIn;
-import org.jglr.sbm.Decoration;
-import org.jglr.sbm.decorations.DecorationValue;
 
 public class IntDecorationValue extends DecorationValue {
     private final long value;

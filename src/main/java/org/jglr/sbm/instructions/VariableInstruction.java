@@ -1,6 +1,6 @@
 package org.jglr.sbm.instructions;
 
-import org.jglr.sbm.ConstantPool;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.StorageClass;
 import org.jglr.sbm.decorations.DecorationValue;
 import org.jglr.sbm.types.Type;
@@ -44,10 +44,10 @@ public class VariableInstruction extends ResultInstruction implements Resolvable
     }
 
     @Override
-    public void onVisitEnd(ConstantPool constantPool) {
-        resultType = constantPool.getType(resultTypeID);
-        name = constantPool.getName(getResultID());
-        decorations = constantPool.getDecorations(getResultID());
+    public void onVisitEnd(InfoPool infoPool) {
+        resultType = infoPool.getType(resultTypeID);
+        name = infoPool.getName(getResultID());
+        decorations = infoPool.getDecorations(getResultID());
     }
 
     @Override
