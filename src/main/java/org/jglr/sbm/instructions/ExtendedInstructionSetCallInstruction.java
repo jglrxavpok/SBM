@@ -1,6 +1,7 @@
 package org.jglr.sbm.instructions;
 
 import org.jglr.sbm.InfoPool;
+import org.jglr.sbm.glsl.GLSLStd450;
 import org.jglr.sbm.types.Type;
 
 import java.util.Arrays;
@@ -29,6 +30,10 @@ public class ExtendedInstructionSetCallInstruction extends ResultInstruction imp
 
     @Override
     public String toString() {
-        return "ExtInst "+nameOrID(setID, set)+": "+ Arrays.toString(operands)+nameOrID(resultTypeID, resultType)+" 0x"+Long.toHexString(instruction);
+        String instructionStr = " 0x"+Long.toHexString(instruction);
+        if(set != null && set.startsWith("GLSL.std.")) {
+            instructionStr = " GLSL::"+ GLSLStd450.values()[(int) instruction];
+        }
+        return "ExtInst "+nameOrID(setID, set)+": "+ Arrays.toString(operands)+nameOrID(resultTypeID, resultType)+instructionStr;
     }
 }

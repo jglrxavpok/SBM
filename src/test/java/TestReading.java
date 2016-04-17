@@ -1,6 +1,9 @@
 import org.jglr.sbm.Capability;
+import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.SBMModule;
 import org.jglr.sbm.SourceLanguage;
+import org.jglr.sbm.glsl.GLSLStd450;
+import org.jglr.sbm.instructions.ExtendedInstructionSetCallInstruction;
 import org.jglr.sbm.visitors.CodeCollector;
 import org.jglr.sbm.visitors.HeaderCollector;
 import org.jglr.sbm.visitors.SBMReader;
@@ -12,13 +15,12 @@ import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.Collections;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
 
 public class TestReading {
 
     // taken from HelloVulkan.java: https://github.com/LWJGL/lwjgl3/blob/f8a4bb701b4942e1d4cd26dbf2354c31bf2f5546/modules/core/src/test/java/org/lwjgl/demo/vulkan/HelloVulkan.java#L64
-    private static final byte[] fragShaderCode = {
+    public static final byte[] fragShaderCode = {
             0x03, 0x02, 0x23, 0x07, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x08, 0x00,
             0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x11, 0x00, 0x02, 0x00,
             0x01, 0x00, 0x00, 0x00, 0x0b, 0x00, 0x06, 0x00, 0x01, 0x00, 0x00, 0x00,
@@ -222,6 +224,12 @@ public class TestReading {
 
         assertEquals(Collections.singletonList(Capability.Shader), module.getCapabilities());
         assertEquals(Collections.singletonList("GLSL.std.450"), module.getSetImports());
+
+        InfoPool pool = new InfoPool();
+        pool.registerSet(0, "GLSL.std.450");
+        ExtendedInstructionSetCallInstruction inst = new ExtendedInstructionSetCallInstruction(0, 0, 0, GLSLStd450.Sqrt.ordinal(), new long[0]);
+        inst.onVisitEnd(pool);
+        System.out.println(inst.toString());
     }
 
 }
