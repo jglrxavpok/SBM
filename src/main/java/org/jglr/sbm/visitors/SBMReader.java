@@ -88,417 +88,411 @@ public class SBMReader implements SBMVisitor, Opcodes {
             long opcodeFull = nextWord();
             int wordCount = (int) (opcodeFull >> 16);
             int opcodeID = (int) (opcodeFull & 0xFFFF);
-            try {
-                switch (opcodeID) {
-                    case NOP:
-                        break;
-
-                    case UNDEF: {
-                        long resultType = nextWord();
-                        long resultID = nextWord();
-                        System.out.println("UNDEF! " + resultType);
-                    }
+            switch (opcodeID) {
+                case NOP:
                     break;
 
-                    case TYPE_VOID: {
-                        long resultID = nextWord();
-                        visitor.visitVoidType(resultID);
-                    }
-                    break;
-
-                    case TYPE_BOOL: {
-                        long resultID = nextWord();
-                        visitor.visitBoolType(resultID);
-                    }
-                    break;
-
-                    case TYPE_INT: {
-                        long resultID = nextWord();
-                        long width = nextWord();
-                        boolean isSigned = toBoolean(nextWord());
-                        visitor.visitIntType(resultID, width, isSigned);
-                    }
-                    break;
-
-                    case TYPE_FLOAT: {
-                        long resultID = nextWord();
-                        long width = nextWord();
-                        visitor.visitFloatType(resultID, width);
-                    }
-                    break;
-
-                    case TYPE_VEC: {
-                        long resultID = nextWord();
-                        long componentType = nextWord();
-                        long componentCount = nextWord();
-                        visitor.visitVectorType(resultID, componentType, componentCount);
-                    }
-                    break;
-
-                    case TYPE_MATRIX: {
-                        long resultID = nextWord();
-                        long columnType = nextWord();
-                        long columnCount = nextWord();
-                        visitor.visitMatrixType(resultID, columnType, columnCount);
-                    }
-                    break;
-
-                    case TYPE_IMAGE: {
-                        long resultID = nextWord();
-                        long sampledType = nextWord();
-                        Dimensionality dimensionality = nextEnumValue(Dimensionality.values());
-                        ImageDepth depth = nextEnumValue(ImageDepth.values());
-                        boolean arrayed = toBoolean(nextWord());
-                        boolean multisampled = toBoolean(nextWord());
-                        Sampling sampling = nextEnumValue(Sampling.values());
-                        ImageFormat format = nextEnumValue(ImageFormat.values());
-                        AccessQualifier qualifier = null;
-                        if(wordCount > 9)
-                            qualifier = nextEnumValue(AccessQualifier.values());
-                        visitor.visitImageType(resultID, sampledType, dimensionality, depth, arrayed, multisampled, sampling, format, qualifier);
-                    }
-                    break;
-
-                    case TYPE_SAMPLER: {
-                        long resultID = nextWord();
-                        visitor.visitSamplerType(resultID);
-                    }
-                    break;
-
-                    case TYPE_SAMPLED_IMAGE: {
-                        long resultID = nextWord();
-                        long imageType = nextWord();
-                        visitor.visitSampledImageType(resultID, imageType);
-                    }
-                    break;
-
-                    case TYPE_ARRAY: {
-                        long resultID = nextWord();
-                        long elementType = nextWord();
-                        long length = nextWord();
-                        visitor.visitArrayType(resultID, elementType, length);
-                    }
-                    break;
-
-                    case TYPE_RUNTIME_ARRAY: {
-                        long resultID = nextWord();
-                        long elementType = nextWord();
-                        visitor.visitRuntimeArrayType(resultID, elementType);
-                    }
-                    break;
-
-                    case TYPE_STRUCT: {
-                        long resultID = nextWord();
-                        long[] structMembers = new long[wordCount - 2];
-                        for (int i = 0; i < wordCount - 2; i++) {
-                            structMembers[i] = nextWord();
-                        }
-                        visitor.visitStructType(resultID, structMembers);
-                    }
-                    break;
-
-                    case TYPE_OPAQUE: {
-                        long resultID = nextWord();
-                        String name = nextString(wordCount - 2);
-                        visitor.visitOpaqueType(resultID, name);
-                    }
-                    break;
-
-                    case TYPE_POINTER: {
-                        long resultID = nextWord();
-                        StorageClass storageClass = nextEnumValue(StorageClass.values());
-                        long type = nextWord();
-                        visitor.visitPointerType(resultID, storageClass, type);
-                    }
-                    break;
-
-                    case TYPE_FUNCTION: {
-                        long resultID = nextWord();
-                        long returnType = nextWord();
-                        int parameterCount = wordCount - 3;
-                        long[] parameters = new long[parameterCount];
-                        for (int i = 0; i < parameterCount; i++) {
-                            parameters[i] = nextWord();
-                        }
-                        visitor.visitFunctionType(resultID, returnType, parameters);
-                    }
-                    break;
-
-                    case TYPE_EVENT: {
-                        long resultID = nextWord();
-                        visitor.visitEventType(resultID);
-                    }
-                    break;
-
-                    case TYPE_DEVICE_EVENT: {
-                        long resultID = nextWord();
-                        visitor.visitDeviceEventType(resultID);
-                    }
-                    break;
-
-                    case TYPE_RESERVED_ID: {
-                        long resultID = nextWord();
-                        visitor.visitReserveIDType(resultID);
-                    }
-                    break;
-
-                    case TYPE_QUEUE: {
-                        long resultID = nextWord();
-                        visitor.visitQueueType(resultID);
-                    }
-                    break;
-
-                    case TYPE_PIPE: {
-                        long resultID = nextWord();
-                        AccessQualifier qualifier = nextEnumValue(AccessQualifier.values());
-                        visitor.visitPipeType(resultID, qualifier);
-                    }
-                    break;
-
-                    case TYPE_FORWARD_POINTER: {
-                        long pointerType = nextWord();
-                        StorageClass storageClass = nextEnumValue(StorageClass.values());
-                        visitor.visitForwardType(pointerType, storageClass);
-                    }
-                    break;
-
-                    case CONSTANT_FALSE:
-                    case CONSTANT_TRUE: {
-                        long type = nextWord();
-                        long resultID = nextWord();
-                        if (opcodeID == CONSTANT_FALSE)
-                            visitor.visitFalseConstant(type, resultID);
-                        else
-                            visitor.visitTrueConstant(type, resultID);
-                    }
-                    break;
-
-                    case SOURCE: {
-                        SourceLanguage language = nextEnumValue(SourceLanguage.values());
-                        long version = nextWord();
-                        long filenameStringID = -1;
-                        String sourceCode = null;
-                        if (wordCount > 3) {
-                            filenameStringID = nextWord();
-                            if (wordCount > 4) {
-                                sourceCode = nextString(wordCount - 4);
-                            }
-                        }
-                        visitor.visitSource(language, version, filenameStringID, sourceCode);
-                    }
-                    break;
-
-                    case SOURCE_CONTINUED: {
-                        String source = nextString();
-                        visitor.visitSourceContinued(source);
-                    }
-                    break;
-
-                    case SOURCE_EXTENSION: {
-                        String source = nextString(wordCount - 1);
-                        visitor.visitSourceExtension(source);
-                    }
-                    break;
-
-                    case NAME: {
-                        long target = nextWord();
-                        int stringSize = wordCount - 2;
-                        String name = nextString(stringSize);
-                        visitor.visitName(target, name);
-                    }
-                    break;
-
-                    case MEMBER_NAME: {
-                        long type = nextWord();
-                        long target = nextWord();
-                        int stringSize = wordCount - 3;
-                        String name = nextString(stringSize);
-                        visitor.visitMemberName(type, target, name);
-                    }
-                    break;
-
-                    case STRING: {
-                        long resultID = nextWord();
-                        String value = nextString(wordCount - 2);
-                        visitor.visitString(resultID, value);
-                    }
-                    break;
-
-                    case LINE: {
-                        long filenameID = nextWord();
-                        long line = nextWord();
-                        long column = nextWord();
-                        visitor.visitLine(filenameID, line, column);
-                    }
-                    break;
-
-                    case DECORATE: {
-                        long target = nextWord();
-                        Decoration decoration = nextEnumValue(Decoration.values());
-                        visitDecoration(visitor, decoration, target, wordCount);
-                    }
-                    break;
-
-                    case MEMBER_DECORATE: {
-                        long structureType = nextWord();
-                        long member = nextWord();
-                        Decoration decoration = nextEnumValue(Decoration.values());
-                        visitMemberDecoration(visitor, decoration, structureType, member, wordCount);
-                    }
-                    break;
-
-                    case ENTRY_POINT: {
-                        int savedPosition = position;
-                        ExecutionModel model = nextEnumValue(ExecutionModel.values());
-                        long entryPoint = nextWord();
-                        String name = nextString();
-                        int strSize = (position - savedPosition) / 4;
-                        int interfaceCount = wordCount - strSize - 1;
-                        long[] interfaces = new long[interfaceCount];
-                        for (int i = 0; i < interfaceCount; i++) {
-                            interfaces[i] = nextWord();
-                        }
-                        visitor.visitEntryPoint(model, entryPoint, name, interfaces);
-                    }
-                    break;
-
-                    case EXTENSION: {
-                        int strSize = wordCount - 1;
-                        String extension = nextString(strSize);
-                        visitor.visitExtension(extension);
-                    }
-                    break;
-
-                    case CAPABILITY: {
-                        Capability cap = nextEnumValue(Capability.values());
-                        visitor.visitCapability(cap);
-                    }
-                    break;
-
-                    case EXT_INST_IMPORT: {
-                        long resultID = nextWord();
-                        String name = nextString(wordCount - 2);
-                        visitor.visitExtendedInstructionSetImport(resultID, name);
-                    }
-                    break;
-
-                    case EXT_INST: {
-                        long resultType = nextWord();
-                        long resultID = nextWord();
-                        long set = nextWord();
-                        long instruction = nextWord();
-                        int operandCount = wordCount - 5;
-                        long[] operands = new long[operandCount];
-                        for (int i = 0; i < operandCount; i++) {
-                            operands[i] = nextWord();
-                        }
-                        visitor.visitExecExtendedInstruction(resultType, resultID, set, instruction, operands);
-                    }
-                    break;
-
-                    case MEMORY_MODEL: {
-                        AddressingModel addressingModel = nextEnumValue(AddressingModel.values());
-                        MemoryModel memoryModel = nextEnumValue(MemoryModel.values());
-                        visitor.visitMemoryModel(addressingModel, memoryModel);
-                    }
-                    break;
-
-                    case VARIABLE: {
-                        long resultType = nextWord();
-                        long resultID = nextWord();
-                        StorageClass storageClass = nextEnumValue(StorageClass.values());
-                        long initializer = -1;
-                        if (wordCount > 4)
-                            initializer = nextWord();
-                        visitor.visitVariable(resultType, resultID, storageClass, initializer);
-                    }
-                    break;
-
-                    case CONSTANT: {
-                        long type = nextWord();
-                        long resultID = nextWord();
-                        long[] bitPattern = new long[wordCount - 3];
-                        for (int i = 0; i < bitPattern.length; i++) {
-                            bitPattern[i] = nextWord();
-                        }
-                        visitor.visitConstant(type, resultID, bitPattern);
-                    }
-                    break;
-
-                    case FUNCTION: {
-                        long resultType = nextWord();
-                        long resultID = nextWord();
-                        FunctionControl control = new FunctionControl(nextWord());
-                        long funcType = nextWord();
-                        visitor.visitFunction(resultType, resultID, control, funcType);
-                    }
-                    break;
-
-                    case FUNCTION_END: {
-                        visitor.visitFunctionEnd();
-                    }
-                    break;
-
-                    case ACCESS_CHAIN: {
-                        long resultType = nextWord();
-                        long resultID = nextWord();
-                        long base = nextWord();
-                        long[] indexes = new long[wordCount-4];
-                        for (int i = 0; i < indexes.length; i++) {
-                            indexes[i] = nextWord();
-                        }
-                        visitor.visitAccessChain(resultType, resultID, base, indexes);
-                    }
-                    break;
-
-                    case STORE: {
-                        long pointer = nextWord();
-                        long object = nextWord();
-                        MemoryAccess memoryAccess;
-                        if(wordCount > 3) {
-                            memoryAccess = new MemoryAccess(nextWord());
-                        } else {
-                            memoryAccess = new MemoryAccess(0);
-                        }
-                        visitor.visitStore(pointer, object, memoryAccess);
-                    }
-                    break;
-
-                    case LABEL: {
-                        long resultID = nextWord();
-                        visitor.visitLabel(resultID);
-                    }
-                    break;
-
-                    case RETURN: {
-                        visitor.visitReturn();
-                    }
-                    break;
-
-                    case LOAD: {
-                        long resultType = nextWord();
-                        long resultID = nextWord();
-                        long pointer = nextWord();
-                        MemoryAccess memoryAccess;
-                        if(wordCount > 4) {
-                            memoryAccess = new MemoryAccess(nextWord());
-                        } else {
-                            memoryAccess = new MemoryAccess(0);
-                        }
-                        visitor.visitLoad(resultType, resultID, pointer, memoryAccess);
-                    }
-                    break;
-
-                    default:
-                        System.out.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);
-                        position += (wordCount-1)*4;
-                        continue;
+                case UNDEF: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    visitor.visitUndef(resultType, resultID);
                 }
-            } catch (Exception e) {
-                new RuntimeException("Error while handling opcode: "+Opcodes.getName(opcodeID)+" with "+wordCount+" words", e).printStackTrace();
-            }
+                break;
 
-            System.out.println("Read: " + Opcodes.getName(opcodeID)+", words: "+wordCount);
+                case TYPE_VOID: {
+                    long resultID = nextWord();
+                    visitor.visitVoidType(resultID);
+                }
+                break;
+
+                case TYPE_BOOL: {
+                    long resultID = nextWord();
+                    visitor.visitBoolType(resultID);
+                }
+                break;
+
+                case TYPE_INT: {
+                    long resultID = nextWord();
+                    long width = nextWord();
+                    boolean isSigned = toBoolean(nextWord());
+                    visitor.visitIntType(resultID, width, isSigned);
+                }
+                break;
+
+                case TYPE_FLOAT: {
+                    long resultID = nextWord();
+                    long width = nextWord();
+                    visitor.visitFloatType(resultID, width);
+                }
+                break;
+
+                case TYPE_VEC: {
+                    long resultID = nextWord();
+                    long componentType = nextWord();
+                    long componentCount = nextWord();
+                    visitor.visitVectorType(resultID, componentType, componentCount);
+                }
+                break;
+
+                case TYPE_MATRIX: {
+                    long resultID = nextWord();
+                    long columnType = nextWord();
+                    long columnCount = nextWord();
+                    visitor.visitMatrixType(resultID, columnType, columnCount);
+                }
+                break;
+
+                case TYPE_IMAGE: {
+                    long resultID = nextWord();
+                    long sampledType = nextWord();
+                    Dimensionality dimensionality = nextEnumValue(Dimensionality.values());
+                    ImageDepth depth = nextEnumValue(ImageDepth.values());
+                    boolean arrayed = toBoolean(nextWord());
+                    boolean multisampled = toBoolean(nextWord());
+                    Sampling sampling = nextEnumValue(Sampling.values());
+                    ImageFormat format = nextEnumValue(ImageFormat.values());
+                    AccessQualifier qualifier = null;
+                    if(wordCount > 9)
+                        qualifier = nextEnumValue(AccessQualifier.values());
+                    visitor.visitImageType(resultID, sampledType, dimensionality, depth, arrayed, multisampled, sampling, format, qualifier);
+                }
+                break;
+
+                case TYPE_SAMPLER: {
+                    long resultID = nextWord();
+                    visitor.visitSamplerType(resultID);
+                }
+                break;
+
+                case TYPE_SAMPLED_IMAGE: {
+                    long resultID = nextWord();
+                    long imageType = nextWord();
+                    visitor.visitSampledImageType(resultID, imageType);
+                }
+                break;
+
+                case TYPE_ARRAY: {
+                    long resultID = nextWord();
+                    long elementType = nextWord();
+                    long length = nextWord();
+                    visitor.visitArrayType(resultID, elementType, length);
+                }
+                break;
+
+                case TYPE_RUNTIME_ARRAY: {
+                    long resultID = nextWord();
+                    long elementType = nextWord();
+                    visitor.visitRuntimeArrayType(resultID, elementType);
+                }
+                break;
+
+                case TYPE_STRUCT: {
+                    long resultID = nextWord();
+                    long[] structMembers = new long[wordCount - 2];
+                    for (int i = 0; i < wordCount - 2; i++) {
+                        structMembers[i] = nextWord();
+                    }
+                    visitor.visitStructType(resultID, structMembers);
+                }
+                break;
+
+                case TYPE_OPAQUE: {
+                    long resultID = nextWord();
+                    String name = nextString(wordCount - 2);
+                    visitor.visitOpaqueType(resultID, name);
+                }
+                break;
+
+                case TYPE_POINTER: {
+                    long resultID = nextWord();
+                    StorageClass storageClass = nextEnumValue(StorageClass.values());
+                    long type = nextWord();
+                    visitor.visitPointerType(resultID, storageClass, type);
+                }
+                break;
+
+                case TYPE_FUNCTION: {
+                    long resultID = nextWord();
+                    long returnType = nextWord();
+                    int parameterCount = wordCount - 3;
+                    long[] parameters = new long[parameterCount];
+                    for (int i = 0; i < parameterCount; i++) {
+                        parameters[i] = nextWord();
+                    }
+                    visitor.visitFunctionType(resultID, returnType, parameters);
+                }
+                break;
+
+                case TYPE_EVENT: {
+                    long resultID = nextWord();
+                    visitor.visitEventType(resultID);
+                }
+                break;
+
+                case TYPE_DEVICE_EVENT: {
+                    long resultID = nextWord();
+                    visitor.visitDeviceEventType(resultID);
+                }
+                break;
+
+                case TYPE_RESERVED_ID: {
+                    long resultID = nextWord();
+                    visitor.visitReserveIDType(resultID);
+                }
+                break;
+
+                case TYPE_QUEUE: {
+                    long resultID = nextWord();
+                    visitor.visitQueueType(resultID);
+                }
+                break;
+
+                case TYPE_PIPE: {
+                    long resultID = nextWord();
+                    AccessQualifier qualifier = nextEnumValue(AccessQualifier.values());
+                    visitor.visitPipeType(resultID, qualifier);
+                }
+                break;
+
+                case TYPE_FORWARD_POINTER: {
+                    long pointerType = nextWord();
+                    StorageClass storageClass = nextEnumValue(StorageClass.values());
+                    visitor.visitForwardType(pointerType, storageClass);
+                }
+                break;
+
+                case CONSTANT_FALSE:
+                case CONSTANT_TRUE: {
+                    long type = nextWord();
+                    long resultID = nextWord();
+                    if (opcodeID == CONSTANT_FALSE)
+                        visitor.visitFalseConstant(type, resultID);
+                    else
+                        visitor.visitTrueConstant(type, resultID);
+                }
+                break;
+
+                case SOURCE: {
+                    SourceLanguage language = nextEnumValue(SourceLanguage.values());
+                    long version = nextWord();
+                    long filenameStringID = -1;
+                    String sourceCode = null;
+                    if (wordCount > 3) {
+                        filenameStringID = nextWord();
+                        if (wordCount > 4) {
+                            sourceCode = nextString(wordCount - 4);
+                        }
+                    }
+                    visitor.visitSource(language, version, filenameStringID, sourceCode);
+                }
+                break;
+
+                case SOURCE_CONTINUED: {
+                    String source = nextString();
+                    visitor.visitSourceContinued(source);
+                }
+                break;
+
+                case SOURCE_EXTENSION: {
+                    String source = nextString(wordCount - 1);
+                    visitor.visitSourceExtension(source);
+                }
+                break;
+
+                case NAME: {
+                    long target = nextWord();
+                    int stringSize = wordCount - 2;
+                    String name = nextString(stringSize);
+                    visitor.visitName(target, name);
+                }
+                break;
+
+                case MEMBER_NAME: {
+                    long type = nextWord();
+                    long target = nextWord();
+                    int stringSize = wordCount - 3;
+                    String name = nextString(stringSize);
+                    visitor.visitMemberName(type, target, name);
+                }
+                break;
+
+                case STRING: {
+                    long resultID = nextWord();
+                    String value = nextString(wordCount - 2);
+                    visitor.visitString(resultID, value);
+                }
+                break;
+
+                case LINE: {
+                    long filenameID = nextWord();
+                    long line = nextWord();
+                    long column = nextWord();
+                    visitor.visitLine(filenameID, line, column);
+                }
+                break;
+
+                case DECORATE: {
+                    long target = nextWord();
+                    Decoration decoration = nextEnumValue(Decoration.values());
+                    visitDecoration(visitor, decoration, target, wordCount);
+                }
+                break;
+
+                case MEMBER_DECORATE: {
+                    long structureType = nextWord();
+                    long member = nextWord();
+                    Decoration decoration = nextEnumValue(Decoration.values());
+                    visitMemberDecoration(visitor, decoration, structureType, member, wordCount);
+                }
+                break;
+
+                case ENTRY_POINT: {
+                    int savedPosition = position;
+                    ExecutionModel model = nextEnumValue(ExecutionModel.values());
+                    long entryPoint = nextWord();
+                    String name = nextString();
+                    int strSize = (position - savedPosition) / 4;
+                    int interfaceCount = wordCount - strSize - 1;
+                    long[] interfaces = new long[interfaceCount];
+                    for (int i = 0; i < interfaceCount; i++) {
+                        interfaces[i] = nextWord();
+                    }
+                    visitor.visitEntryPoint(model, entryPoint, name, interfaces);
+                }
+                break;
+
+                case EXTENSION: {
+                    int strSize = wordCount - 1;
+                    String extension = nextString(strSize);
+                    visitor.visitExtension(extension);
+                }
+                break;
+
+                case CAPABILITY: {
+                    Capability cap = nextEnumValue(Capability.values());
+                    visitor.visitCapability(cap);
+                }
+                break;
+
+                case EXT_INST_IMPORT: {
+                    long resultID = nextWord();
+                    String name = nextString(wordCount - 2);
+                    visitor.visitExtendedInstructionSetImport(resultID, name);
+                }
+                break;
+
+                case EXT_INST: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    long set = nextWord();
+                    long instruction = nextWord();
+                    int operandCount = wordCount - 5;
+                    long[] operands = new long[operandCount];
+                    for (int i = 0; i < operandCount; i++) {
+                        operands[i] = nextWord();
+                    }
+                    visitor.visitExecExtendedInstruction(resultType, resultID, set, instruction, operands);
+                }
+                break;
+
+                case MEMORY_MODEL: {
+                    AddressingModel addressingModel = nextEnumValue(AddressingModel.values());
+                    MemoryModel memoryModel = nextEnumValue(MemoryModel.values());
+                    visitor.visitMemoryModel(addressingModel, memoryModel);
+                }
+                break;
+
+                case VARIABLE: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    StorageClass storageClass = nextEnumValue(StorageClass.values());
+                    long initializer = -1;
+                    if (wordCount > 4)
+                        initializer = nextWord();
+                    visitor.visitVariable(resultType, resultID, storageClass, initializer);
+                }
+                break;
+
+                case CONSTANT: {
+                    long type = nextWord();
+                    long resultID = nextWord();
+                    long[] bitPattern = new long[wordCount - 3];
+                    for (int i = 0; i < bitPattern.length; i++) {
+                        bitPattern[i] = nextWord();
+                    }
+                    visitor.visitConstant(type, resultID, bitPattern);
+                }
+                break;
+
+                case FUNCTION: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    FunctionControl control = new FunctionControl(nextWord());
+                    long funcType = nextWord();
+                    visitor.visitFunction(resultType, resultID, control, funcType);
+                }
+                break;
+
+                case FUNCTION_END: {
+                    visitor.visitFunctionEnd();
+                }
+                break;
+
+                case ACCESS_CHAIN: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    long base = nextWord();
+                    long[] indexes = new long[wordCount-4];
+                    for (int i = 0; i < indexes.length; i++) {
+                        indexes[i] = nextWord();
+                    }
+                    visitor.visitAccessChain(resultType, resultID, base, indexes);
+                }
+                break;
+
+                case STORE: {
+                    long pointer = nextWord();
+                    long object = nextWord();
+                    MemoryAccess memoryAccess;
+                    if(wordCount > 3) {
+                        memoryAccess = new MemoryAccess(nextWord());
+                    } else {
+                        memoryAccess = new MemoryAccess(0);
+                    }
+                    visitor.visitStore(pointer, object, memoryAccess);
+                }
+                break;
+
+                case LABEL: {
+                    long resultID = nextWord();
+                    visitor.visitLabel(resultID);
+                }
+                break;
+
+                case RETURN: {
+                    visitor.visitReturn();
+                }
+                break;
+
+                case LOAD: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    long pointer = nextWord();
+                    MemoryAccess memoryAccess;
+                    if(wordCount > 4) {
+                        memoryAccess = new MemoryAccess(nextWord());
+                    } else {
+                        memoryAccess = new MemoryAccess(0);
+                    }
+                    visitor.visitLoad(resultType, resultID, pointer, memoryAccess);
+                }
+                break;
+
+                default:
+                    System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);
+                    position += (wordCount-1)*4;
+                    break;
+            }
         }
         visitor.visitEnd();
         return visitor;

@@ -14,12 +14,11 @@ import java.util.List;
 
 public class CodeCollector implements SBMCodeVisitor {
 
-    private final StringBuffer buffer;
     private final List<SpvInstruction> instructions;
     private ConstantPool constantPool;
+    private boolean visitFinished;
 
     public CodeCollector() {
-        buffer = new StringBuffer();
         instructions = new LinkedList<>();
         constantPool = new ConstantPool();
     }
@@ -160,32 +159,44 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitIntMemberDecoration(Decoration decoration, long structureType, long member, long value) {
-
+        DecorationValue decorationValue = new IntDecorationValue(decoration, value);
+        addInstruction(new MemberDecorationInstruction(5, decorationValue, structureType, member));
+        constantPool.addMemberDecoration(structureType, member, decorationValue);
     }
 
     @Override
     public void visitFunctionParameterAttributeMemberDecoration(long structureType, long member, FunctionParameterAttribute attribute) {
-
+        DecorationValue decorationValue = new FunctionParameterAttributeDecorationValue(attribute);
+        addInstruction(new MemberDecorationInstruction(5, decorationValue, structureType, member));
+        constantPool.addMemberDecoration(structureType, member, decorationValue);
     }
 
     @Override
     public void visitFPRoundingModeMemberDecoration(long structureType, long member, FPRoundingMode roundingMode) {
-
+        DecorationValue decorationValue = new RoundingModeDecorationValue(roundingMode);
+        addInstruction(new MemberDecorationInstruction(5, decorationValue, structureType, member));
+        constantPool.addMemberDecoration(structureType, member, decorationValue);
     }
 
     @Override
     public void visitFPFastMathModeMemberDecoration(long structureType, long member, FPFastMathMode mathMode) {
-
+        DecorationValue decorationValue = new FastMathDecorationValue(mathMode);
+        addInstruction(new MemberDecorationInstruction(5, decorationValue, structureType, member));
+        constantPool.addMemberDecoration(structureType, member, decorationValue);
     }
 
     @Override
     public void visitLinkageAttributesMemberDecoration(long structureType, long member, String name, LinkageType linkageType) {
-
+        DecorationValue decorationValue = new LinkageDecorationValue(name, linkageType);
+        addInstruction(new MemberDecorationInstruction(6 + name.length()/4, decorationValue, structureType, member));
+        constantPool.addMemberDecoration(structureType, member, decorationValue);
     }
 
     @Override
     public void visitMemberDecoration(long structureType, long member, Decoration decoration) {
-
+        DecorationValue decorationValue = new DecorationValue(decoration);
+        addInstruction(new MemberDecorationInstruction(4, decorationValue, structureType, member));
+        constantPool.addMemberDecoration(structureType, member, decorationValue);
     }
 
     @Override
@@ -339,7 +350,9 @@ public class CodeCollector implements SBMCodeVisitor {
     }
 
     private void addInstruction(SpvInstruction instruction) {
-        // TODO: check if visit ended?
+        if(visitFinished) {
+            throw new IllegalStateException("Cannot visit instruction while visit has ended");
+        }
         instructions.add(instruction);
     }
 
@@ -350,25 +363,26 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitEnd() {
+        visitFinished = true;
         instructions.stream()
                 .filter(i -> i instanceof ResolvableInstruction)
                 .map(i -> (ResolvableInstruction)i)
-                .forEach(i -> {
-                    i.onVisitEnd(constantPool);
-                });
+                .forEach(i -> i.onVisitEnd(constantPool));
     }
 
     @Override
     public void reset() {
+        visitFinished = false;
         instructions.clear();
         constantPool.empty();
     }
 
-    public List<SpvInstruction> getInstructions() {
-        return instructions;
+    @Override
+    public void visitUndef(long resultType, long resultID) {
+        addInstruction(new UndefInstruction(resultType, resultID));
     }
 
-    public String getResult() {
-        return buffer.toString();
+    public List<SpvInstruction> getInstructions() {
+        return instructions;
     }
 }

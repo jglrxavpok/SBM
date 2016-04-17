@@ -51,4 +51,6 @@ public interface SBMCodeVisitor extends SBMTypeVisitor, SBMDecorationVisitor {
     void visitEnd();
 
     void reset();
+
+    void visitUndef(long resultType, long resultID);
 }

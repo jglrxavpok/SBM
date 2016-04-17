@@ -1,4 +1,4 @@
-package org.jglr.sbm.instructions;
+package org.jglr.sbm.decorations;
 
 import org.jglr.sbm.BuiltIn;
 import org.jglr.sbm.Decoration;

@@ -13,6 +13,7 @@ public class ConstantPool {
     private final Map<Long, Type> typeMap;
     private final Map<Long, String> sets;
     private final Map<Long, List<DecorationValue>> decorations;
+    private final Map<Long, Map<Long, List<DecorationValue>>> memberDecorations;
 
     public ConstantPool() {
         stringMap = new HashMap<>();
@@ -21,6 +22,7 @@ public class ConstantPool {
         typeMap = new HashMap<>();
         sets = new HashMap<>();
         decorations = new HashMap<>();
+        memberDecorations = new HashMap<>();
     }
 
     public void empty() {
@@ -98,5 +100,20 @@ public class ConstantPool {
 
     public List<DecorationValue> getDecorations(long target) {
         return decorations.getOrDefault(target, Collections.emptyList());
+    }
+
+    public List<DecorationValue> getMemberDecorations(long structureType, long target) {
+        return memberDecorations.getOrDefault(structureType, Collections.emptyMap()).getOrDefault(target, Collections.emptyList());
+    }
+
+    public void addMemberDecoration(long structureType, long member, DecorationValue decorationValue) {
+        if(!memberDecorations.containsKey(structureType)) {
+            memberDecorations.put(structureType, new HashMap<>());
+        }
+        Map<Long, List<DecorationValue>> decorationMap = memberDecorations.get(structureType);
+        if(!decorationMap.containsKey(member)) {
+            decorationMap.put(member, new LinkedList<>());
+        }
+        decorationMap.get(member).add(decorationValue);
     }
 }
