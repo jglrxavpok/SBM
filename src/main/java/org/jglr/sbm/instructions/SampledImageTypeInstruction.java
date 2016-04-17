@@ -8,7 +8,7 @@ public class SampledImageTypeInstruction extends ResultInstruction implements Re
     private Type imageType;
 
     public SampledImageTypeInstruction(long resultID, long imageTypeID) {
-        super(TypeSampledImage, 3, resultID);
+        super(OpTypeSampledImage, 3, resultID);
         this.imageTypeID = imageTypeID;
     }
 
@@ -27,6 +27,6 @@ public class SampledImageTypeInstruction extends ResultInstruction implements Re
 
     @Override
     public String toString() {
-        return "TypeSampledImage "+nameOrID(imageTypeID, imageType);
+        return "OpTypeSampledImage "+nameOrID(imageTypeID, imageType);
     }
 }

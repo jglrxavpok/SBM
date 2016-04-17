@@ -2,10 +2,7 @@ package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
 import org.jglr.sbm.decorations.Decoration;
-import org.jglr.sbm.image.Dimensionality;
-import org.jglr.sbm.image.ImageDepth;
-import org.jglr.sbm.image.ImageFormat;
-import org.jglr.sbm.image.Sampling;
+import org.jglr.sbm.image.*;
 import org.jglr.sbm.modes.InvocationsExecutionMode;
 import org.jglr.sbm.modes.OutputVerticesExecutionMode;
 import org.jglr.sbm.modes.SizeExecutionMode;
@@ -94,29 +91,29 @@ public class SBMReader implements SBMVisitor, Opcodes {
             int wordCount = (int) (opcodeFull >> 16);
             int opcodeID = (int) (opcodeFull & 0xFFFF);
             switch (opcodeID) {
-                case Nop:
+                case OpNop:
                     break;
 
-                case Undef: {
+                case OpUndef: {
                     long resultType = nextWord();
                     long resultID = nextWord();
                     visitor.visitUndef(resultType, resultID);
                 }
                 break;
 
-                case TypeVoid: {
+                case OpTypeVoid: {
                     long resultID = nextWord();
                     visitor.visitVoidType(resultID);
                 }
                 break;
 
-                case TypeBool: {
+                case OpTypeBool: {
                     long resultID = nextWord();
                     visitor.visitBoolType(resultID);
                 }
                 break;
 
-                case TypeInt: {
+                case OpTypeInt: {
                     long resultID = nextWord();
                     long width = nextWord();
                     boolean isSigned = toBoolean(nextWord());
@@ -124,14 +121,14 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case TypeFloat: {
+                case OpTypeFloat: {
                     long resultID = nextWord();
                     long width = nextWord();
                     visitor.visitFloatType(resultID, width);
                 }
                 break;
 
-                case TypeVec: {
+                case OpTypeVec: {
                     long resultID = nextWord();
                     long componentType = nextWord();
                     long componentCount = nextWord();
@@ -139,7 +136,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case TypeMatrix: {
+                case OpTypeMatrix: {
                     long resultID = nextWord();
                     long columnType = nextWord();
                     long columnCount = nextWord();
@@ -147,7 +144,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case TypeImage: {
+                case OpTypeImage: {
                     long resultID = nextWord();
                     long sampledType = nextWord();
                     Dimensionality dimensionality = nextEnumValue(Dimensionality.values());
@@ -163,20 +160,20 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case TypeSampler: {
+                case OpTypeSampler: {
                     long resultID = nextWord();
                     visitor.visitSamplerType(resultID);
                 }
                 break;
 
-                case TypeSampledImage: {
+                case OpTypeSampledImage: {
                     long resultID = nextWord();
                     long imageType = nextWord();
                     visitor.visitSampledImageType(resultID, imageType);
                 }
                 break;
 
-                case TypeArray: {
+                case OpTypeArray: {
                     long resultID = nextWord();
                     long elementType = nextWord();
                     long length = nextWord();
@@ -184,14 +181,14 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case TypeRuntimeArray: {
+                case OpTypeRuntimeArray: {
                     long resultID = nextWord();
                     long elementType = nextWord();
                     visitor.visitRuntimeArrayType(resultID, elementType);
                 }
                 break;
 
-                case TypeStruct: {
+                case OpTypeStruct: {
                     long resultID = nextWord();
                     long[] structMembers = new long[wordCount - 2];
                     for (int i = 0; i < wordCount - 2; i++) {
@@ -201,14 +198,14 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case TypeOpaque: {
+                case OpTypeOpaque: {
                     long resultID = nextWord();
                     String name = nextString(wordCount - 2);
                     visitor.visitOpaqueType(resultID, name);
                 }
                 break;
 
-                case TypePointer: {
+                case OpTypePointer: {
                     long resultID = nextWord();
                     StorageClass storageClass = nextEnumValue(StorageClass.values());
                     long type = nextWord();
@@ -216,7 +213,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case TypeFunction: {
+                case OpTypeFunction: {
                     long resultID = nextWord();
                     long returnType = nextWord();
                     int parameterCount = wordCount - 3;
@@ -228,56 +225,56 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case TypeEvent: {
+                case OpTypeEvent: {
                     long resultID = nextWord();
                     visitor.visitEventType(resultID);
                 }
                 break;
 
-                case TypeDeviceEvent: {
+                case OpTypeDeviceEvent: {
                     long resultID = nextWord();
                     visitor.visitDeviceEventType(resultID);
                 }
                 break;
 
-                case TypeReservedID: {
+                case OpTypeReservedID: {
                     long resultID = nextWord();
                     visitor.visitReserveIDType(resultID);
                 }
                 break;
 
-                case TypeQueue: {
+                case OpTypeQueue: {
                     long resultID = nextWord();
                     visitor.visitQueueType(resultID);
                 }
                 break;
 
-                case TypePipe: {
+                case OpTypePipe: {
                     long resultID = nextWord();
                     AccessQualifier qualifier = nextEnumValue(AccessQualifier.values());
                     visitor.visitPipeType(resultID, qualifier);
                 }
                 break;
 
-                case TypeForwardPointer: {
+                case OpTypeForwardPointer: {
                     long pointerType = nextWord();
                     StorageClass storageClass = nextEnumValue(StorageClass.values());
                     visitor.visitForwardType(pointerType, storageClass);
                 }
                 break;
 
-                case ConstantFalse:
-                case ConstantTrue: {
+                case OpConstantFalse:
+                case OpConstantTrue: {
                     long type = nextWord();
                     long resultID = nextWord();
-                    if (opcodeID == ConstantFalse)
+                    if (opcodeID == OpConstantFalse)
                         visitor.visitFalseConstant(type, resultID);
                     else
                         visitor.visitTrueConstant(type, resultID);
                 }
                 break;
 
-                case Source: {
+                case OpSource: {
                     SourceLanguage language = nextEnumValue(SourceLanguage.values());
                     long version = nextWord();
                     long filenameStringID = -1;
@@ -292,19 +289,19 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case SourceContinued: {
+                case OpSourceContinued: {
                     String source = nextString();
                     visitor.visitSourceContinued(source);
                 }
                 break;
 
-                case SourceExtension: {
+                case OpSourceExtension: {
                     String source = nextString(wordCount - 1);
                     visitor.visitSourceExtension(source);
                 }
                 break;
 
-                case Name: {
+                case OpName: {
                     long target = nextWord();
                     int stringSize = wordCount - 2;
                     String name = nextString(stringSize);
@@ -312,7 +309,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case MemberName: {
+                case OpMemberName: {
                     long type = nextWord();
                     long target = nextWord();
                     int stringSize = wordCount - 3;
@@ -321,14 +318,14 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case String: {
+                case OpString: {
                     long resultID = nextWord();
                     String value = nextString(wordCount - 2);
                     visitor.visitString(resultID, value);
                 }
                 break;
 
-                case Line: {
+                case OpLine: {
                     long filenameID = nextWord();
                     long line = nextWord();
                     long column = nextWord();
@@ -336,14 +333,14 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case Decorate: {
+                case OpDecorate: {
                     long target = nextWord();
                     Decoration decoration = nextEnumValue(Decoration.values());
                     visitDecoration(visitor, decoration, target, wordCount);
                 }
                 break;
 
-                case MemberDecorate: {
+                case OpMemberDecorate: {
                     long structureType = nextWord();
                     long member = nextWord();
                     Decoration decoration = nextEnumValue(Decoration.values());
@@ -351,7 +348,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case EntryPoint: {
+                case OpEntryPoint: {
                     int savedPosition = position;
                     ExecutionModel model = nextEnumValue(ExecutionModel.values());
                     long entryPoint = nextWord();
@@ -366,27 +363,27 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case Extension: {
+                case OpExtension: {
                     int strSize = wordCount - 1;
                     String extension = nextString(strSize);
                     visitor.visitExtension(extension);
                 }
                 break;
 
-                case Capability: {
+                case OpCapability: {
                     Capability cap = nextEnumValue(Capability.values());
                     visitor.visitCapability(cap);
                 }
                 break;
 
-                case ExtInstImport: {
+                case OpExtInstImport: {
                     long resultID = nextWord();
                     String name = nextString(wordCount - 2);
                     visitor.visitExtendedInstructionSetImport(resultID, name);
                 }
                 break;
 
-                case ExtInst: {
+                case OpExtInst: {
                     long resultType = nextWord();
                     long resultID = nextWord();
                     long set = nextWord();
@@ -400,14 +397,14 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case MemoryModel: {
+                case OpMemoryModel: {
                     AddressingModel addressingModel = nextEnumValue(AddressingModel.values());
                     MemoryModel memoryModel = nextEnumValue(MemoryModel.values());
                     visitor.visitMemoryModel(addressingModel, memoryModel);
                 }
                 break;
 
-                case Variable: {
+                case OpVariable: {
                     long resultType = nextWord();
                     long resultID = nextWord();
                     StorageClass storageClass = nextEnumValue(StorageClass.values());
@@ -418,7 +415,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case Constant: {
+                case OpConstant: {
                     long type = nextWord();
                     long resultID = nextWord();
                     long[] bitPattern = new long[wordCount - 3];
@@ -429,7 +426,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case Function: {
+                case OpFunction: {
                     long resultType = nextWord();
                     long resultID = nextWord();
                     FunctionControl control = new FunctionControl(nextWord());
@@ -438,12 +435,12 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case FunctionEnd: {
+                case OpFunctionEnd: {
                     visitor.visitFunctionEnd();
                 }
                 break;
 
-                case AccessChain: {
+                case OpAccessChain: {
                     long resultType = nextWord();
                     long resultID = nextWord();
                     long base = nextWord();
@@ -455,7 +452,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case Store: {
+                case OpStore: {
                     long pointer = nextWord();
                     long object = nextWord();
                     MemoryAccess memoryAccess;
@@ -468,18 +465,18 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case Label: {
+                case OpLabel: {
                     long resultID = nextWord();
                     visitor.visitLabel(resultID);
                 }
                 break;
 
-                case Return: {
+                case OpReturn: {
                     visitor.visitReturn();
                 }
                 break;
 
-                case Load: {
+                case OpLoad: {
                     long resultType = nextWord();
                     long resultID = nextWord();
                     long pointer = nextWord();
@@ -493,11 +490,24 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
-                case ExecutionMode: {
+                case OpExecutionMode: {
                     long entryPoint = nextWord();
                     ExecutionMode.Type type = nextEnumValue(ExecutionMode.Type.values());
                     ExecutionMode mode = readMode(type, wordCount-3);
                     visitor.visitExecutionMode(entryPoint, mode);
+                }
+                break;
+
+                case OpImageSampleImplicitLod: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    long sampledImage = nextWord();
+                    long coordinate = nextWord();
+                    ImageOperands operands = new ImageOperands(0);
+                    if(wordCount > 5) {
+                        operands.setFromMask(nextWord());
+                        // https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.html#Image_Operands
+                    }
                 }
                 break;
 

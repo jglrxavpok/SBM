@@ -4,7 +4,7 @@ public class OpaqueTypeInstruction extends ResultInstruction {
     private final String name;
 
     public OpaqueTypeInstruction(long resultID, String name) {
-        super(TypeOpaque, 2 + getWordCount(name), resultID);
+        super(OpTypeOpaque, 2 + getWordCount(name), resultID);
         this.name = name;
     }
 
@@ -14,6 +14,6 @@ public class OpaqueTypeInstruction extends ResultInstruction {
 
     @Override
     public String toString() {
-        return "TypeOpaque "+name;
+        return "OpTypeOpaque "+name;
     }
 }

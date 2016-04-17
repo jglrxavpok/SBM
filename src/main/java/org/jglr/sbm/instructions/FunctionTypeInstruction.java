@@ -10,7 +10,7 @@ public class FunctionTypeInstruction extends ResultInstruction implements Resolv
     private Type returnType;
 
     public FunctionTypeInstruction(long resultID, long returnTypeID, long[] parameterTypeIDs) {
-        super(TypeFunction, 3 + parameterTypeIDs.length, resultID);
+        super(OpTypeFunction, 3 + parameterTypeIDs.length, resultID);
         this.returnTypeID = returnTypeID;
         this.parameterTypeIDs = parameterTypeIDs;
     }
@@ -37,6 +37,6 @@ public class FunctionTypeInstruction extends ResultInstruction implements Resolv
                 params += ", ";
             params += nameOrID(parameterTypeIDs[i], parameterTypes[i]);
         }
-        return "TypeFunction ("+params+")"+nameOrID(returnTypeID, returnType);
+        return "OpTypeFunction ("+params+")"+nameOrID(returnTypeID, returnType);
     }
 }

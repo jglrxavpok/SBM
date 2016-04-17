@@ -8,7 +8,7 @@ public class UndefInstruction extends ResultInstruction implements ResolvableIns
     private Type resultType;
 
     public UndefInstruction(long resultTypeID, long resultID) {
-        super(Undef, 3, resultID);
+        super(OpUndef, 3, resultID);
         this.resultTypeID = resultTypeID;
     }
 
@@ -27,6 +27,6 @@ public class UndefInstruction extends ResultInstruction implements ResolvableIns
 
     @Override
     public String toString() {
-        return "Undef "+nameOrID(resultTypeID, resultType);
+        return "OpUndef "+nameOrID(resultTypeID, resultType);
     }
 }

@@ -12,7 +12,7 @@ public class MemberDecorationInstruction extends SpvInstruction implements Resol
     private Type structureType;
 
     public MemberDecorationInstruction(int wordCount, DecorationValue decoration, long structureTypeID, long member) {
-        super(MemberDecorate, wordCount);
+        super(OpMemberDecorate, wordCount);
         this.wordCount = wordCount;
         this.decoration = decoration;
         this.structureTypeID = structureTypeID;
@@ -42,7 +42,7 @@ public class MemberDecorationInstruction extends SpvInstruction implements Resol
 
     @Override
     public String toString() {
-        return "MemberDecorate "+member+" in "+nameOrID(structureTypeID, structureType)+" with "+ decoration.toString();
+        return "OpMemberDecorate "+member+" in "+nameOrID(structureTypeID, structureType)+" with "+ decoration.toString();
     }
 
     @Override

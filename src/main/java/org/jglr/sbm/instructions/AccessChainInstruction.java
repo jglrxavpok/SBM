@@ -14,7 +14,7 @@ public class AccessChainInstruction extends ResultInstruction implements Resolva
     private String[] indexNames;
 
     public AccessChainInstruction(long resultTypeID, long resultID, long baseID, long[] indexIDs) {
-        super(AccessChain, 4 + indexIDs.length, resultID);
+        super(OpAccessChain, 4 + indexIDs.length, resultID);
         this.resultTypeID = resultTypeID;
         this.baseID = baseID;
         this.indexIDs = indexIDs;
@@ -53,6 +53,6 @@ public class AccessChainInstruction extends ResultInstruction implements Resolva
 
     @Override
     public String toString() {
-        return "AccessChain "+nameOrID(baseID, baseName)+" indexes: "+(indexNames != null ? Arrays.toString(indexNames) : Arrays.toString(indexIDs))+" (result: "+nameOrID(resultTypeID, resultType)+")";
+        return "OpAccessChain "+nameOrID(baseID, baseName)+" indexes: "+(indexNames != null ? Arrays.toString(indexNames) : Arrays.toString(indexIDs))+" (result: "+nameOrID(resultTypeID, resultType)+")";
     }
 }

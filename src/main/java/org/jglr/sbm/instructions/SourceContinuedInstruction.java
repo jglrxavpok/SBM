@@ -4,7 +4,7 @@ public class SourceContinuedInstruction extends SpvInstruction {
     private final String source;
 
     public SourceContinuedInstruction(String source) {
-        super(SourceContinued, getWordCount(source)+1);
+        super(OpSourceContinued, getWordCount(source)+1);
         this.source = source;
     }
 

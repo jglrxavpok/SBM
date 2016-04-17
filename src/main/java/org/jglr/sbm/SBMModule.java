@@ -38,9 +38,9 @@ public class SBMModule implements Opcodes {
     }
 
     private void init() {
-        handlers.put(Source, this::handleSource);
-        handlers.put(Capability, this::handleCap);
-        handlers.put(ExtInstImport, this::handleSetImport);
+        handlers.put(OpSource, this::handleSource);
+        handlers.put(OpCapability, this::handleCap);
+        handlers.put(OpExtInstImport, this::handleSetImport);
         instructions.forEach(in -> getHandler(in.getOpcode()).accept(in));
     }
 

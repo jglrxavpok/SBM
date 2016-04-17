@@ -4,7 +4,7 @@ public class ExtendedInstructionSetImportInstruction extends ResultInstruction {
     private final String name;
 
     public ExtendedInstructionSetImportInstruction(long resultID, String name) {
-        super(ExtInstImport, 2 + getWordCount(name), resultID);
+        super(OpExtInstImport, 2 + getWordCount(name), resultID);
         this.name = name;
     }
 
@@ -14,6 +14,6 @@ public class ExtendedInstructionSetImportInstruction extends ResultInstruction {
 
     @Override
     public String toString() {
-        return "ExtInstImport "+name;
+        return "OpExtInstImport "+name;
     }
 }

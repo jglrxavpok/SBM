@@ -11,7 +11,7 @@ public class StoreInstruction extends SpvInstruction implements ResolvableInstru
     private String pointerName;
 
     public StoreInstruction(long pointer, long object, MemoryAccess memoryAccess) {
-        super(Store, 3 + (memoryAccess == null ? 0 : 1));
+        super(OpStore, 3 + (memoryAccess == null ? 0 : 1));
         this.pointer = pointer;
         this.object = object;
         this.memoryAccess = memoryAccess;
@@ -41,6 +41,6 @@ public class StoreInstruction extends SpvInstruction implements ResolvableInstru
         if(memoryAccess != null) {
             access = " (addressing: 0x"+Long.toHexString(memoryAccess.getMask())+")";
         }
-        return "Store "+nameOrID(object, objectName)+" to pointer "+nameOrID(pointer, pointerName)+access;
+        return "OpStore "+nameOrID(object, objectName)+" to pointer "+nameOrID(pointer, pointerName)+access;
     }
 }

@@ -15,7 +15,7 @@ public class ExtendedInstructionSetCallInstruction extends ResultInstruction imp
     private String set;
 
     public ExtendedInstructionSetCallInstruction(long resultTypeID, long resultID, long setID, long instruction, long[] operands) {
-        super(ExtInst, 5 + operands.length, resultID);
+        super(OpExtInst, 5 + operands.length, resultID);
         this.resultTypeID = resultTypeID;
         this.setID = setID;
         this.instruction = instruction;
@@ -34,6 +34,6 @@ public class ExtendedInstructionSetCallInstruction extends ResultInstruction imp
         if(set != null && set.startsWith("GLSL.std.")) {
             instructionStr = " GLSL::"+ GLSLStd450.values()[(int) instruction];
         }
-        return "ExtInst "+nameOrID(setID, set)+": "+ Arrays.toString(operands)+nameOrID(resultTypeID, resultType)+instructionStr;
+        return "OpExtInst "+nameOrID(setID, set)+": "+ Arrays.toString(operands)+nameOrID(resultTypeID, resultType)+instructionStr;
     }
 }

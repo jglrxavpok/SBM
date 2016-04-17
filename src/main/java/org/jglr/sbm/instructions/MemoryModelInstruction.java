@@ -8,7 +8,7 @@ public class MemoryModelInstruction extends SpvInstruction {
     private final MemoryModel memoryModel;
 
     public MemoryModelInstruction(AddressingModel addressingModel, MemoryModel memoryModel) {
-        super(MemoryModel, 3);
+        super(OpMemoryModel, 3);
         this.addressingModel = addressingModel;
         this.memoryModel = memoryModel;
     }
@@ -23,6 +23,6 @@ public class MemoryModelInstruction extends SpvInstruction {
 
     @Override
     public String toString() {
-        return "MemoryModel "+addressingModel.name()+" "+memoryModel.name();
+        return "OpMemoryModel "+addressingModel.name()+" "+memoryModel.name();
     }
 }

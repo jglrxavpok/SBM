@@ -9,7 +9,7 @@ public class ArrayTypeInstruction extends ResultInstruction implements Resolvabl
     private Type elementType;
 
     public ArrayTypeInstruction(long resultID, long elementTypeID, long length) {
-        super(TypeArray, 4, resultID);
+        super(OpTypeArray, 4, resultID);
         this.elementTypeID = elementTypeID;
         this.length = length;
     }
@@ -33,6 +33,6 @@ public class ArrayTypeInstruction extends ResultInstruction implements Resolvabl
 
     @Override
     public String toString() {
-        return "TypeArray "+nameOrID(elementTypeID, elementType)+"["+length+"]";
+        return "OpTypeArray "+nameOrID(elementTypeID, elementType)+"["+length+"]";
     }
 }

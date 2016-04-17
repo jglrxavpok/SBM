@@ -9,7 +9,7 @@ public class BooleanConstantInstruction extends ResultInstruction implements Res
     private Type type;
 
     public BooleanConstantInstruction(long typeID, long resultID, boolean value) {
-        super(value ? ConstantTrue : ConstantFalse, 2, resultID);
+        super(value ? OpConstantTrue : OpConstantFalse, 2, resultID);
         this.typeID = typeID;
         this.value = value;
     }

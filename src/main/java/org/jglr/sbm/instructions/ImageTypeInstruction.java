@@ -21,7 +21,7 @@ public class ImageTypeInstruction extends ResultInstruction implements Resolvabl
     private Type sampledType;
 
     public ImageTypeInstruction(long resultID, long sampledTypeID, Dimensionality dim, ImageDepth depth, boolean arrayed, boolean multisampled, Sampling sampling, ImageFormat format, AccessQualifier access) {
-        super(TypeImage, 9 + (access == null ? 0 : 1), resultID);
+        super(OpTypeImage, 9 + (access == null ? 0 : 1), resultID);
         this.resultID = resultID;
         this.sampledTypeID = sampledTypeID;
         this.dim = dim;
@@ -81,6 +81,6 @@ public class ImageTypeInstruction extends ResultInstruction implements Resolvabl
 
     @Override
     public String toString() {
-        return "TypeImage "+nameOrID(sampledTypeID, sampledType);
+        return "OpTypeImage "+nameOrID(sampledTypeID, sampledType);
     }
 }

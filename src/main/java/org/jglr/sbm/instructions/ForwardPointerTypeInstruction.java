@@ -10,7 +10,7 @@ public class ForwardPointerTypeInstruction extends SpvInstruction implements Res
     private Type type;
 
     public ForwardPointerTypeInstruction(long typeID, StorageClass storageClass) {
-        super(TypeForwardPointer, 3);
+        super(OpTypeForwardPointer, 3);
         this.typeID = typeID;
         this.storageClass = storageClass;
     }
@@ -29,7 +29,7 @@ public class ForwardPointerTypeInstruction extends SpvInstruction implements Res
 
     @Override
     public String toString() {
-        return "TypeForwardPointer "+nameOrID(typeID, type)+" ("+storageClass.name()+")";
+        return "OpTypeForwardPointer "+nameOrID(typeID, type)+" ("+storageClass.name()+")";
     }
 
     @Override

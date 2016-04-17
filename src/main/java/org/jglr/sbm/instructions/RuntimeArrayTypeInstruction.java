@@ -8,7 +8,7 @@ public class RuntimeArrayTypeInstruction extends ResultInstruction implements Re
     private Type elementType;
 
     public RuntimeArrayTypeInstruction(long resultID, long elementTypeID) {
-        super(TypeRuntimeArray, 3, resultID);
+        super(OpTypeRuntimeArray, 3, resultID);
         this.elementTypeID = elementTypeID;
     }
 
@@ -19,6 +19,6 @@ public class RuntimeArrayTypeInstruction extends ResultInstruction implements Re
 
     @Override
     public String toString() {
-        return "TypeRuntimeArray "+nameOrID(elementTypeID, elementType);
+        return "OpTypeRuntimeArray "+nameOrID(elementTypeID, elementType);
     }
 }

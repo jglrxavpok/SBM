@@ -10,7 +10,7 @@ public class StructTypeInstruction extends ResultInstruction implements Resolvab
     private Type[] memberTypes;
 
     public StructTypeInstruction(long resultID, long[] memberTypeIDs) {
-        super(TypeStruct, 2 + memberTypeIDs.length, resultID);
+        super(OpTypeStruct, 2 + memberTypeIDs.length, resultID);
         this.memberTypeIDs = memberTypeIDs;
     }
 
@@ -29,6 +29,6 @@ public class StructTypeInstruction extends ResultInstruction implements Resolvab
 
     @Override
     public String toString() {
-        return "TypeStruct "+ Arrays.toString(namesOrID(memberTypeIDs, memberTypes));
+        return "OpTypeStruct "+ Arrays.toString(namesOrID(memberTypeIDs, memberTypes));
     }
 }

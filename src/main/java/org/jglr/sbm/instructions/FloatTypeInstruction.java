@@ -4,7 +4,7 @@ public class FloatTypeInstruction extends ResultInstruction {
     private final long width;
 
     public FloatTypeInstruction(long resultID, long width) {
-        super(TypeFloat, 3, resultID);
+        super(OpTypeFloat, 3, resultID);
         this.width = width;
     }
 
@@ -14,6 +14,6 @@ public class FloatTypeInstruction extends ResultInstruction {
 
     @Override
     public String toString() {
-        return "TypeFloat "+width;
+        return "OpTypeFloat "+width;
     }
 }

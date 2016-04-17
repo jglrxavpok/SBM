@@ -15,7 +15,7 @@ public class EntryPointInstruction extends SpvInstruction implements ResolvableI
     private ExecutionMode executionMode;
 
     public EntryPointInstruction(ExecutionModel model, long entryPoint, String name, long[] interfaceIDs) {
-        super(EntryPoint, 3 + getWordCount(name) + interfaceIDs.length);
+        super(OpEntryPoint, 3 + getWordCount(name) + interfaceIDs.length);
         this.model = model;
         this.entryPoint = entryPoint;
         this.name = name;
@@ -30,7 +30,7 @@ public class EntryPointInstruction extends SpvInstruction implements ResolvableI
 
     @Override
     public String toString() {
-        return "EntryPoint "+model.name()+" "+entryPoint+" "+name+" "+(interfaces == null ? Arrays.toString(interfaceIDs) : Arrays.toString(interfaces))
+        return "OpEntryPoint "+model.name()+" "+entryPoint+" "+name+" "+(interfaces == null ? Arrays.toString(interfaceIDs) : Arrays.toString(interfaces))
                 +(executionMode == null ? "" : " "+executionMode.toString());
     }
 }

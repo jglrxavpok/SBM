@@ -10,7 +10,7 @@ public class PointerTypeInstruction extends ResultInstruction implements Resolva
     private Type type;
 
     public PointerTypeInstruction(long resultID, StorageClass storageClass, long typeID) {
-        super(TypePointer, 4, resultID);
+        super(OpTypePointer, 4, resultID);
         this.storageClass = storageClass;
         this.typeID = typeID;
     }
@@ -26,6 +26,6 @@ public class PointerTypeInstruction extends ResultInstruction implements Resolva
 
     @Override
     public String toString() {
-        return "TypePointer "+nameOrID(typeID, type)+" "+storageClass.name();
+        return "OpTypePointer "+nameOrID(typeID, type)+" "+storageClass.name();
     }
 }

@@ -5,73 +5,73 @@ import java.util.HashMap;
 
 public interface Opcodes {
 
-    int Nop = 0,
-        Undef = 1,
+    int OpNop = 0,
+        OpUndef = 1,
 
-        SourceContinued = 2,
-        Source = 3,
-        SourceExtension = 4,
+        OpSourceContinued = 2,
+        OpSource = 3,
+        OpSourceExtension = 4,
 
-        Name = 5,
-        MemberName = 6,
-        String = 7,
-        Line = 8,
+        OpName = 5,
+        OpMemberName = 6,
+        OpString = 7,
+        OpLine = 8,
 
-        NoLine = 317,
-
-
-        Decorate = 71,
-        MemberDecorate = 72,
-
-        Capability = 17,
-        Extension = 10,
-        ExtInstImport = 11,
-        ExtInst = 12,
-        MemoryModel = 14,
-        EntryPoint = 15,
-        ExecutionMode = 16,
-
-        Constant = 43,
-        Function = 54,
-        Variable = 59,
-        Label = 248,
-        FunctionEnd = 56,
-        FunctionCall = 57,
-        Load = 61,
-        Store = 62,
-        CopyMemory = 63,
-        CopyMemorySized = 64,
-        AccessChain = 65,
-
-        ImageSampleImplicitLod = 87,
-
-        Return = 253,
+        OpNoLine = 317,
 
 
-        TypeVoid = 19,
-        TypeBool = 20,
-        TypeInt = 21,
-        TypeFloat = 22,
-        TypeVec = 23,
-        TypeMatrix = 24,
-        TypeImage = 25,
-        TypeSampler = 26,
-        TypeSampledImage = 27,
-        TypeArray = 28,
-        TypeRuntimeArray = 29,
-        TypeStruct = 30,
-        TypeOpaque = 31,
-        TypePointer = 32,
-        TypeFunction = 33,
-        TypeEvent = 34,
-        TypeDeviceEvent = 35,
-        TypeReservedID = 36,
-        TypeQueue = 37,
-        TypePipe = 38,
-        TypeForwardPointer = 39,
+        OpDecorate = 71,
+        OpMemberDecorate = 72,
 
-        ConstantTrue = 40,
-        ConstantFalse = 41
+        OpCapability = 17,
+        OpExtension = 10,
+        OpExtInstImport = 11,
+        OpExtInst = 12,
+        OpMemoryModel = 14,
+        OpEntryPoint = 15,
+        OpExecutionMode = 16,
+
+        OpConstant = 43,
+        OpFunction = 54,
+        OpVariable = 59,
+        OpLabel = 248,
+        OpFunctionEnd = 56,
+        OpFunctionCall = 57,
+        OpLoad = 61,
+        OpStore = 62,
+        OpCopyMemory = 63,
+        OpCopyMemorySized = 64,
+        OpAccessChain = 65,
+
+        OpImageSampleImplicitLod = 87,
+
+        OpReturn = 253,
+
+
+        OpTypeVoid = 19,
+        OpTypeBool = 20,
+        OpTypeInt = 21,
+        OpTypeFloat = 22,
+        OpTypeVec = 23,
+        OpTypeMatrix = 24,
+        OpTypeImage = 25,
+        OpTypeSampler = 26,
+        OpTypeSampledImage = 27,
+        OpTypeArray = 28,
+        OpTypeRuntimeArray = 29,
+        OpTypeStruct = 30,
+        OpTypeOpaque = 31,
+        OpTypePointer = 32,
+        OpTypeFunction = 33,
+        OpTypeEvent = 34,
+        OpTypeDeviceEvent = 35,
+        OpTypeReservedID = 36,
+        OpTypeQueue = 37,
+        OpTypePipe = 38,
+        OpTypeForwardPointer = 39,
+
+        OpConstantTrue = 40,
+        OpConstantFalse = 41
 
     ;
 

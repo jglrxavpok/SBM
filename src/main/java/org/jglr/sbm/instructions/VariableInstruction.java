@@ -17,7 +17,7 @@ public class VariableInstruction extends ResultInstruction implements Resolvable
     private List<DecorationValue> decorations;
 
     public VariableInstruction(long resultTypeID, long resultID, StorageClass storageClass, long initializer) {
-        super(Variable, 4 + (initializer == -1 ? 0 : 1), resultID);
+        super(OpVariable, 4 + (initializer == -1 ? 0 : 1), resultID);
         this.resultTypeID = resultTypeID;
         this.storageClass = storageClass;
         this.initializer = initializer;

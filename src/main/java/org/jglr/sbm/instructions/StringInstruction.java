@@ -4,7 +4,7 @@ public class StringInstruction extends ResultInstruction {
     private final String value;
 
     public StringInstruction(long resultID, String value) {
-        super(String, getWordCount(value)+1, resultID);
+        super(OpString, getWordCount(value)+1, resultID);
         this.value = value;
     }
 
@@ -14,6 +14,6 @@ public class StringInstruction extends ResultInstruction {
 
     @Override
     public String toString() {
-        return "String "+value;
+        return "OpString "+value;
     }
 }

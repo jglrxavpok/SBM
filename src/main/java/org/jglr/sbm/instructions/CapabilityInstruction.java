@@ -6,7 +6,7 @@ public class CapabilityInstruction extends SpvInstruction {
     private final Capability cap;
 
     public CapabilityInstruction(Capability cap) {
-        super(Capability, 2);
+        super(OpCapability, 2);
         this.cap = cap;
     }
 
@@ -16,6 +16,6 @@ public class CapabilityInstruction extends SpvInstruction {
 
     @Override
     public String toString() {
-        return "Capability: "+cap.name();
+        return "OpCapability: "+cap.name();
     }
 }

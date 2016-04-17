@@ -5,7 +5,7 @@ public class NameInstruction extends SpvInstruction {
     private final String name;
 
     public NameInstruction(long target, String name) {
-        super(Name, 2 + getWordCount(name));
+        super(OpName, 2 + getWordCount(name));
         this.target = target;
         this.name = name;
     }
@@ -20,6 +20,6 @@ public class NameInstruction extends SpvInstruction {
 
     @Override
     public String toString() {
-        return "Name for "+target+": "+name;
+        return "OpName for "+target+": "+name;
     }
 }

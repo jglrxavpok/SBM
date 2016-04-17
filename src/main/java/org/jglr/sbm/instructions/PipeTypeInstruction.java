@@ -6,7 +6,7 @@ public class PipeTypeInstruction extends ResultInstruction {
     private final AccessQualifier accessQualifier;
 
     public PipeTypeInstruction(long resultID, AccessQualifier accessQualifier) {
-        super(TypePipe, 3, resultID);
+        super(OpTypePipe, 3, resultID);
         this.accessQualifier = accessQualifier;
     }
 
@@ -16,6 +16,6 @@ public class PipeTypeInstruction extends ResultInstruction {
 
     @Override
     public String toString() {
-        return "TypePipe "+accessQualifier.name();
+        return "OpTypePipe "+accessQualifier.name();
     }
 }

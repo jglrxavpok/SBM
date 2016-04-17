@@ -12,7 +12,7 @@ public class LoadInstruction extends ResultInstruction implements ResolvableInst
     private String pointerName;
 
     public LoadInstruction(long resultTypeID, long resultID, long pointer, MemoryAccess memoryAccess) {
-        super(Load, 4 + (memoryAccess == null ? 0 : 1), resultID);
+        super(OpLoad, 4 + (memoryAccess == null ? 0 : 1), resultID);
         this.resultTypeID = resultTypeID;
         this.pointer = pointer;
         this.memoryAccess = memoryAccess;
@@ -50,6 +50,6 @@ public class LoadInstruction extends ResultInstruction implements ResolvableInst
         if(memoryAccess != null) {
             access = " (addressing: 0x"+Long.toHexString(memoryAccess.getMask())+")";
         }
-        return "Load "+nameOrID(resultTypeID, resultType)+" from pointer "+nameOrID(pointer, pointerName)+access;
+        return "OpLoad "+nameOrID(resultTypeID, resultType)+" from pointer "+nameOrID(pointer, pointerName)+access;
     }
 }

@@ -9,7 +9,7 @@ public class MatrixTypeInstruction extends ResultInstruction implements Resolvab
     private Type columnType;
 
     public MatrixTypeInstruction(long resultID, long columnTypeID, long columnCount) {
-        super(TypeMatrix, 4, resultID);
+        super(OpTypeMatrix, 4, resultID);
         this.columnTypeID = columnTypeID;
         this.columnCount = columnCount;
     }
@@ -33,6 +33,6 @@ public class MatrixTypeInstruction extends ResultInstruction implements Resolvab
 
     @Override
     public String toString() {
-        return "TypeVec "+ columnCount +" ("+nameOrID(columnTypeID, columnType)+")";
+        return "OpTypeMatrix "+ columnCount +" ("+nameOrID(columnTypeID, columnType)+")";
     }
 }

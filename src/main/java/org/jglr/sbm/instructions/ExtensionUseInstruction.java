@@ -4,7 +4,7 @@ public class ExtensionUseInstruction extends SpvInstruction {
     private final String extension;
 
     public ExtensionUseInstruction(String extension) {
-        super(Extension, getWordCount(extension)+1);
+        super(OpExtension, getWordCount(extension)+1);
         this.extension = extension;
     }
 
@@ -14,6 +14,6 @@ public class ExtensionUseInstruction extends SpvInstruction {
 
     @Override
     public String toString() {
-        return "Extension use: "+extension;
+        return "OpExtension use: "+extension;
     }
 }

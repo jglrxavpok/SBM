@@ -9,7 +9,7 @@ public class ExecutionModeInstruction extends SpvInstruction implements Resolvab
     private String entryPointName;
 
     public ExecutionModeInstruction(long entryPoint, ExecutionMode mode) {
-        super(ExecutionMode, 3 + mode.getOperandCount());
+        super(OpExecutionMode, 3 + mode.getOperandCount());
         this.entryPoint = entryPoint;
         this.mode = mode;
     }
@@ -24,7 +24,7 @@ public class ExecutionModeInstruction extends SpvInstruction implements Resolvab
 
     @Override
     public String toString() {
-        return "ExecutionMode "+nameOrID(entryPoint, entryPointName)+" = "+mode.toString();
+        return "OpExecutionMode "+nameOrID(entryPoint, entryPointName)+" = "+mode.toString();
     }
 
     @Override

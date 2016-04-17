@@ -10,7 +10,7 @@ public class MemberNameInstruction extends SpvInstruction implements ResolvableI
     private Type structureType;
 
     public MemberNameInstruction(long structureTypeID, long target, String name) {
-        super(Name, 3 + getWordCount(name));
+        super(OpName, 3 + getWordCount(name));
         this.structureTypeID = structureTypeID;
         this.target = target;
         this.name = name;
@@ -34,7 +34,7 @@ public class MemberNameInstruction extends SpvInstruction implements ResolvableI
 
     @Override
     public String toString() {
-        return "MemberName for "+target+" inside "+nameOrID(structureTypeID, structureType)+": "+name;
+        return "OpMemberName for "+target+" inside "+nameOrID(structureTypeID, structureType)+": "+name;
     }
 
     @Override
