@@ -1,6 +1,7 @@
 package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
+import org.jglr.sbm.decorations.DecorationValue;
 import org.jglr.sbm.instructions.*;
 import org.jglr.sbm.image.Dimensionality;
 import org.jglr.sbm.image.ImageDepth;
@@ -8,7 +9,6 @@ import org.jglr.sbm.image.ImageFormat;
 import org.jglr.sbm.image.Sampling;
 import org.jglr.sbm.types.*;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -120,7 +120,9 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitIntDecoration(Decoration decoration, long target, long value) {
-        addInstruction(new IntDecorationInstruction(decoration, target, value));
+        DecorationValue decorationValue = new IntDecorationValue(decoration, value);
+        constantPool.addDecoration(target, decorationValue);
+        addInstruction(new DecorationInstruction(3, decorationValue, target));
     }
 
     @Override
@@ -145,7 +147,7 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitDecoration(long target, Decoration decoration) {
-        addInstruction(new DecorationInstruction(2, decoration, target));
+        addInstruction(new DecorationInstruction(2, new DecorationValue(decoration), target));
     }
 
     @Override
@@ -234,22 +236,26 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitArrayType(long resultID, long elementType, long length) {
-
+        addInstruction(new ArrayTypeInstruction(resultID, elementType, length));
+        constantPool.registerType(resultID, new ArrayType(constantPool.getType(elementType), length));
     }
 
     @Override
     public void visitRuntimeArrayType(long resultID, long elementType) {
-
+        addInstruction(new RuntimeArrayTypeInstruction(resultID, elementType));
+        constantPool.registerType(resultID, new RuntimeArrayType(constantPool.getType(elementType)));
     }
 
     @Override
     public void visitStructType(long resultID, long[] memberTypes) {
-
+        addInstruction(new StructTypeInstruction(resultID, memberTypes));
+        constantPool.registerType(resultID, new StructType(constantPool.getTypes(memberTypes)));
     }
 
     @Override
     public void visitOpaqueType(long resultID, String name) {
-
+        addInstruction(new OpaqueTypeInstruction(resultID, name));
+        constantPool.registerType(resultID, new OpaqueType(name));
     }
 
     @Override
@@ -266,22 +272,26 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitEventType(long resultID) {
-
+        addInstruction(new EventTypeInstruction(resultID));
+        constantPool.registerType(resultID, new Type("event"));
     }
 
     @Override
     public void visitDeviceEventType(long resultID) {
-
+        addInstruction(new DeviceEventTypeInstruction(resultID));
+        constantPool.registerType(resultID, new Type("deviceEvent"));
     }
 
     @Override
     public void visitReserveIDType(long resultID) {
-
+        addInstruction(new EventTypeInstruction(resultID));
+        constantPool.registerType(resultID, new Type("reserveID"));
     }
 
     @Override
     public void visitQueueType(long resultID) {
-
+        addInstruction(new QueueTypeInstruction(resultID));
+        constantPool.registerType(resultID, new Type("queue"));
     }
 
     @Override

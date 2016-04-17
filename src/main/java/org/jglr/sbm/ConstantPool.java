@@ -1,11 +1,9 @@
 package org.jglr.sbm;
 
+import org.jglr.sbm.decorations.DecorationValue;
 import org.jglr.sbm.types.Type;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ConstantPool {
 
@@ -14,6 +12,7 @@ public class ConstantPool {
     private final Map<Long, Map<Long, String>> memberNameMap;
     private final Map<Long, Type> typeMap;
     private final Map<Long, String> sets;
+    private final Map<Long, List<DecorationValue>> decorations;
 
     public ConstantPool() {
         stringMap = new HashMap<>();
@@ -21,6 +20,7 @@ public class ConstantPool {
         nameMap = new HashMap<>();
         typeMap = new HashMap<>();
         sets = new HashMap<>();
+        decorations = new HashMap<>();
     }
 
     public void empty() {
@@ -87,5 +87,16 @@ public class ConstantPool {
 
     public String getSet(long resultID) {
         return sets.get(resultID);
+    }
+
+    public void addDecoration(long target, DecorationValue decorationValue) {
+        if(!decorations.containsKey(target)) {
+            decorations.put(target, new LinkedList<>());
+        }
+        decorations.get(target).add(decorationValue);
+    }
+
+    public List<DecorationValue> getDecorations(long target) {
+        return decorations.getOrDefault(target, Collections.emptyList());
     }
 }

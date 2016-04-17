@@ -32,6 +32,19 @@ public abstract class SpvInstruction implements Opcodes {
         return type == null ? "%"+id : type.getName();
     }
 
+    public String[] namesOrID(long[] ids, Type[] types) {
+        String[] result = new String[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            Type type = types[i];
+            if(type == null) {
+                result[i] = ""+ids[i];
+            } else {
+                result[i] = type.getName();
+            }
+        }
+        return result;
+    }
+
     public static int getWordCount(String string) {
         return string.length()/4;
     }
