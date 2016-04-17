@@ -1,7 +1,7 @@
 package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
-import org.jglr.sbm.decorations.DecorationValue;
+import org.jglr.sbm.decorations.*;
 import org.jglr.sbm.instructions.*;
 import org.jglr.sbm.image.Dimensionality;
 import org.jglr.sbm.image.ImageDepth;
@@ -127,22 +127,30 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitFunctionParameterAttributeDecoration(long target, FunctionParameterAttribute attribute) {
-
+        DecorationValue decorationValue = new FunctionParameterAttributeDecorationValue(attribute);
+        constantPool.addDecoration(target, decorationValue);
+        addInstruction(new DecorationInstruction(3, decorationValue, target));
     }
 
     @Override
     public void visitFPRoundingModeDecoration(long target, FPRoundingMode roundingMode) {
-
+        DecorationValue decorationValue = new RoundingModeDecorationValue(roundingMode);
+        constantPool.addDecoration(target, decorationValue);
+        addInstruction(new DecorationInstruction(3, decorationValue, target));
     }
 
     @Override
     public void visitFPFastMathModeDecoration(long target, FPFastMathMode fastMathMode) {
-
+        DecorationValue decorationValue = new FastMathDecorationValue(fastMathMode);
+        constantPool.addDecoration(target, decorationValue);
+        addInstruction(new DecorationInstruction(3, decorationValue, target));
     }
 
     @Override
     public void visitLinkageAttributesDecoration(long target, String name, LinkageType type) {
-
+        DecorationValue decorationValue = new LinkageDecorationValue(name, type);
+        constantPool.addDecoration(target, decorationValue);
+        addInstruction(new DecorationInstruction(4 + name.length()/4, decorationValue, target));
     }
 
     @Override
@@ -296,12 +304,13 @@ public class CodeCollector implements SBMCodeVisitor {
 
     @Override
     public void visitPipeType(long resultID, AccessQualifier accessQualifier) {
-
+        addInstruction(new PipeTypeInstruction(resultID, accessQualifier));
+        constantPool.registerType(resultID, new PipeType(accessQualifier));
     }
 
     @Override
     public void visitForwardType(long type, StorageClass storageClass) {
-
+        addInstruction(new ForwardPointerTypeInstruction(type, storageClass));
     }
 
     @Override
