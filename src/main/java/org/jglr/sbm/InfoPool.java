@@ -14,6 +14,7 @@ public class InfoPool {
     private final Map<Long, String> sets;
     private final Map<Long, List<DecorationValue>> decorations;
     private final Map<Long, Map<Long, List<DecorationValue>>> memberDecorations;
+    private final Map<Long, ExecutionMode> modes;
 
     public InfoPool() {
         stringMap = new HashMap<>();
@@ -23,6 +24,7 @@ public class InfoPool {
         sets = new HashMap<>();
         decorations = new HashMap<>();
         memberDecorations = new HashMap<>();
+        modes = new HashMap<>();
     }
 
     public void empty() {
@@ -115,5 +117,13 @@ public class InfoPool {
             decorationMap.put(member, new LinkedList<>());
         }
         decorationMap.get(member).add(decorationValue);
+    }
+
+    public void setExecutionMode(long entryPoint, ExecutionMode mode) {
+        modes.put(entryPoint, mode);
+    }
+
+    public ExecutionMode getExecutionMode(long entryPoint) {
+        return modes.get(entryPoint);
     }
 }

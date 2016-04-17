@@ -29,6 +29,7 @@ public interface Opcodes {
         EXT_INST = 12,
         MEMORY_MODEL = 14,
         ENTRY_POINT = 15,
+        EXECUTION_MODE = 16,
 
         CONSTANT = 43,
         FUNCTION = 54,

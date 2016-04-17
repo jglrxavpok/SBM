@@ -382,7 +382,17 @@ public class CodeCollector implements SBMCodeVisitor {
         addInstruction(new UndefInstruction(resultType, resultID));
     }
 
+    @Override
+    public void visitExecutionMode(long entryPoint, ExecutionMode mode) {
+        addInstruction(new ExecutionModeInstruction(entryPoint, mode));
+        infoPool.setExecutionMode(entryPoint, mode);
+    }
+
     public List<SpvInstruction> getInstructions() {
         return instructions;
+    }
+
+    public SBMModule toModule() {
+        return new SBMModule(instructions, infoPool);
     }
 }

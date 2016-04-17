@@ -6,6 +6,10 @@ import org.jglr.sbm.image.Dimensionality;
 import org.jglr.sbm.image.ImageDepth;
 import org.jglr.sbm.image.ImageFormat;
 import org.jglr.sbm.image.Sampling;
+import org.jglr.sbm.modes.InvocationsExecutionMode;
+import org.jglr.sbm.modes.OutputVerticesExecutionMode;
+import org.jglr.sbm.modes.SizeExecutionMode;
+import org.jglr.sbm.modes.VecTypeHintExecutionMode;
 import org.jglr.sbm.types.*;
 
 import java.io.ByteArrayOutputStream;
@@ -489,6 +493,14 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 }
                 break;
 
+                case EXECUTION_MODE: {
+                    long entryPoint = nextWord();
+                    ExecutionMode.Type type = nextEnumValue(ExecutionMode.Type.values());
+                    ExecutionMode mode = readMode(type, wordCount-3);
+                    visitor.visitExecutionMode(entryPoint, mode);
+                }
+                break;
+
                 default:
                     System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);
                     position += (wordCount-1)*4;
@@ -497,6 +509,33 @@ public class SBMReader implements SBMVisitor, Opcodes {
         }
         visitor.visitEnd();
         return visitor;
+    }
+
+    private ExecutionMode readMode(ExecutionMode.Type type, int opCount) throws IOException {
+        switch (type) {
+            case Invocations:
+                return new InvocationsExecutionMode(nextWord());
+
+            case LocalSize:
+            case LocalSizeHint:
+                return new SizeExecutionMode(type, nextWord(), nextWord(), nextWord());
+
+            case OutputVertices:
+                return new OutputVerticesExecutionMode(nextWord());
+
+            case VecTypeHint: {
+                long componentCount = nextWord();
+                VecTypeHintExecutionMode.DataType dataType = nextEnumValue(VecTypeHintExecutionMode.DataType.values());
+                return new VecTypeHintExecutionMode(componentCount, dataType);
+            }
+
+        }
+        return new ExecutionMode(type) {
+            @Override
+            public int getOperandCount() {
+                return opCount;
+            }
+        };
     }
 
     private String nextString() throws IOException {
@@ -510,17 +549,26 @@ public class SBMReader implements SBMVisitor, Opcodes {
             byte b1 = (byte) (word >> 8 & 0xFF);
             byte b0 = (byte) (word & 0xFF);
 
-            baos.write(new byte[] {b0,b1,b2,b3});
             if(b3 == 0) {
                 break;
             }
+            if(b2 == 0) {
+                break;
+            }
+            if(b1 == 0) {
+                break;
+            }
+            if(b0 == 0) {
+                break;
+            }
+            baos.write(new byte[] {b0,b1,b2,b3});
 
         }
         baos.flush();
         baos.close();
         byte[] bytes = baos.toByteArray();
         // -1 to remove the null character
-        return new String(bytes, "UTF-8");
+        return new String(bytes, "UTF-8").replace("\0", "");
     }
 
     private void visitDecoration(SBMCodeVisitor visitor, Decoration decoration, long target, int wordCount) throws IOException {
@@ -621,15 +669,24 @@ public class SBMReader implements SBMVisitor, Opcodes {
             byte b0 = (byte) (word >> 0 & 0xFF);
 
             data[i*4] = b0;
+
+            if(b0 == 0)
+                break;
             data[i*4+1] = b1;
+            if(b1 == 0)
+                break;
             data[i*4+2] = b2;
+            if(b2 == 0)
+                break;
             data[i*4+3] = b3;
+            if(b3 == 0)
+                break;
         }
         if(data[data.length-1] != '\0') {
             throw new IOException("Invalid string, not null terminated");
         }
         // -1 to remove the null character
-        return new String(data, 0, data.length-1, "UTF-8");
+        return new String(data, 0, data.length-1, "UTF-8").replace("\0", "");
     }
 
     private <T> T nextEnumValue(T[] values) throws IOException {

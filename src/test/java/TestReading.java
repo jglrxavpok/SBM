@@ -1,3 +1,6 @@
+import org.jglr.sbm.Capability;
+import org.jglr.sbm.SBMModule;
+import org.jglr.sbm.SourceLanguage;
 import org.jglr.sbm.visitors.CodeCollector;
 import org.jglr.sbm.visitors.HeaderCollector;
 import org.jglr.sbm.visitors.SBMReader;
@@ -7,9 +10,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.*;
 
 public class TestReading {
 
@@ -175,7 +179,19 @@ public class TestReading {
     public void readVertCode() throws IOException {
         SBMReader reader = new SBMReader(vertShaderCode);
         CodeCollector codeCollector = (CodeCollector) reader.visitCode();
+        SBMModule module = codeCollector.toModule();
         codeCollector.getInstructions().forEach(System.out::println);
+
+        // Source
+        assertEquals(400, module.getLanguageVersion());
+        assertEquals(SourceLanguage.GLSL, module.getLanguage());
+        assertEquals(null, module.getFilename());
+        assertEquals(null, module.getSource());
+
+        // Capability
+        assertEquals(Collections.singletonList(Capability.Shader), module.getCapabilities());
+
+        assertEquals(Collections.singletonList("GLSL.std.450"), module.getSetImports());
     }
 
     @Test
@@ -191,9 +207,21 @@ public class TestReading {
 
     @Test
     public void readFragCode() throws IOException {
+        FileOutputStream out = new FileOutputStream(new File(".", "shader.frag.spv"));
+        out.write(fragShaderCode);
+        out.flush();
+        out.close();
         SBMReader reader = new SBMReader(fragShaderCode);
         CodeCollector codeCollector = (CodeCollector) reader.visitCode();
         codeCollector.getInstructions().forEach(System.out::println);
+        SBMModule module = codeCollector.toModule();
+        assertEquals(400, module.getLanguageVersion());
+        assertEquals(SourceLanguage.GLSL, module.getLanguage());
+        assertEquals(null, module.getFilename());
+        assertEquals(null, module.getSource());
+
+        assertEquals(Collections.singletonList(Capability.Shader), module.getCapabilities());
+        assertEquals(Collections.singletonList("GLSL.std.450"), module.getSetImports());
     }
 
 }

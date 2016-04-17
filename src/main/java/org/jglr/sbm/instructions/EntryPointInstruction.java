@@ -1,5 +1,6 @@
 package org.jglr.sbm.instructions;
 
+import org.jglr.sbm.ExecutionMode;
 import org.jglr.sbm.InfoPool;
 import org.jglr.sbm.ExecutionModel;
 
@@ -11,6 +12,7 @@ public class EntryPointInstruction extends SpvInstruction implements ResolvableI
     private final String name;
     private final long[] interfaceIDs;
     private String[] interfaces;
+    private ExecutionMode executionMode;
 
     public EntryPointInstruction(ExecutionModel model, long entryPoint, String name, long[] interfaceIDs) {
         super(ENTRY_POINT, 3 + getWordCount(name) + interfaceIDs.length);
@@ -23,10 +25,12 @@ public class EntryPointInstruction extends SpvInstruction implements ResolvableI
     @Override
     public void onVisitEnd(InfoPool infoPool) {
         interfaces = infoPool.getNames(interfaceIDs);
+        executionMode = infoPool.getExecutionMode(entryPoint);
     }
 
     @Override
     public String toString() {
-        return "EntryPoint "+model.name()+" "+entryPoint+" "+name+" "+(interfaces == null ? Arrays.toString(interfaceIDs) : Arrays.toString(interfaces));
+        return "EntryPoint "+model.name()+" "+entryPoint+" "+name+" "+(interfaces == null ? Arrays.toString(interfaceIDs) : Arrays.toString(interfaces))
+                +(executionMode == null ? "" : " "+executionMode.toString());
     }
 }

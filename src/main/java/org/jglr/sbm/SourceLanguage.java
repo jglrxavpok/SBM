@@ -1,9 +1,9 @@
 package org.jglr.sbm;
 
 public enum SourceLanguage {
-    UNKNOWN,
+    Unknown,
     ESSL,
     GLSL,
-    OPENCL_C,
-    OPENCL_CPP
+    OpenCL_C,
+    OpenCL_CPP
 }
