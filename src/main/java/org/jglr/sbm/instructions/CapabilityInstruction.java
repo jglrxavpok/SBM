@@ -6,7 +6,7 @@ public class CapabilityInstruction extends SpvInstruction {
     private final Capability cap;
 
     public CapabilityInstruction(Capability cap) {
-        super(CAPABILITY, 2);
+        super(Capability, 2);
         this.cap = cap;
     }
 

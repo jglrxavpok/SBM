@@ -4,7 +4,7 @@ public class StringInstruction extends ResultInstruction {
     private final String value;
 
     public StringInstruction(long resultID, String value) {
-        super(STRING, getWordCount(value)+1, resultID);
+        super(String, getWordCount(value)+1, resultID);
         this.value = value;
     }
 

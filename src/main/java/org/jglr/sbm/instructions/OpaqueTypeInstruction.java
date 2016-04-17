@@ -4,7 +4,7 @@ public class OpaqueTypeInstruction extends ResultInstruction {
     private final String name;
 
     public OpaqueTypeInstruction(long resultID, String name) {
-        super(TYPE_OPAQUE, 2 + getWordCount(name), resultID);
+        super(TypeOpaque, 2 + getWordCount(name), resultID);
         this.name = name;
     }
 

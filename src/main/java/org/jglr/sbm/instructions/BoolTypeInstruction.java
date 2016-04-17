@@ -2,7 +2,7 @@ package org.jglr.sbm.instructions;
 
 public class BoolTypeInstruction extends ResultInstruction {
     public BoolTypeInstruction(long resultID) {
-        super(TYPE_BOOL, 2, resultID);
+        super(TypeBool, 2, resultID);
     }
 
     @Override

@@ -6,7 +6,7 @@ public class PipeTypeInstruction extends ResultInstruction {
     private final AccessQualifier accessQualifier;
 
     public PipeTypeInstruction(long resultID, AccessQualifier accessQualifier) {
-        super(TYPE_PIPE, 3, resultID);
+        super(TypePipe, 3, resultID);
         this.accessQualifier = accessQualifier;
     }
 

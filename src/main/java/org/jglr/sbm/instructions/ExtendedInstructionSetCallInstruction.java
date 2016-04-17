@@ -15,7 +15,7 @@ public class ExtendedInstructionSetCallInstruction extends ResultInstruction imp
     private String set;
 
     public ExtendedInstructionSetCallInstruction(long resultTypeID, long resultID, long setID, long instruction, long[] operands) {
-        super(EXT_INST, 5 + operands.length, resultID);
+        super(ExtInst, 5 + operands.length, resultID);
         this.resultTypeID = resultTypeID;
         this.setID = setID;
         this.instruction = instruction;

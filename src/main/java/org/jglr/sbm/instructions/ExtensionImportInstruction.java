@@ -4,7 +4,7 @@ public class ExtensionImportInstruction extends SpvInstruction {
     private final String extension;
 
     public ExtensionImportInstruction(String extension) {
-        super(SOURCE_EXTENSION, getWordCount(extension) +1);
+        super(SourceExtension, getWordCount(extension) +1);
         this.extension = extension;
     }
 

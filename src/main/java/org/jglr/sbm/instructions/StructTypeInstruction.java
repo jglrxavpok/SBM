@@ -10,7 +10,7 @@ public class StructTypeInstruction extends ResultInstruction implements Resolvab
     private Type[] memberTypes;
 
     public StructTypeInstruction(long resultID, long[] memberTypeIDs) {
-        super(TYPE_STRUCT, 2 + memberTypeIDs.length, resultID);
+        super(TypeStruct, 2 + memberTypeIDs.length, resultID);
         this.memberTypeIDs = memberTypeIDs;
     }
 

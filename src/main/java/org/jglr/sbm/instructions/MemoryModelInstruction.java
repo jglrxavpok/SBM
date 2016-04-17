@@ -8,7 +8,7 @@ public class MemoryModelInstruction extends SpvInstruction {
     private final MemoryModel memoryModel;
 
     public MemoryModelInstruction(AddressingModel addressingModel, MemoryModel memoryModel) {
-        super(MEMORY_MODEL, 3);
+        super(MemoryModel, 3);
         this.addressingModel = addressingModel;
         this.memoryModel = memoryModel;
     }

@@ -5,7 +5,7 @@ public class NameInstruction extends SpvInstruction {
     private final String name;
 
     public NameInstruction(long target, String name) {
-        super(NAME, 2 + getWordCount(name));
+        super(Name, 2 + getWordCount(name));
         this.target = target;
         this.name = name;
     }

@@ -13,7 +13,7 @@ public class FunctionInstruction extends ResultInstruction implements Resolvable
     private String name;
 
     public FunctionInstruction(long resultTypeID, long resultID, FunctionControl control, long funcTypeID) {
-        super(FUNCTION, 5, resultID);
+        super(Function, 5, resultID);
         this.resultTypeID = resultTypeID;
         this.control = control;
         this.funcTypeID = funcTypeID;

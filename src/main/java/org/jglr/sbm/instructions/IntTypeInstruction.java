@@ -5,7 +5,7 @@ public class IntTypeInstruction extends ResultInstruction {
     private final boolean isSigned;
 
     public IntTypeInstruction(long resultID, long width, boolean isSigned) {
-        super(TYPE_INT, 4, resultID);
+        super(TypeInt, 4, resultID);
         this.width = width;
         this.isSigned = isSigned;
     }

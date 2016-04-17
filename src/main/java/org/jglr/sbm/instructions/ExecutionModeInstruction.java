@@ -9,7 +9,7 @@ public class ExecutionModeInstruction extends SpvInstruction implements Resolvab
     private String entryPointName;
 
     public ExecutionModeInstruction(long entryPoint, ExecutionMode mode) {
-        super(EXECUTION_MODE, 3 + mode.getOperandCount());
+        super(ExecutionMode, 3 + mode.getOperandCount());
         this.entryPoint = entryPoint;
         this.mode = mode;
     }

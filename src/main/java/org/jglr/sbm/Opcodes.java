@@ -5,71 +5,73 @@ import java.util.HashMap;
 
 public interface Opcodes {
 
-    int NOP = 0,
-        UNDEF = 1,
+    int Nop = 0,
+        Undef = 1,
 
-        SOURCE_CONTINUED = 2,
-        SOURCE = 3,
-        SOURCE_EXTENSION = 4,
+        SourceContinued = 2,
+        Source = 3,
+        SourceExtension = 4,
 
-        NAME = 5,
-        MEMBER_NAME = 6,
-        STRING = 7,
-        LINE = 8,
+        Name = 5,
+        MemberName = 6,
+        String = 7,
+        Line = 8,
 
-        NO_LINE = 317,
-
-
-        DECORATE = 71,
-        MEMBER_DECORATE = 72,
-
-        CAPABILITY = 17,
-        EXTENSION = 10,
-        EXT_INST_IMPORT = 11,
-        EXT_INST = 12,
-        MEMORY_MODEL = 14,
-        ENTRY_POINT = 15,
-        EXECUTION_MODE = 16,
-
-        CONSTANT = 43,
-        FUNCTION = 54,
-        VARIABLE = 59,
-        LABEL = 248,
-        FUNCTION_END = 56,
-        FUNCTION_CALL = 57,
-        LOAD = 61,
-        STORE = 62,
-        COPY_MEMORY = 63,
-        COPY_MEMORY_SIZED = 64,
-        ACCESS_CHAIN = 65,
-
-        RETURN = 253,
+        NoLine = 317,
 
 
-        TYPE_VOID = 19,
-        TYPE_BOOL = 20,
-        TYPE_INT = 21,
-        TYPE_FLOAT = 22,
-        TYPE_VEC = 23,
-        TYPE_MATRIX = 24,
-        TYPE_IMAGE = 25,
-        TYPE_SAMPLER = 26,
-        TYPE_SAMPLED_IMAGE = 27,
-        TYPE_ARRAY = 28,
-        TYPE_RUNTIME_ARRAY = 29,
-        TYPE_STRUCT = 30,
-        TYPE_OPAQUE = 31,
-        TYPE_POINTER = 32,
-        TYPE_FUNCTION = 33,
-        TYPE_EVENT = 34,
-        TYPE_DEVICE_EVENT = 35,
-        TYPE_RESERVED_ID = 36,
-        TYPE_QUEUE = 37,
-        TYPE_PIPE = 38,
-        TYPE_FORWARD_POINTER = 39,
+        Decorate = 71,
+        MemberDecorate = 72,
 
-        CONSTANT_TRUE = 40,
-        CONSTANT_FALSE = 41
+        Capability = 17,
+        Extension = 10,
+        ExtInstImport = 11,
+        ExtInst = 12,
+        MemoryModel = 14,
+        EntryPoint = 15,
+        ExecutionMode = 16,
+
+        Constant = 43,
+        Function = 54,
+        Variable = 59,
+        Label = 248,
+        FunctionEnd = 56,
+        FunctionCall = 57,
+        Load = 61,
+        Store = 62,
+        CopyMemory = 63,
+        CopyMemorySized = 64,
+        AccessChain = 65,
+
+        ImageSampleImplicitLod = 87,
+
+        Return = 253,
+
+
+        TypeVoid = 19,
+        TypeBool = 20,
+        TypeInt = 21,
+        TypeFloat = 22,
+        TypeVec = 23,
+        TypeMatrix = 24,
+        TypeImage = 25,
+        TypeSampler = 26,
+        TypeSampledImage = 27,
+        TypeArray = 28,
+        TypeRuntimeArray = 29,
+        TypeStruct = 30,
+        TypeOpaque = 31,
+        TypePointer = 32,
+        TypeFunction = 33,
+        TypeEvent = 34,
+        TypeDeviceEvent = 35,
+        TypeReservedID = 36,
+        TypeQueue = 37,
+        TypePipe = 38,
+        TypeForwardPointer = 39,
+
+        ConstantTrue = 40,
+        ConstantFalse = 41
 
     ;
 

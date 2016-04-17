@@ -1,4 +1,5 @@
 import org.lwjgl.PointerBuffer;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.vulkan.*;
@@ -12,6 +13,10 @@ public class TestVulkanIntegration {
 
     public static void main(String[] args) {
         VkInstanceCreateInfo creationInfos = VkInstanceCreateInfo.create();
+        PointerBuffer validationLayers = PointerBuffer.allocateDirect(1);
+        validationLayers.put(MemoryUtil.memASCII("VK_LAYER_LUNARG_standard_validation"));
+        validationLayers.flip();
+        creationInfos.ppEnabledLayerNames(validationLayers);
         PointerBuffer instanceBuffer = PointerBuffer.allocateDirect(1);
         int err = VK10.vkCreateInstance(creationInfos, null, instanceBuffer);
         check(err);

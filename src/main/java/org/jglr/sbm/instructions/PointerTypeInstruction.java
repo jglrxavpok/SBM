@@ -10,7 +10,7 @@ public class PointerTypeInstruction extends ResultInstruction implements Resolva
     private Type type;
 
     public PointerTypeInstruction(long resultID, StorageClass storageClass, long typeID) {
-        super(TYPE_POINTER, 4, resultID);
+        super(TypePointer, 4, resultID);
         this.storageClass = storageClass;
         this.typeID = typeID;
     }

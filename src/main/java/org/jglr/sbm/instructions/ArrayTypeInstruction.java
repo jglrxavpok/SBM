@@ -9,7 +9,7 @@ public class ArrayTypeInstruction extends ResultInstruction implements Resolvabl
     private Type elementType;
 
     public ArrayTypeInstruction(long resultID, long elementTypeID, long length) {
-        super(TYPE_ARRAY, 4, resultID);
+        super(TypeArray, 4, resultID);
         this.elementTypeID = elementTypeID;
         this.length = length;
     }

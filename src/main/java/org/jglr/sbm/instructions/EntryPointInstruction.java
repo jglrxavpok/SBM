@@ -15,7 +15,7 @@ public class EntryPointInstruction extends SpvInstruction implements ResolvableI
     private ExecutionMode executionMode;
 
     public EntryPointInstruction(ExecutionModel model, long entryPoint, String name, long[] interfaceIDs) {
-        super(ENTRY_POINT, 3 + getWordCount(name) + interfaceIDs.length);
+        super(EntryPoint, 3 + getWordCount(name) + interfaceIDs.length);
         this.model = model;
         this.entryPoint = entryPoint;
         this.name = name;

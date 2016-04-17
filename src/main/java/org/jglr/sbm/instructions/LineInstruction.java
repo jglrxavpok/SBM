@@ -9,7 +9,7 @@ public class LineInstruction extends SpvInstruction implements ResolvableInstruc
     private String filename;
 
     public LineInstruction(long filenameID, long line, long column) {
-        super(LINE, 4);
+        super(Line, 4);
         this.filenameID = filenameID;
         this.line = line;
         this.column = column;

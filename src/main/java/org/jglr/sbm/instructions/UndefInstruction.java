@@ -8,7 +8,7 @@ public class UndefInstruction extends ResultInstruction implements ResolvableIns
     private Type resultType;
 
     public UndefInstruction(long resultTypeID, long resultID) {
-        super(UNDEF, 3, resultID);
+        super(Undef, 3, resultID);
         this.resultTypeID = resultTypeID;
     }
 

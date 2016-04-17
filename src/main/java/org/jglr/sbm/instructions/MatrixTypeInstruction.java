@@ -9,7 +9,7 @@ public class MatrixTypeInstruction extends ResultInstruction implements Resolvab
     private Type columnType;
 
     public MatrixTypeInstruction(long resultID, long columnTypeID, long columnCount) {
-        super(TYPE_MATRIX, 4, resultID);
+        super(TypeMatrix, 4, resultID);
         this.columnTypeID = columnTypeID;
         this.columnCount = columnCount;
     }

@@ -8,7 +8,7 @@ public class RuntimeArrayTypeInstruction extends ResultInstruction implements Re
     private Type elementType;
 
     public RuntimeArrayTypeInstruction(long resultID, long elementTypeID) {
-        super(TYPE_RUNTIME_ARRAY, 3, resultID);
+        super(TypeRuntimeArray, 3, resultID);
         this.elementTypeID = elementTypeID;
     }
 

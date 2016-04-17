@@ -4,7 +4,7 @@ public class ExtensionUseInstruction extends SpvInstruction {
     private final String extension;
 
     public ExtensionUseInstruction(String extension) {
-        super(EXTENSION, getWordCount(extension)+1);
+        super(Extension, getWordCount(extension)+1);
         this.extension = extension;
     }
 

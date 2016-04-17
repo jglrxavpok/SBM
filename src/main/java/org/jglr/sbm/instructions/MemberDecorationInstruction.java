@@ -12,7 +12,7 @@ public class MemberDecorationInstruction extends SpvInstruction implements Resol
     private Type structureType;
 
     public MemberDecorationInstruction(int wordCount, DecorationValue decoration, long structureTypeID, long member) {
-        super(MEMBER_DECORATE, wordCount);
+        super(MemberDecorate, wordCount);
         this.wordCount = wordCount;
         this.decoration = decoration;
         this.structureTypeID = structureTypeID;

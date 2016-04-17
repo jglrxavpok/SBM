@@ -2,7 +2,7 @@ package org.jglr.sbm.instructions;
 
 public class ReturnInstruction extends SpvInstruction {
     public ReturnInstruction() {
-        super(RETURN, 1);
+        super(Return, 1);
     }
 
     @Override

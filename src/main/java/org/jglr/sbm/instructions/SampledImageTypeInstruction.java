@@ -8,7 +8,7 @@ public class SampledImageTypeInstruction extends ResultInstruction implements Re
     private Type imageType;
 
     public SampledImageTypeInstruction(long resultID, long imageTypeID) {
-        super(TYPE_SAMPLED_IMAGE, 3, resultID);
+        super(TypeSampledImage, 3, resultID);
         this.imageTypeID = imageTypeID;
     }
 

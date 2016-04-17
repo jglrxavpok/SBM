@@ -11,7 +11,7 @@ public class ConstantInstruction extends ResultInstruction implements Resolvable
     private Type type;
 
     public ConstantInstruction(long typeID, long resultID, long[] bitPattern) {
-        super(CONSTANT, 2 + bitPattern.length, resultID);
+        super(Constant, 2 + bitPattern.length, resultID);
         this.typeID = typeID;
         this.bitPattern = bitPattern;
     }

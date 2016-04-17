@@ -9,7 +9,7 @@ public class DecorationInstruction extends SpvInstruction implements ResolvableI
     private String targetName;
 
     public DecorationInstruction(int wordCount, DecorationValue decoration, long target) {
-        super(DECORATE, wordCount);
+        super(Decorate, wordCount);
         this.decoration = decoration;
         this.target = target;
     }

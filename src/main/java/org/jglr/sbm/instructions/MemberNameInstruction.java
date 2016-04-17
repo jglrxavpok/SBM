@@ -10,7 +10,7 @@ public class MemberNameInstruction extends SpvInstruction implements ResolvableI
     private Type structureType;
 
     public MemberNameInstruction(long structureTypeID, long target, String name) {
-        super(NAME, 3 + getWordCount(name));
+        super(Name, 3 + getWordCount(name));
         this.structureTypeID = structureTypeID;
         this.target = target;
         this.name = name;

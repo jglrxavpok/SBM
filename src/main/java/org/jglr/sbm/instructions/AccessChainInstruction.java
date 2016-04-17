@@ -14,7 +14,7 @@ public class AccessChainInstruction extends ResultInstruction implements Resolva
     private String[] indexNames;
 
     public AccessChainInstruction(long resultTypeID, long resultID, long baseID, long[] indexIDs) {
-        super(ACCESS_CHAIN, 4 + indexIDs.length, resultID);
+        super(AccessChain, 4 + indexIDs.length, resultID);
         this.resultTypeID = resultTypeID;
         this.baseID = baseID;
         this.indexIDs = indexIDs;

@@ -11,7 +11,7 @@ public class SourceInstruction extends SpvInstruction implements ResolvableInstr
     private String filename;
 
     public SourceInstruction(SourceLanguage language, long version, long filenameStringID, String sourceCode) {
-        super(SOURCE, 3 + (filenameStringID != -1 ? 1 : 0) + (sourceCode != null ? getWordCount(sourceCode) : 0));
+        super(Source, 3 + (filenameStringID != -1 ? 1 : 0) + (sourceCode != null ? getWordCount(sourceCode) : 0));
         this.language = language;
         this.version = version;
         this.filenameStringID = filenameStringID;
