@@ -81,7 +81,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
         return visitor;
     }
 
-    private HeaderVisitor newHeaderVisitor() {
+    public HeaderVisitor newHeaderVisitor() throws IOException {
         return new HeaderCollector();
     }
 
@@ -715,7 +715,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
         return value != 0;
     }
 
-    private CodeVisitor newCodeVisitor() {
+    public CodeVisitor newCodeVisitor() throws IOException {
         return new CodeCollector();
     }
 }
