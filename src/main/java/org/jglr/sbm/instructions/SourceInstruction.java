@@ -45,6 +45,8 @@ public class SourceInstruction extends SpvInstruction implements ResolvableInstr
             result += " ("+filename+")";
         else if(filenameStringID != -1)
             result += " (filenameID: "+filenameStringID+")";
+        if(sourceCode != null)
+            result += ", source: "+sourceCode;
         return result;
     }
 

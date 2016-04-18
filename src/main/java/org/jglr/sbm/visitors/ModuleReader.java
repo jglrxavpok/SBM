@@ -12,6 +12,7 @@ import org.jglr.sbm.types.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -691,7 +692,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                 break;
         }
         if(data[data.length-1] != '\0') {
-            throw new IOException("Invalid string, not null terminated");
+            throw new IOException("Invalid string, not null terminated: "+ Arrays.toString(data));
         }
         // -1 to remove the null character
         return new String(data, 0, data.length-1, "UTF-8").replace("\0", "");

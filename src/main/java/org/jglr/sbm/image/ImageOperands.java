@@ -2,6 +2,9 @@ package org.jglr.sbm.image;
 
 import org.jglr.sbm.MaskValue;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class ImageOperands extends MaskValue {
@@ -179,5 +182,22 @@ public class ImageOperands extends MaskValue {
 
     private void set(Map<Integer, long[]> result, int key, long... values) {
         result.put(key, values);
+    }
+
+    public static long[] mergeOperands(Map<Integer, long[]> splitOperands) {
+        List<Long> list = new ArrayList<>();
+        int[] flags = {FLAG_BIAS, FLAG_LOD, FLAG_GRAD, FLAG_CONST_OFFSET, FLAG_OFFSET, FLAG_CONST_OFFSETS, FLAG_SAMPLE, FLAG_MIN_LOD};
+        for (int f : flags) {
+            long[] operands = splitOperands.getOrDefault(f, new long[0]);
+            for(long l : operands) {
+                list.add(l);
+            }
+        }
+
+        long[] result = new long[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            result[i] = list.get(i);
+        }
+        return result;
     }
 }
