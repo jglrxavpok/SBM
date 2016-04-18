@@ -8,7 +8,7 @@ import org.jglr.sbm.image.ImageFormat;
 import org.jglr.sbm.image.Sampling;
 import org.jglr.sbm.types.Type;
 
-public interface SBMTypeVisitor {
+public interface TypeVisitor {
     void visitVoidType(long resultID);
     void visitBoolType(long resultID);
     void visitFloatType(long resultID, long width);

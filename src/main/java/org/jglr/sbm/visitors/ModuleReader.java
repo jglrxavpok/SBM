@@ -16,14 +16,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SBMReader implements SBMVisitor, Opcodes {
+public class ModuleReader implements ModuleVisitor, Opcodes {
 
     public static final long SPIRV_MAGIC_NUMBER = 0x07230203;
     private final int[] input;
     private final ByteOrder endianness;
     private int position;
 
-    public SBMReader(byte[] input) throws IOException {
+    public ModuleReader(byte[] input) throws IOException {
         this.input = toUnsignedBytes(input);
         endianness = findEndianness();
     }
@@ -71,9 +71,9 @@ public class SBMReader implements SBMVisitor, Opcodes {
         return endianness;
     }
 
-    public SBMHeaderVisitor visitHeader() throws IOException {
+    public HeaderVisitor visitHeader() throws IOException {
         position = 4; // skip the magic number (4 bytes)
-        SBMHeaderVisitor visitor = newHeaderVisitor();
+        HeaderVisitor visitor = newHeaderVisitor();
         visitor.visitSpirVersion(nextWord());
         visitor.visitGeneratorMagicNumber(nextWord());
         visitor.visitBound(nextWord());
@@ -81,13 +81,13 @@ public class SBMReader implements SBMVisitor, Opcodes {
         return visitor;
     }
 
-    private SBMHeaderVisitor newHeaderVisitor() {
+    private HeaderVisitor newHeaderVisitor() {
         return new HeaderCollector();
     }
 
-    public SBMCodeVisitor visitCode() throws IOException {
+    public CodeVisitor visitCode() throws IOException {
         position = 5*4; // skip the header (20 bytes long)
-        SBMCodeVisitor visitor = newCodeVisitor();
+        CodeVisitor visitor = newCodeVisitor();
         while (position < input.length) {
             long opcodeFull = nextWord();
             int wordCount = (int) (opcodeFull >> 16);
@@ -579,7 +579,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
         return new String(bytes, "UTF-8").replace("\0", "");
     }
 
-    private void visitDecoration(SBMCodeVisitor visitor, Decoration decoration, long target, int wordCount) throws IOException {
+    private void visitDecoration(CodeVisitor visitor, Decoration decoration, long target, int wordCount) throws IOException {
         switch (decoration) {
             case SpecId:
             case ArrayStride:
@@ -622,7 +622,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
         }
     }
 
-    private void visitMemberDecoration(SBMCodeVisitor visitor, Decoration decoration, long structureType, long member, int wordCount) throws IOException {
+    private void visitMemberDecoration(CodeVisitor visitor, Decoration decoration, long structureType, long member, int wordCount) throws IOException {
         switch (decoration) {
             case SpecId:
             case ArrayStride:
@@ -715,7 +715,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
         return value != 0;
     }
 
-    private SBMCodeVisitor newCodeVisitor() {
+    private CodeVisitor newCodeVisitor() {
         return new CodeCollector();
     }
 }

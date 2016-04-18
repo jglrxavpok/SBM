@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class SBMModule implements Opcodes {
+public class Module implements Opcodes {
 
     private final List<SpvInstruction> instructions;
     private final InfoPool infoPool;
@@ -23,7 +23,7 @@ public class SBMModule implements Opcodes {
     private long languageVersion;
     private SourceLanguage language;
 
-    public SBMModule(List<SpvInstruction> instructions, InfoPool infoPool) {
+    public Module(List<SpvInstruction> instructions, InfoPool infoPool) {
         this.instructions = instructions;
         this.infoPool = infoPool;
         handlers = new HashMap<>();

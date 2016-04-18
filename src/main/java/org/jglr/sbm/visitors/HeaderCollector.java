@@ -1,6 +1,6 @@
 package org.jglr.sbm.visitors;
 
-public class HeaderCollector implements SBMHeaderVisitor {
+public class HeaderCollector implements HeaderVisitor {
     private long generatorNumber;
     private long spirVersion;
     private long schema;

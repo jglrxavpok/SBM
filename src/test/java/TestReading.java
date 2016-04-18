@@ -1,12 +1,12 @@
 import org.jglr.sbm.Capability;
 import org.jglr.sbm.InfoPool;
-import org.jglr.sbm.SBMModule;
+import org.jglr.sbm.Module;
 import org.jglr.sbm.SourceLanguage;
 import org.jglr.sbm.glsl.GLSLStd450;
 import org.jglr.sbm.instructions.ExtendedInstructionSetCallInstruction;
 import org.jglr.sbm.visitors.CodeCollector;
 import org.jglr.sbm.visitors.HeaderCollector;
-import org.jglr.sbm.visitors.SBMReader;
+import org.jglr.sbm.visitors.ModuleReader;
 import org.junit.Test;
 
 import java.io.File;
@@ -168,7 +168,7 @@ public class TestReading {
 
     @Test
     public void readVertHeader() throws IOException {
-        SBMReader reader = new SBMReader(vertShaderCode);
+        ModuleReader reader = new ModuleReader(vertShaderCode);
         assertEquals(ByteOrder.BIG_ENDIAN, reader.getEndianness());
         HeaderCollector headerCollector = (HeaderCollector) reader.visitHeader();
         assertEquals(0x10000, headerCollector.getSpirVersion());
@@ -179,9 +179,9 @@ public class TestReading {
 
     @Test
     public void readVertCode() throws IOException {
-        SBMReader reader = new SBMReader(vertShaderCode);
+        ModuleReader reader = new ModuleReader(vertShaderCode);
         CodeCollector codeCollector = (CodeCollector) reader.visitCode();
-        SBMModule module = codeCollector.toModule();
+        Module module = codeCollector.toModule();
         codeCollector.getInstructions().forEach(System.out::println);
 
         // Source
@@ -198,7 +198,7 @@ public class TestReading {
 
     @Test
     public void readFragHeader() throws IOException {
-        SBMReader reader = new SBMReader(fragShaderCode);
+        ModuleReader reader = new ModuleReader(fragShaderCode);
         assertEquals(ByteOrder.BIG_ENDIAN, reader.getEndianness());
         HeaderCollector headerCollector = (HeaderCollector) reader.visitHeader();
         assertEquals(0x10000, headerCollector.getSpirVersion());
@@ -213,10 +213,10 @@ public class TestReading {
         out.write(fragShaderCode);
         out.flush();
         out.close();
-        SBMReader reader = new SBMReader(fragShaderCode);
+        ModuleReader reader = new ModuleReader(fragShaderCode);
         CodeCollector codeCollector = (CodeCollector) reader.visitCode();
         codeCollector.getInstructions().forEach(System.out::println);
-        SBMModule module = codeCollector.toModule();
+        Module module = codeCollector.toModule();
         assertEquals(400, module.getLanguageVersion());
         assertEquals(SourceLanguage.GLSL, module.getLanguage());
         assertEquals(null, module.getFilename());

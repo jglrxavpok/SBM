@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class CodeCollector implements SBMCodeVisitor {
+public class CodeCollector implements CodeVisitor {
 
     private final List<SpvInstruction> instructions;
     private InfoPool infoPool;
@@ -395,7 +395,7 @@ public class CodeCollector implements SBMCodeVisitor {
         return instructions;
     }
 
-    public SBMModule toModule() {
-        return new SBMModule(instructions, infoPool);
+    public Module toModule() {
+        return new Module(instructions, infoPool);
     }
 }

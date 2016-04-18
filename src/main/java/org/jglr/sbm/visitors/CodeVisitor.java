@@ -2,11 +2,10 @@ package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
 import org.jglr.sbm.image.ImageOperands;
-import org.jglr.sbm.types.Type;
 
 import java.util.Map;
 
-public interface SBMCodeVisitor extends SBMTypeVisitor, SBMDecorationVisitor {
+public interface CodeVisitor extends TypeVisitor, DecorationVisitor {
 
     // source info
     void visitSource(SourceLanguage language, long version, long filenameStringID, String sourceCode);

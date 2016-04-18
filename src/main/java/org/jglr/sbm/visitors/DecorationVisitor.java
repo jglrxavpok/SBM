@@ -3,7 +3,7 @@ package org.jglr.sbm.visitors;
 import org.jglr.sbm.*;
 import org.jglr.sbm.decorations.Decoration;
 
-public interface SBMDecorationVisitor {
+public interface DecorationVisitor {
 
     /**
      * <b>Note</B>: Compressed because the related decorations have the same physical layout and differentiation must be done by the end-user

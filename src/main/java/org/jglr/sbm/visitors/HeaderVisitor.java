@@ -1,6 +1,6 @@
 package org.jglr.sbm.visitors;
 
-public interface SBMHeaderVisitor {
+public interface HeaderVisitor {
 
     void visitSpirVersion(long value);
 
