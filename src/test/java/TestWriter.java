@@ -13,6 +13,7 @@ public class TestWriter {
     public void testWrite() throws IOException {
         ModuleWriter writer = new ModuleWriter();
 
+        // Set the visitors of the ModuleReader to the writer visitors in order to copy the contents from TestReading.fragShaderCode
         ModuleReader reader = new ModuleReader(TestReading.fragShaderCode) {
             @Override
             public HeaderVisitor newHeaderVisitor() throws IOException {
