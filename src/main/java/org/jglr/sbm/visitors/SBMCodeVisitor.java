@@ -1,7 +1,10 @@
 package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
+import org.jglr.sbm.image.ImageOperands;
 import org.jglr.sbm.types.Type;
+
+import java.util.Map;
 
 public interface SBMCodeVisitor extends SBMTypeVisitor, SBMDecorationVisitor {
 
@@ -55,4 +58,6 @@ public interface SBMCodeVisitor extends SBMTypeVisitor, SBMDecorationVisitor {
     void visitUndef(long resultType, long resultID);
 
     void visitExecutionMode(long entryPoint, ExecutionMode mode);
+
+    void visitImageSampleImplicitLod(long resultType, long resultID, long sampledImage, long coordinate, ImageOperands operands, Map<Integer, long[]> splitOperands);
 }

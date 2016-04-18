@@ -12,6 +12,8 @@ import org.jglr.sbm.types.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SBMReader implements SBMVisitor, Opcodes {
@@ -190,10 +192,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
 
                 case OpTypeStruct: {
                     long resultID = nextWord();
-                    long[] structMembers = new long[wordCount - 2];
-                    for (int i = 0; i < wordCount - 2; i++) {
-                        structMembers[i] = nextWord();
-                    }
+                    long[] structMembers = nextWords(wordCount - 2);
                     visitor.visitStructType(resultID, structMembers);
                 }
                 break;
@@ -217,10 +216,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     long resultID = nextWord();
                     long returnType = nextWord();
                     int parameterCount = wordCount - 3;
-                    long[] parameters = new long[parameterCount];
-                    for (int i = 0; i < parameterCount; i++) {
-                        parameters[i] = nextWord();
-                    }
+                    long[] parameters = nextWords(parameterCount);
                     visitor.visitFunctionType(resultID, returnType, parameters);
                 }
                 break;
@@ -355,10 +351,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     String name = nextString();
                     int strSize = (position - savedPosition) / 4;
                     int interfaceCount = wordCount - strSize - 1;
-                    long[] interfaces = new long[interfaceCount];
-                    for (int i = 0; i < interfaceCount; i++) {
-                        interfaces[i] = nextWord();
-                    }
+                    long[] interfaces = nextWords(interfaceCount);
                     visitor.visitEntryPoint(model, entryPoint, name, interfaces);
                 }
                 break;
@@ -389,10 +382,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     long set = nextWord();
                     long instruction = nextWord();
                     int operandCount = wordCount - 5;
-                    long[] operands = new long[operandCount];
-                    for (int i = 0; i < operandCount; i++) {
-                        operands[i] = nextWord();
-                    }
+                    long[] operands = nextWords(operandCount);
                     visitor.visitExecExtendedInstruction(resultType, resultID, set, instruction, operands);
                 }
                 break;
@@ -418,10 +408,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                 case OpConstant: {
                     long type = nextWord();
                     long resultID = nextWord();
-                    long[] bitPattern = new long[wordCount - 3];
-                    for (int i = 0; i < bitPattern.length; i++) {
-                        bitPattern[i] = nextWord();
-                    }
+                    long[] bitPattern = nextWords(wordCount - 3);
                     visitor.visitConstant(type, resultID, bitPattern);
                 }
                 break;
@@ -444,10 +431,7 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     long resultType = nextWord();
                     long resultID = nextWord();
                     long base = nextWord();
-                    long[] indexes = new long[wordCount-4];
-                    for (int i = 0; i < indexes.length; i++) {
-                        indexes[i] = nextWord();
-                    }
+                    long[] indexes = nextWords(wordCount-4);
                     visitor.visitAccessChain(resultType, resultID, base, indexes);
                 }
                 break;
@@ -506,7 +490,13 @@ public class SBMReader implements SBMVisitor, Opcodes {
                     ImageOperands operands = new ImageOperands(0);
                     if(wordCount > 5) {
                         operands.setFromMask(nextWord());
-                        // https://www.khronos.org/registry/spir-v/specs/1.0/SPIRV.html#Image_Operands
+                        int count = operands.getOperandCount();
+                        long[] operandValues = nextWords(count);
+                        Map<Integer, long[]> splitOperands = new HashMap<>();
+                        operands.splitOperands(operandValues, splitOperands);
+                        visitor.visitImageSampleImplicitLod(resultType, resultID, sampledImage, coordinate, operands, splitOperands);
+                    } else {
+                        visitor.visitImageSampleImplicitLod(resultType, resultID, sampledImage, coordinate, operands, Collections.emptyMap());
                     }
                 }
                 break;
@@ -519,6 +509,14 @@ public class SBMReader implements SBMVisitor, Opcodes {
         }
         visitor.visitEnd();
         return visitor;
+    }
+
+    private long[] nextWords(int count) throws IOException {
+        long[] result = new long[count];
+        for (int i = 0; i < count; i++) {
+            result[i] = nextWord();
+        }
+        return result;
     }
 
     private ExecutionMode readMode(ExecutionMode.Type type, int opCount) throws IOException {

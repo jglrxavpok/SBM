@@ -2,15 +2,13 @@ package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
 import org.jglr.sbm.decorations.*;
+import org.jglr.sbm.image.*;
 import org.jglr.sbm.instructions.*;
-import org.jglr.sbm.image.Dimensionality;
-import org.jglr.sbm.image.ImageDepth;
-import org.jglr.sbm.image.ImageFormat;
-import org.jglr.sbm.image.Sampling;
 import org.jglr.sbm.types.*;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class CodeCollector implements SBMCodeVisitor {
 
@@ -386,6 +384,11 @@ public class CodeCollector implements SBMCodeVisitor {
     public void visitExecutionMode(long entryPoint, ExecutionMode mode) {
         addInstruction(new ExecutionModeInstruction(entryPoint, mode));
         infoPool.setExecutionMode(entryPoint, mode);
+    }
+
+    @Override
+    public void visitImageSampleImplicitLod(long resultType, long resultID, long sampledImage, long coordinate, ImageOperands operands, Map<Integer, long[]> splitOperands) {
+        addInstruction(new ImageSampleImplicitLodInstruction(resultType, resultID, sampledImage, coordinate, operands, splitOperands));
     }
 
     public List<SpvInstruction> getInstructions() {
