@@ -1,9 +1,15 @@
-import org.jglr.sbm.SourceLanguage;
+import org.jglr.sbm.*;
+import org.jglr.sbm.instructions.ResultInstruction;
+import org.jglr.sbm.types.FunctionType;
+import org.jglr.sbm.types.IntType;
+import org.jglr.sbm.types.Type;
+import org.jglr.sbm.utils.FunctionGenerator;
+import org.jglr.sbm.utils.ModuleGenerator;
+import org.jglr.sbm.utils.ModuleVariable;
 import org.jglr.sbm.visitors.*;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -37,5 +43,43 @@ public class TestWriter {
         reader.visitHeader();
         CodeCollector codeCollector = (CodeCollector) reader.visitCode();
         codeCollector.getInstructions().forEach(System.out::println);
+    }
+
+    @Test
+    public void generator() throws IOException {
+        ModuleGenerator generator = new ModuleGenerator()
+                .setGeneratorMagicNumber(42)
+                .setSourceInfos(SourceLanguage.GLSL, 400, "Test.txt", "c = a+b;")
+                .addCapability(Capability.Shader).addCapability(Capability.Kernel)
+                .addSetImport("GLSL.std.450")
+                .addSourceExtension("GL_ARB_separate_shader_objects")
+                .addSourceExtension("GL_ARB_shading_language_420pack")
+                .setMemoryModel(AddressingModel.Logical, MemoryModel.GLSL450);
+
+        ModuleFunction mainFunction = new ModuleFunction("main", new FunctionType(Type.VOID, new IntType(32, false)));
+        generator.addEntryPoint(mainFunction, ExecutionModel.Fragment, new ModuleVariable[0]);
+        generator.setExecutionMode(mainFunction, new ExecutionMode(ExecutionMode.Type.OriginLowerLeft) {
+            @Override
+            public int getOperandCount() {
+                return 0;
+            }
+        });
+        FunctionGenerator functionGenerator = generator.createFunction(mainFunction);
+
+        functionGenerator.end();
+
+        FileOutputStream out = new FileOutputStream(new File(".", "shaderGenerated.frag.spv"));
+        out.write(generator.toBytes());
+        out.flush();
+        out.close();
+
+        ModuleReader reader = new ModuleReader(generator.toBytes());
+        reader.visitHeader();
+        CodeCollector codeCollector = (CodeCollector) reader.visitCode();
+        codeCollector.getInstructions().forEach(i -> {
+            if(i instanceof ResultInstruction)
+                System.out.print("%"+((ResultInstruction)i).getResultID()+" = ");
+            System.out.println(i.toString());
+        });
     }
 }

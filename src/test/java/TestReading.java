@@ -4,6 +4,7 @@ import org.jglr.sbm.Module;
 import org.jglr.sbm.SourceLanguage;
 import org.jglr.sbm.glsl.GLSLStd450;
 import org.jglr.sbm.instructions.ExtendedInstructionSetCallInstruction;
+import org.jglr.sbm.instructions.ResultInstruction;
 import org.jglr.sbm.visitors.CodeCollector;
 import org.jglr.sbm.visitors.HeaderCollector;
 import org.jglr.sbm.visitors.ModuleReader;
@@ -182,7 +183,11 @@ public class TestReading {
         ModuleReader reader = new ModuleReader(vertShaderCode);
         CodeCollector codeCollector = (CodeCollector) reader.visitCode();
         Module module = codeCollector.toModule();
-        codeCollector.getInstructions().forEach(System.out::println);
+        codeCollector.getInstructions().forEach(i -> {
+            if(i instanceof ResultInstruction)
+                System.out.print("%"+((ResultInstruction)i).getResultID()+" = ");
+            System.out.println(i.toString());
+        });
 
         // Source
         assertEquals(400, module.getLanguageVersion());
@@ -215,7 +220,11 @@ public class TestReading {
         out.close();
         ModuleReader reader = new ModuleReader(fragShaderCode);
         CodeCollector codeCollector = (CodeCollector) reader.visitCode();
-        codeCollector.getInstructions().forEach(System.out::println);
+        codeCollector.getInstructions().forEach(i -> {
+            if(i instanceof ResultInstruction)
+                System.out.print("%"+((ResultInstruction)i).getResultID()+" = ");
+            System.out.println(i.toString());
+        });
         Module module = codeCollector.toModule();
         assertEquals(400, module.getLanguageVersion());
         assertEquals(SourceLanguage.GLSL, module.getLanguage());

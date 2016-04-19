@@ -12,4 +12,5 @@ public abstract class ResultInstruction extends SpvInstruction {
     public long getResultID() {
         return resultID;
     }
+
 }
