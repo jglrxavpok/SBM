@@ -176,10 +176,11 @@ public class CodeWriter implements CodeVisitor, Opcodes {
 
     @Override
     public void visitStore(long pointer, long object, MemoryAccess memoryAccess) {
-        newOpcode(OpStore, 3);
+        newOpcode(OpStore, 2 + (memoryAccess != null && memoryAccess.getMask() != 0 ? 1 : 0));
         buffer.putUnsignedInt(pointer);
         buffer.putUnsignedInt(object);
-        buffer.putUnsignedInt(memoryAccess.getMask());
+        if(memoryAccess != null && memoryAccess.getMask() != 0)
+            buffer.putUnsignedInt(memoryAccess.getMask());
     }
 
     @Override
@@ -211,11 +212,12 @@ public class CodeWriter implements CodeVisitor, Opcodes {
 
     @Override
     public void visitLoad(long resultType, long resultID, long pointer, MemoryAccess memoryAccess) {
-        newOpcode(OpLoad, 4);
+        newOpcode(OpLoad, 3 + (memoryAccess != null && memoryAccess.getMask() != 0 ? 1 : 0));
         buffer.putUnsignedInt(resultType);
         buffer.putUnsignedInt(resultID);
         buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(memoryAccess.getMask());
+        if(memoryAccess != null && memoryAccess.getMask() != 0)
+            buffer.putUnsignedInt(memoryAccess.getMask());
     }
 
     @Override

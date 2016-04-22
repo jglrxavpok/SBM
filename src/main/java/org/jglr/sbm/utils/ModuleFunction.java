@@ -1,5 +1,6 @@
-package org.jglr.sbm;
+package org.jglr.sbm.utils;
 
+import org.jglr.sbm.FunctionControl;
 import org.jglr.sbm.types.FunctionType;
 import org.jglr.sbm.types.Type;
 import org.jglr.sbm.utils.ModuleComponent;
@@ -24,6 +25,11 @@ public class ModuleFunction implements ModuleComponent {
 
     public Type getFunctionType() {
         return functionType;
+    }
+
+    @Override
+    public Type getType() {
+        return getFunctionType();
     }
 
     public String getName() {

@@ -20,15 +20,17 @@ public class ModuleGenerator {
     private final Map<String, Long> setIDs;
     private final Map<Type, Long> typeIDs;
     private final Map<ModuleComponent, Long> componentIDs;
-    private HeaderVisitor header;
+    HeaderVisitor header;
     CodeVisitor code;
     private long currentID;
+    private boolean checks;
 
     public ModuleGenerator() {
         this(new ModuleWriter());
     }
 
     public ModuleGenerator(ModuleWriter writer) {
+        checks = true;
         currentID = 1;
         this.writer = writer;
         try {
@@ -65,7 +67,7 @@ public class ModuleGenerator {
      * @return
      *      The assigned &lt;id&gt;
      */
-    private long getStringID(String string) {
+    public long getStringID(String string) {
         if(string == null)
             return -1;
         if(!stringIDs.containsKey(string)) {
@@ -94,7 +96,7 @@ public class ModuleGenerator {
         return this;
     }
 
-    private long getSetID(String name) {
+    public long getSetID(String name) {
         if(name == null)
             return -1;
         if(!setIDs.containsKey(name)) {
@@ -103,7 +105,7 @@ public class ModuleGenerator {
         return setIDs.get(name);
     }
 
-    private long[] getComponentIDs(ModuleComponent[] components) {
+    public long[] getComponentIDs(ModuleComponent[] components) {
         long[] result = new long[components.length];
         for (int i = 0; i < components.length; i++) {
             result[i] = getComponentID(components[i]);
@@ -111,7 +113,7 @@ public class ModuleGenerator {
         return result;
     }
 
-    private long getComponentID(ModuleComponent component) {
+    public long getComponentID(ModuleComponent component) {
         if(component == null)
             return -1;
         if(!componentIDs.containsKey(component)) {
@@ -236,5 +238,18 @@ public class ModuleGenerator {
 
     public void setExecutionMode(ModuleFunction entryPoint, ExecutionMode mode) {
         code.visitExecutionMode(getComponentID(entryPoint), mode);
+    }
+
+    public boolean performsChecks() {
+        return checks;
+    }
+
+    public ModuleGenerator performChecks(boolean checks) {
+        this.checks = checks;
+        return this;
+    }
+
+    public boolean hasComponentID(ModuleComponent component) {
+        return componentIDs.containsKey(component);
     }
 }

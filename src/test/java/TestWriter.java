@@ -1,9 +1,9 @@
 import org.jglr.sbm.*;
+import org.jglr.sbm.decorations.FastMathDecorationValue;
 import org.jglr.sbm.instructions.ResultInstruction;
-import org.jglr.sbm.types.FunctionType;
-import org.jglr.sbm.types.IntType;
-import org.jglr.sbm.types.Type;
+import org.jglr.sbm.types.*;
 import org.jglr.sbm.utils.FunctionGenerator;
+import org.jglr.sbm.utils.ModuleFunction;
 import org.jglr.sbm.utils.ModuleGenerator;
 import org.jglr.sbm.utils.ModuleVariable;
 import org.jglr.sbm.visitors.*;
@@ -65,7 +65,13 @@ public class TestWriter {
             }
         });
         FunctionGenerator functionGenerator = generator.createFunction(mainFunction);
-
+            Type objectType = new FloatType(32);
+            ModuleVariable object = new ModuleVariable("object", objectType);
+            object.addDecoration(new FastMathDecorationValue(new FPFastMathMode(FPFastMathMode.FLAG_NOT_INF | FPFastMathMode.FLAG_NOT_NAN)));
+            ModuleVariable pointer = new ModuleVariable("pointer", new PointerType(StorageClass.Function, objectType));
+            functionGenerator.store(object, pointer);
+            ModuleVariable resultHolder = new ModuleVariable("result", objectType);
+            functionGenerator.load(resultHolder, pointer);
         functionGenerator.end();
 
         FileOutputStream out = new FileOutputStream(new File(".", "shaderGenerated.frag.spv"));
