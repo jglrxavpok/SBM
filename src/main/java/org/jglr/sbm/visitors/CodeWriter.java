@@ -260,6 +260,17 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     }
 
     @Override
+    public void visitKill() {
+        newOpcode(OpKill, 0);
+    }
+
+    @Override
+    public void visitReturnValue(long valueID) {
+        newOpcode(OpReturnValue, 1);
+        buffer.putUnsignedInt(valueID);
+    }
+
+    @Override
     public void visitIntDecoration(Decoration decoration, long target, long value) {
         newOpcode(OpDecorate, 3);
         buffer.putUnsignedInt(target);

@@ -45,7 +45,9 @@ public interface Opcodes {
 
         OpImageSampleImplicitLod = 87,
 
+        OpKill = 252,
         OpReturn = 253,
+        OpReturnValue = 254,
 
 
         OpTypeVoid = 19,

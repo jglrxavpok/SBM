@@ -59,4 +59,8 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor {
     void visitExecutionMode(long entryPoint, ExecutionMode mode);
 
     void visitImageSampleImplicitLod(long resultType, long resultID, long sampledImage, long coordinate, ImageOperands operands, Map<Integer, long[]> splitOperands);
+
+    void visitKill();
+
+    void visitReturnValue(long valueID);
 }

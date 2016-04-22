@@ -391,6 +391,16 @@ public class CodeCollector implements CodeVisitor {
         addInstruction(new ImageSampleImplicitLodInstruction(resultType, resultID, sampledImage, coordinate, operands, splitOperands));
     }
 
+    @Override
+    public void visitKill() {
+        addInstruction(new KillInstruction());
+    }
+
+    @Override
+    public void visitReturnValue(long valueID) {
+        addInstruction(new ReturnValueInstruction(valueID));
+    }
+
     public List<SpvInstruction> getInstructions() {
         return instructions;
     }

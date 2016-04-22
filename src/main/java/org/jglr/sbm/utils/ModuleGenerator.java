@@ -20,6 +20,7 @@ public class ModuleGenerator {
     private final Map<String, Long> setIDs;
     private final Map<Type, Long> typeIDs;
     private final Map<ModuleComponent, Long> componentIDs;
+    private final Map<Label, Long> labelIDs;
     HeaderVisitor header;
     CodeVisitor code;
     private long currentID;
@@ -43,6 +44,7 @@ public class ModuleGenerator {
         stringIDs = new HashMap<>();
         typeIDs = new HashMap<>();
         componentIDs = new HashMap<>();
+        labelIDs = new HashMap<>();
     }
 
     public ModuleGenerator setSpirVersion(long version) {
@@ -127,9 +129,9 @@ public class ModuleGenerator {
         return this;
     }
 
-    public FunctionGenerator createFunction(ModuleFunction function) {
+    public FunctionGenerator createFunction(ModuleFunction function, Label startLabel) {
         FunctionGenerator generator = new FunctionGenerator(this, function);
-        generator.init(getComponentID(function));
+        generator.init(getComponentID(function), startLabel);
         return generator;
     }
 
@@ -251,5 +253,15 @@ public class ModuleGenerator {
 
     public boolean hasComponentID(ModuleComponent component) {
         return componentIDs.containsKey(component);
+    }
+
+    public long getLabelID(Label label) {
+        if(label == null)
+            return -1;
+        if(!labelIDs.containsKey(label)) {
+            long id = currentID++;
+            labelIDs.put(label, id);
+        }
+        return labelIDs.get(label);
     }
 }

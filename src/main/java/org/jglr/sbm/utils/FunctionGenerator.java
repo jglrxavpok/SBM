@@ -20,11 +20,12 @@ public class FunctionGenerator {
         generator.code.visitFunctionEnd();
     }
 
-    void init(long id) {
+    void init(long id, Label startLabel) {
         if(function.getName() != null) {
             generator.code.visitName(id, function.getName());
         }
         generator.code.visitFunction(generator.getTypeID(function.getReturnType()), id, function.getControl(), generator.getTypeID(function.getFunctionType()));
+        label(startLabel);
     }
 
     public FunctionGenerator load(ModuleVariable resultHolder, ModuleVariable pointerVariable) {
@@ -132,5 +133,25 @@ public class FunctionGenerator {
         if(!typeClass.isAssignableFrom(type.getClass())) {
             throw new IllegalArgumentException("Types do not match, requested: "+typeClass.getSimpleName()+", got: "+type+" ("+type.getClass().getSimpleName()+")");
         }
+    }
+
+    public FunctionGenerator label(Label label) {
+        generator.code.visitLabel(generator.getLabelID(label));
+        return this;
+    }
+
+    public FunctionGenerator returnVoid() {
+        generator.code.visitReturn();
+        return this;
+    }
+
+    public FunctionGenerator kill() {
+        generator.code.visitKill();
+        return this;
+    }
+
+    public FunctionGenerator returnValue(ModuleVariable value) {
+        generator.code.visitReturnValue(generator.getComponentID(value));
+        return this;
     }
 }
