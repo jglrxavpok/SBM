@@ -23,4 +23,16 @@ public class Type {
     public String toString() {
         return name;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Type)
+            return ((Type) obj).getName().equals(getName());
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
 }

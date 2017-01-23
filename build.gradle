@@ -17,6 +17,25 @@ repositories {
     }
 }
 
+sourceSets {
+    main {
+        java {
+            ['src/main/java']
+        }
+        resources {
+            ['src/main/resources']
+        }
+    }
+
+    test {
+        java {
+            ['src/test/java']
+        }
+        resources {
+            ['src/test/resources']
+        }
+    }
+}
 project.ext.lwjglVersion = '3.0.0-SNAPSHOT'
 
 dependencies {

@@ -34,4 +34,10 @@ public interface DecorationVisitor {
     void visitLinkageAttributesMemberDecoration(long structureType, long member, String name, LinkageType linkageType);
 
     void visitMemberDecoration(long structureType, long member, Decoration decoration);
+
+    void visitDecorationGroup(long resultID);
+
+    void visitGroupDecoration(long decorationGroup, long[] targets);
+
+    void visitGroupMemberDecoration(long decorationGroup, long[] memberTargets);
 }

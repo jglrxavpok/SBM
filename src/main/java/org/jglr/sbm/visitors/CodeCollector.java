@@ -198,6 +198,21 @@ public class CodeCollector implements CodeVisitor {
     }
 
     @Override
+    public void visitDecorationGroup(long resultID) {
+        addInstruction(new DecorationGroupInstruction(resultID));
+    }
+
+    @Override
+    public void visitGroupDecoration(long decorationGroup, long[] targets) {
+        addInstruction(new GroupDecorationInstruction(decorationGroup, targets));
+    }
+
+    @Override
+    public void visitGroupMemberDecoration(long decorationGroup, long[] memberTargets) {
+        addInstruction(new GroupDecorationMemberInstruction(decorationGroup, memberTargets));
+    }
+
+    @Override
     public void visitVoidType(long resultID) {
         addInstruction(new VoidTypeInstruction(resultID));
         infoPool.registerType(resultID, new Type("void"));
@@ -323,6 +338,12 @@ public class CodeCollector implements CodeVisitor {
     }
 
     @Override
+    public void visitNamedBarrierType(long resultID) {
+        addInstruction(new NamedBarrierTypeInstruction(resultID));
+        infoPool.registerType(resultID, new Type("namedBarrier"));
+    }
+
+    @Override
     public void visitStore(long pointer, long object, MemoryAccess memoryAccess) {
         addInstruction(new StoreInstruction(pointer, object, memoryAccess));
     }
@@ -399,6 +420,31 @@ public class CodeCollector implements CodeVisitor {
     @Override
     public void visitReturnValue(long valueID) {
         addInstruction(new ReturnValueInstruction(valueID));
+    }
+
+    @Override
+    public void visitNoLine() {
+        addInstruction(new NoLineInstruction());
+    }
+
+    @Override
+    public void visitFunctionCall(long resultType, long resultID, long functionID, long[] arguments) {
+        addInstruction(new FunctionCallInstruction(resultType, resultID, functionID, arguments));
+    }
+
+    @Override
+    public void visitCopyMemory(long targetID, long sourceID, MemoryAccess access) {
+        addInstruction(new CopyMemoryInstruction(sourceID, targetID, access));
+    }
+
+    @Override
+    public void visitCopyMemorySized(long targetID, long sourceID, long size, MemoryAccess access) {
+        addInstruction(new CopyMemorySizedInstruction(sourceID, targetID, size, access));
+    }
+
+    @Override
+    public void visitModuleProcessed(String process) {
+        addInstruction(new ModuleProcessedInstruction(process));
     }
 
     public List<SpvInstruction> getInstructions() {

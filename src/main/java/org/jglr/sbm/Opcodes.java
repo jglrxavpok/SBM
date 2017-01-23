@@ -22,6 +22,9 @@ public interface Opcodes {
 
         OpDecorate = 71,
         OpMemberDecorate = 72,
+        OpDecorationGroup = 73,
+        OpGroupDecorate = 74,
+        OpGroupMemberDecorate = 75,
 
         OpCapability = 17,
         OpExtension = 10,
@@ -71,9 +74,20 @@ public interface Opcodes {
         OpTypeQueue = 37,
         OpTypePipe = 38,
         OpTypeForwardPointer = 39,
+        OpTypeNamedBarrier = 327,
 
         OpConstantTrue = 40,
-        OpConstantFalse = 41
+        OpConstantFalse = 41,
+        OpConstantComposite = 44,
+        OpConstantSampler = 45,
+        OpConstantNull = 46,
+        OpSpecConstantTrue = 48,
+        OpSpecConstantFalse = 49,
+        OpSpecConstant = 50,
+        OpSpecConstantComposite = 51,
+        OpSpecConstantOp = 52,
+
+        OpModuleProcessed = 330
 
     ;
 

@@ -30,4 +30,5 @@ public interface TypeVisitor {
     void visitQueueType(long resultID);
     void visitPipeType(long resultID, AccessQualifier accessQualifier);
     void visitForwardType(long type, StorageClass storageClass);
+    void visitNamedBarrierType(long resultID);
 }

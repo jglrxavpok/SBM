@@ -63,4 +63,14 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor {
     void visitKill();
 
     void visitReturnValue(long valueID);
+
+    void visitNoLine();
+
+    void visitFunctionCall(long resultType, long resultID, long functionID, long[] arguments);
+
+    void visitCopyMemory(long targetID, long sourceID, MemoryAccess access);
+
+    void visitCopyMemorySized(long targetID, long sourceID, long size, MemoryAccess access);
+
+    void visitModuleProcessed(String process);
 }

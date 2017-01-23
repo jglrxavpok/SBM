@@ -5,7 +5,6 @@ import org.jglr.sbm.*;
 import org.jglr.sbm.decorations.Decoration;
 import org.jglr.sbm.image.*;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteOrder;
 import java.util.Map;
 
@@ -372,6 +371,26 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     }
 
     @Override
+    public void visitDecorationGroup(long resultID) {
+        newOpcode(OpDecorationGroup, 1);
+        buffer.putUnsignedInt(resultID);
+    }
+
+    @Override
+    public void visitGroupDecoration(long decorationGroup, long[] targets) {
+        newOpcode(OpGroupDecorate, 1 + targets.length);
+        buffer.putUnsignedInt(decorationGroup);
+        buffer.putUnsignedInts(targets);
+    }
+
+    @Override
+    public void visitGroupMemberDecoration(long decorationGroup, long[] memberTargets) {
+        newOpcode(OpDecorationGroup, 1 + memberTargets.length);
+        buffer.putUnsignedInt(decorationGroup);
+        buffer.putUnsignedInts(memberTargets);
+    }
+
+    @Override
     public void visitVoidType(long resultID) {
         newOpcode(OpTypeVoid, 1);
         buffer.putUnsignedInt(resultID);
@@ -526,6 +545,41 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         newOpcode(OpTypeForwardPointer, 2);
         buffer.putUnsignedInt(type);
         buffer.putUnsignedInt(storageClass.ordinal());
+    }
+
+    @Override
+    public void visitNamedBarrierType(long resultID) {
+        newOpcode(OpTypeNamedBarrier, 1);
+        buffer.putUnsignedInt(resultID);
+    }
+
+    @Override
+    public void visitNoLine() {
+        newOpcode(OpNoLine, 0);
+    }
+
+    @Override
+    public void visitFunctionCall(long resultType, long resultID, long functionID, long[] arguments) {
+        newOpcode(OpFunctionCall, 3 + arguments.length);
+        buffer.putUnsignedInts(resultType, resultID, functionID);
+        buffer.putUnsignedInts(arguments);
+    }
+
+    @Override
+    public void visitCopyMemory(long targetID, long sourceID, MemoryAccess access) {
+        newOpcode(OpCopyMemory, 3);
+        buffer.putUnsignedInts(targetID, sourceID, access.getMask());
+    }
+
+    @Override
+    public void visitCopyMemorySized(long targetID, long sourceID, long size, MemoryAccess access) {
+        newOpcode(OpCopyMemorySized, 4);
+        buffer.putUnsignedInts(targetID, sourceID, size, access.getMask());
+    }
+
+    @Override
+    public void visitModuleProcessed(String process) {
+
     }
 
     public byte[] toBytes() {

@@ -510,6 +510,74 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                     visitor.visitReturnValue(nextWord());
                     break;
 
+                case OpNoLine:
+                    visitor.visitNoLine();
+                    break;
+
+                case OpFunctionCall: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    long functionID = nextWord();
+                    long[] arguments = nextWords(wordCount - 4);
+                    visitor.visitFunctionCall(resultType, resultID, functionID, arguments);
+                }
+                break;
+
+                case OpCopyMemory: {
+                    long targetID = nextWord();
+                    long sourceID = nextWord();
+                    MemoryAccess access = new MemoryAccess(0);
+                    if(wordCount >= 3) {
+                        access.setFromMask(nextWord());
+                    }
+                    visitor.visitCopyMemory(targetID, sourceID, access);
+                }
+                break;
+
+                case OpCopyMemorySized: {
+                    long targetID = nextWord();
+                    long sourceID = nextWord();
+                    long size = nextWord();
+                    MemoryAccess access = new MemoryAccess(0);
+                    if(wordCount >= 4) {
+                        access.setFromMask(nextWord());
+                    }
+                    visitor.visitCopyMemorySized(targetID, sourceID, size, access);
+                }
+                break;
+
+                case OpModuleProcessed: {
+                    String process = nextString();
+                    visitor.visitModuleProcessed(process);
+                }
+                break;
+
+                case OpDecorationGroup: {
+                    long decorationGroup = nextWord();
+                    visitor.visitDecorationGroup(decorationGroup);
+                }
+                break;
+
+                case OpGroupDecorate: {
+                    long decorationGroup = nextWord();
+                    long[] targets = nextWords(wordCount-2);
+                    visitor.visitGroupDecoration(decorationGroup, targets);
+                }
+                break;
+
+                case OpGroupMemberDecorate: {
+                    long decorationGroup = nextWord();
+                    long[] targets = nextWords(wordCount-2);
+                    visitor.visitGroupMemberDecoration(decorationGroup, targets);
+                }
+                break;
+
+                case OpTypeNamedBarrier: {
+                    long resultID = nextWord();
+                    visitor.visitNamedBarrierType(resultID);
+                }
+                break;
+
                 default:
                     System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);
                     position += (wordCount-1)*4;
