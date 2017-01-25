@@ -1,9 +1,9 @@
 package org.jglr.sbm.utils;
 
 import org.jglr.sbm.*;
-import org.jglr.sbm.image.Dimensionality;
-import org.jglr.sbm.image.ImageDepth;
-import org.jglr.sbm.image.Sampling;
+import org.jglr.sbm.sampler.Dimensionality;
+import org.jglr.sbm.sampler.ImageDepth;
+import org.jglr.sbm.sampler.Sampling;
 import org.jglr.sbm.types.*;
 import org.jglr.sbm.visitors.CodeVisitor;
 import org.jglr.sbm.visitors.HeaderVisitor;

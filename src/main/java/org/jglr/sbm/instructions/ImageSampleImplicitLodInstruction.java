@@ -1,7 +1,7 @@
 package org.jglr.sbm.instructions;
 
 import org.jglr.sbm.InfoPool;
-import org.jglr.sbm.image.ImageOperands;
+import org.jglr.sbm.sampler.ImageOperands;
 import org.jglr.sbm.types.Type;
 
 import java.util.Map;

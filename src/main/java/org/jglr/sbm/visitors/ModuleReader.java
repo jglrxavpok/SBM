@@ -2,7 +2,7 @@ package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
 import org.jglr.sbm.decorations.Decoration;
-import org.jglr.sbm.image.*;
+import org.jglr.sbm.sampler.*;
 import org.jglr.sbm.modes.InvocationsExecutionMode;
 import org.jglr.sbm.modes.OutputVerticesExecutionMode;
 import org.jglr.sbm.modes.SizeExecutionMode;
@@ -575,6 +575,45 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                 case OpTypeNamedBarrier: {
                     long resultID = nextWord();
                     visitor.visitNamedBarrierType(resultID);
+                }
+                break;
+
+                case OpConstantComposite: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    long[] constituents = nextWords(wordCount-3);
+                    visitor.visitConstantComposite(resultType, resultID, constituents);
+                }
+                break;
+
+                case OpConstantSampler: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    SamplerAddressingMode mode = nextEnumValue(SamplerAddressingMode.values());
+                    boolean normalized = nextWord() == 1;
+                    SamplerFilterMode filter = nextEnumValue(SamplerFilterMode.values());
+                    visitor.visitConstantSampler(resultType, resultID, mode, normalized, filter);
+                }
+                break;
+
+                case OpConstantNull: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    visitor.visitConstantNull(resultType, resultID);
+                }
+                break;
+
+                case OpSpecConstantTrue: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    visitor.visitSpecConstantBool(resultType, resultID, true);
+                }
+                break;
+
+                case OpSpecConstantFalse: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    visitor.visitSpecConstantBool(resultType, resultID, false);
                 }
                 break;
 

@@ -2,10 +2,10 @@ package org.jglr.sbm.instructions;
 
 import org.jglr.sbm.AccessQualifier;
 import org.jglr.sbm.InfoPool;
-import org.jglr.sbm.image.Dimensionality;
-import org.jglr.sbm.image.ImageDepth;
-import org.jglr.sbm.image.ImageFormat;
-import org.jglr.sbm.image.Sampling;
+import org.jglr.sbm.sampler.Dimensionality;
+import org.jglr.sbm.sampler.ImageDepth;
+import org.jglr.sbm.sampler.ImageFormat;
+import org.jglr.sbm.sampler.Sampling;
 import org.jglr.sbm.types.Type;
 
 public class ImageTypeInstruction extends ResultInstruction implements ResolvableInstruction {

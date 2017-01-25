@@ -1,4 +1,4 @@
-package org.jglr.sbm.image;
+package org.jglr.sbm.sampler;
 
 public enum ImageDepth {
 

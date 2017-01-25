@@ -2,7 +2,7 @@ package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
 import org.jglr.sbm.decorations.*;
-import org.jglr.sbm.image.*;
+import org.jglr.sbm.sampler.*;
 import org.jglr.sbm.instructions.*;
 import org.jglr.sbm.types.*;
 
@@ -445,6 +445,26 @@ public class CodeCollector implements CodeVisitor {
     @Override
     public void visitModuleProcessed(String process) {
         addInstruction(new ModuleProcessedInstruction(process));
+    }
+
+    @Override
+    public void visitConstantComposite(long resultType, long resultID, long[] constituents) {
+        addInstruction(new ConstantCompositeInstruction(resultType, resultID, constituents));
+    }
+
+    @Override
+    public void visitConstantSampler(long resultType, long resultID, SamplerAddressingMode mode, boolean normalized, SamplerFilterMode filter) {
+        addInstruction(new ConstantSamplerInstruction(resultType, resultID, mode, normalized, filter));
+    }
+
+    @Override
+    public void visitConstantNull(long resultType, long resultID) {
+        addInstruction(new ConstantNullInstruction(resultType, resultID));
+    }
+
+    @Override
+    public void visitSpecConstantBool(long resultType, long resultID, boolean defaultValue) {
+        addInstruction(new SpecConstantBoolInstruction(resultType, resultID, defaultValue));
     }
 
     public List<SpvInstruction> getInstructions() {

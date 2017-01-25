@@ -3,7 +3,7 @@ package org.jglr.sbm.visitors;
 import org.jglr.flows.io.ByteArray;
 import org.jglr.sbm.*;
 import org.jglr.sbm.decorations.Decoration;
-import org.jglr.sbm.image.*;
+import org.jglr.sbm.sampler.*;
 
 import java.nio.ByteOrder;
 import java.util.Map;
@@ -579,7 +579,34 @@ public class CodeWriter implements CodeVisitor, Opcodes {
 
     @Override
     public void visitModuleProcessed(String process) {
+        newOpcode(OpModuleProcessed, sizeOf(process));
+        buffer.putChars(process);
+    }
 
+    @Override
+    public void visitConstantComposite(long resultType, long resultID, long[] constituents) {
+        newOpcode(OpConstantComposite, 2 + constituents.length);
+        buffer.putUnsignedInts(resultType, resultID);
+        buffer.putUnsignedInts(constituents);
+    }
+
+    @Override
+    public void visitConstantSampler(long resultType, long resultID, SamplerAddressingMode mode, boolean normalized, SamplerFilterMode filter) {
+        newOpcode(OpConstantSampler, 5);
+        buffer.putUnsignedInts(resultType, resultID, mode.ordinal(), normalized ? 1 : 0, filter.ordinal());
+    }
+
+    @Override
+    public void visitConstantNull(long resultType, long resultID) {
+        newOpcode(OpConstantNull, 2);
+        buffer.putUnsignedInts(resultType, resultID);
+    }
+
+    @Override
+    public void visitSpecConstantBool(long resultType, long resultID, boolean defaultValue) {
+        newOpcode(defaultValue ? OpSpecConstantTrue : OpSpecConstantFalse, 3);
+        buffer.putUnsignedInts(resultType, resultID);
+        buffer.putUnsignedBool(defaultValue);
     }
 
     public byte[] toBytes() {

@@ -1,9 +1,8 @@
-package org.jglr.sbm.image;
+package org.jglr.sbm.sampler;
 
 import org.jglr.sbm.MaskValue;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

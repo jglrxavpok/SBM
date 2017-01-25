@@ -1,7 +1,9 @@
 package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
-import org.jglr.sbm.image.ImageOperands;
+import org.jglr.sbm.sampler.ImageOperands;
+import org.jglr.sbm.sampler.SamplerAddressingMode;
+import org.jglr.sbm.sampler.SamplerFilterMode;
 
 import java.util.Map;
 
@@ -73,4 +75,12 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor {
     void visitCopyMemorySized(long targetID, long sourceID, long size, MemoryAccess access);
 
     void visitModuleProcessed(String process);
+
+    void visitConstantComposite(long resultType, long resultID, long[] constituents);
+
+    void visitConstantSampler(long resultType, long resultID, SamplerAddressingMode mode, boolean normalized, SamplerFilterMode filter);
+
+    void visitConstantNull(long resultType, long resultID);
+
+    void visitSpecConstantBool(long resultType, long resultID, boolean defaultValue);
 }
