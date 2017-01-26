@@ -83,4 +83,10 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor {
     void visitConstantNull(long resultType, long resultID);
 
     void visitSpecConstantBool(long resultType, long resultID, boolean defaultValue);
+
+    void visitSpecConstant(long resultType, long resultID, long[] value);
+
+    void visitSpecConstantComposite(long resultType, long resultID, long[] constituents);
+
+    void visitSpecConstantOp(long resultType, long resultID, long opcode, long[] operands);
 }

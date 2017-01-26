@@ -617,6 +617,31 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                 }
                 break;
 
+                case OpSpecConstant: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    long[] value = nextWords(wordCount - 3);
+                    visitor.visitSpecConstant(resultType, resultID, value);
+                }
+                break;
+
+                case OpSpecConstantComposite: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    long[] constituents = nextWords(wordCount - 3);
+                    visitor.visitSpecConstantComposite(resultType, resultID, constituents);
+                }
+                break;
+
+                case OpSpecConstantOp: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    long opcode = nextWord();
+                    long[] operands = nextWords(wordCount-4);
+                    visitor.visitSpecConstantOp(resultType, resultID, opcode, operands);
+                }
+                break;
+
                 default:
                     System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);
                     position += (wordCount-1)*4;

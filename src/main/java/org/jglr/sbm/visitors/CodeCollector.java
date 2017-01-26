@@ -467,6 +467,21 @@ public class CodeCollector implements CodeVisitor {
         addInstruction(new SpecConstantBoolInstruction(resultType, resultID, defaultValue));
     }
 
+    @Override
+    public void visitSpecConstant(long resultType, long resultID, long[] value) {
+        addInstruction(new SpecConstantInstruction(resultType, resultID, value));
+    }
+
+    @Override
+    public void visitSpecConstantComposite(long resultType, long resultID, long[] constituents) {
+        addInstruction(new SpecConstantCompositeInstruction(resultType, resultID, constituents));
+    }
+
+    @Override
+    public void visitSpecConstantOp(long resultType, long resultID, long opcode, long[] operands) {
+        addInstruction(new SpecConstantOpInstruction(resultType, resultID, opcode, operands));
+    }
+
     public List<SpvInstruction> getInstructions() {
         return instructions;
     }

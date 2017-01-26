@@ -609,6 +609,27 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedBool(defaultValue);
     }
 
+    @Override
+    public void visitSpecConstant(long resultType, long resultID, long[] value) {
+        newOpcode(OpSpecConstant, 2 + value.length);
+        buffer.putUnsignedInts(resultType, resultID);
+        buffer.putUnsignedInts(value);
+    }
+
+    @Override
+    public void visitSpecConstantComposite(long resultType, long resultID, long[] constituents) {
+        newOpcode(OpSpecConstantComposite, 2 + constituents.length);
+        buffer.putUnsignedInts(resultType, resultID);
+        buffer.putUnsignedInts(constituents);
+    }
+
+    @Override
+    public void visitSpecConstantOp(long resultType, long resultID, long opcode, long[] operands) {
+        newOpcode(OpSpecConstantOp, 3 + operands.length);
+        buffer.putUnsignedInts(resultType, resultID, opcode);
+        buffer.putUnsignedInts(operands);
+    }
+
     public byte[] toBytes() {
         return buffer.backingArray();
     }

@@ -15,6 +15,14 @@ public class SpecConstantBoolInstruction extends ResultInstruction implements Re
         this.defaultValue = defaultValue;
     }
 
+    public long getResultTypeID() {
+        return resultTypeID;
+    }
+
+    public boolean isDefaultValue() {
+        return defaultValue;
+    }
+
     @Override
     public void onVisitEnd(InfoPool infoPool) {
         resultType = infoPool.getType(resultTypeID);
