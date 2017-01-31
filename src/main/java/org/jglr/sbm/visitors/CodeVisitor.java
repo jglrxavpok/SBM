@@ -89,4 +89,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor {
     void visitSpecConstantComposite(long resultType, long resultID, long[] constituents);
 
     void visitSpecConstantOp(long resultType, long resultID, long opcode, long[] operands);
+
+    void visitFunctionParameter(long resultType, long resultID);
 }

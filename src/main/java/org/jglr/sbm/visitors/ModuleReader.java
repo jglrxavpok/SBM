@@ -642,6 +642,12 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                 }
                 break;
 
+                case OpFunctionParameter: {
+                    long resultType = nextWord();
+                    long resultID = nextWord();
+                    visitor.visitFunctionParameter(resultType, resultID);
+                }
+
                 default:
                     System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);
                     position += (wordCount-1)*4;

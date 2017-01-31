@@ -87,6 +87,8 @@ public interface Opcodes {
         OpSpecConstantComposite = 51,
         OpSpecConstantOp = 52,
 
+        OpFunctionParameter = 55,
+
         OpModuleProcessed = 330
 
     ;

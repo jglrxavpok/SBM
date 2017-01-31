@@ -630,6 +630,12 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInts(operands);
     }
 
+    @Override
+    public void visitFunctionParameter(long resultType, long resultID) {
+        newOpcode(OpFunctionParameter, 2);
+        buffer.putUnsignedInts(resultType, resultID);
+    }
+
     public byte[] toBytes() {
         return buffer.backingArray();
     }
