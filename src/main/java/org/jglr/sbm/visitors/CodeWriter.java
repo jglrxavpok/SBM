@@ -554,6 +554,12 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     }
 
     @Override
+    public void visitPipeStorageType(long resultID) {
+        newOpcode(OpTypePipeStorage, 1);
+        buffer.putUnsignedInt(resultID);
+    }
+
+    @Override
     public void visitNoLine() {
         newOpcode(OpNoLine, 0);
     }

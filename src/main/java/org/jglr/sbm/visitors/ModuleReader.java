@@ -647,6 +647,13 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                     long resultID = nextWord();
                     visitor.visitFunctionParameter(resultType, resultID);
                 }
+                break;
+
+                case OpTypePipeStorage: {
+                    long resultID = nextWord();
+                    visitor.visitPipeStorageType(resultID);
+                }
+                break;
 
                 default:
                     System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);

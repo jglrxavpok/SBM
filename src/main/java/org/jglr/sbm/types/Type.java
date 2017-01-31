@@ -8,6 +8,7 @@ public class Type {
     public static final Type EVENT = new Type("event");
     public static final Type DEVICE_EVENT = new Type("deviceEvent");
     public static final Type QUEUE = new Type("queue");
+    public static final Type PIPE_STORAGE = new Type("pipeStorage");
     public static final Type RESERVE_ID = new Type("reserveID");
     private final String name;
 

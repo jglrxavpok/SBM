@@ -74,6 +74,7 @@ public interface Opcodes {
         OpTypeQueue = 37,
         OpTypePipe = 38,
         OpTypeForwardPointer = 39,
+        OpTypePipeStorage = 322,
         OpTypeNamedBarrier = 327,
 
         OpConstantTrue = 40,

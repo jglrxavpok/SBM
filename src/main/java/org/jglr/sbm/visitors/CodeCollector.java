@@ -344,6 +344,12 @@ public class CodeCollector implements CodeVisitor {
     }
 
     @Override
+    public void visitPipeStorageType(long resultID) {
+        addInstruction(new PipeStorageTypeInstruction(resultID));
+        infoPool.registerType(resultID, new Type("pipeStorage"));
+    }
+
+    @Override
     public void visitStore(long pointer, long object, MemoryAccess memoryAccess) {
         addInstruction(new StoreInstruction(pointer, object, memoryAccess));
     }
