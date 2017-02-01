@@ -8,7 +8,7 @@ public interface FunctionVisitor {
      *
      Add a function. This instruction must be immediately followed by one OpFunctionParameter instruction per each formal parameter of this function. This function’s body or declaration will terminate with the next OpFunctionEnd instruction.
 
-     The Result <id> cannot be used generally by other instructions. It can only be used by OpFunctionCall, OpEntryPoint, and decoration instructions.
+     The Result id cannot be used generally by other instructions. It can only be used by OpFunctionCall, OpEntryPoint, and decoration instructions.
 
      Result Type must be the same as the Return Type declared in Function Type.
 

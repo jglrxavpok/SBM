@@ -156,7 +156,7 @@ public interface TypeVisitor {
      <br/>
      Return Type is the type of the return value of functions of this type. It must be a concrete or abstract type, or a pointer to such a type. If the function has no return value, Return Type must be OpTypeVoid.<br/>
      <br/>
-     Parameter N Type is the type <id> of the type of parameter N.
+     Parameter N Type is the type id of the type of parameter N.
      */
     void visitFunctionType(long resultID, long returnType, long[] parameterTypes);
 

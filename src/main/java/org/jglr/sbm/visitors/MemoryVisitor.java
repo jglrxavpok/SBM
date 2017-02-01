@@ -74,7 +74,7 @@ public interface MemoryVisitor {
      <br/>
      Storage Class is the Storage Class of the memory holding the object. It cannot be Generic.<br/>
      <br/>
-     Initializer is optional. If Initializer is present, it will be the initial value of the variable’s memory content. Initializer must be an <id> from a constant instruction or a global (module scope) OpVariable instruction. Initializer must have the same type as the type pointed to by Result Type.
+     Initializer is optional. If Initializer is present, it will be the initial value of the variable’s memory content. Initializer must be an id from a constant instruction or a global (module scope) OpVariable instruction. Initializer must have the same type as the type pointed to by Result Type.
      */
     void visitVariable(long resultType, long resultID, StorageClass storageClass, long initializer);
 

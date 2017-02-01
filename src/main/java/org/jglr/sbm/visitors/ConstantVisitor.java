@@ -33,7 +33,7 @@ public interface ConstantVisitor {
      <br/>
      Result Type must be a composite type, whose top-level members/elements/components/columns have the same type as the types of the Constituents. The ordering must be the same between the top-level types in Result Type and the Constituents.<br/>
      <br/>
-     Constituents will become members of a structure, or elements of an array, or components of a vector, or columns of a matrix. There must be exactly one Constituent for each top-level member/element/component/column of the result. The Constituents must appear in the order needed by the definition of the Result Type. The Constituents must all be <id>s of other constant declarations or an OpUndef.
+     Constituents will become members of a structure, or elements of an array, or components of a vector, or columns of a matrix. There must be exactly one Constituent for each top-level member/element/component/column of the result. The Constituents must appear in the order needed by the definition of the Result Type. The Constituents must all be ids of other constant declarations or an OpUndef.
      */
     void visitConstantComposite(long resultType, long resultID, long[] constituents);
 
@@ -104,7 +104,7 @@ public interface ConstantVisitor {
      <br/>
      Result Type must be a composite type, whose top-level members/elements/components/columns have the same type as the types of the Constituents. The ordering must be the same between the top-level types in Result Type and the Constituents.<br/>
      <br/>
-     Constituents will become members of a structure, or elements of an array, or components of a vector, or columns of a matrix. There must be exactly one Constituent for each top-level member/element/component/column of the result. The Constituents must appear in the order needed by the definition of the type of the result. The Constituents must be the <id> of other specialization constant or constant declarations.<br/>
+     Constituents will become members of a structure, or elements of an array, or components of a vector, or columns of a matrix. There must be exactly one Constituent for each top-level member/element/component/column of the result. The Constituents must appear in the order needed by the definition of the type of the result. The Constituents must be the id of other specialization constant or constant declarations.<br/>
      <br/>
      This instruction will be specialized to an OpConstantComposite instruction.<br/>
      <br/>
@@ -151,7 +151,7 @@ public interface ConstantVisitor {
      OpAccessChain, OpInBoundsAccessChain<br/>
      OpPtrAccessChain, OpInBoundsPtrAccessChain<br/>
      <br/>
-     Operands are the operands required by opcode, and satisfy the semantics of opcode. In addition, all Operands must be the <id>s of other constant instructions, or for the AccessChain named opcodes, their Base is allowed to be a global (module scope) OpVariable instruction.<br/>
+     Operands are the operands required by opcode, and satisfy the semantics of opcode. In addition, all Operands must be the ids of other constant instructions, or for the AccessChain named opcodes, their Base is allowed to be a global (module scope) OpVariable instruction.<br/>
      <br/>
      See Specialization.
      */

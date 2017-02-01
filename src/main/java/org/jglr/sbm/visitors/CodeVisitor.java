@@ -65,9 +65,9 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     void visitLine(long filenameID, long line, long column);
 
     /**
-     * Assign a name string to another instruction’s Result <id>. This has no semantic impact and can safely be removed from a module.<br/>
+     * Assign a name string to another instruction’s Result id. This has no semantic impact and can safely be removed from a module.<br/>
      <br/>
-     Target is the Result <id> to assign a name to. It can be the Result <id> of any other instruction; a variable, function, type, intermediate result, etc.<br/>
+     Target is the Result id to assign a name to. It can be the Result id of any other instruction; a variable, function, type, intermediate result, etc.<br/>
      <br/>
      Name is the string to assign.
      */
@@ -76,7 +76,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     /**
      * Assign a name string to a member of a structure type. This has no semantic impact and can safely be removed from a module.<br/>
      <br/>
-     Type is the <id> from an OpTypeStruct instruction.<br/>
+     Type is the id from an OpTypeStruct instruction.<br/>
      <br/>
      Member is the number of the member to assign in the structure. The first member is member 0, the next is member 1, … This literal operand is limited to a single word.<br/>
      <br/>
@@ -85,9 +85,9 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     void visitMemberName(long structureType, long target, String name);
 
     /**
-     * Assign a Result <id> to a string for use by other debug instructions (see OpLine and OpSource). This has no semantic impact and can safely be removed from a module. (Removal also requires removal of all instructions referencing Result <id>.)<br/>
+     * Assign a Result id to a string for use by other debug instructions (see OpLine and OpSource). This has no semantic impact and can safely be removed from a module. (Removal also requires removal of all instructions referencing Result id.)<br/>
      <br/>
-     String is the literal string being assigned a Result <id>.
+     String is the literal string being assigned a Result id.
      */
     void visitString(long resultID, String value);
 
@@ -99,7 +99,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     void visitCapability(Capability cap);
 
     /**
-     * Import an extended set of instructions. It can be later referenced by the Result <id>.<br/>
+     * Import an extended set of instructions. It can be later referenced by the Result id.<br/>
      <br/>
      Name is the extended instruction-set’s name string. There must be an external specification defining the semantics for this extended instruction set.<br/>
      <br/>
@@ -125,18 +125,18 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
      <br/>
      Execution Model is the execution model for the entry point and its static call tree. See Execution Model.<br/>
      <br/>
-     Entry Point must be the Result <id> of an OpFunction instruction.<br/>
+     Entry Point must be the Result id of an OpFunction instruction.<br/>
      <br/>
      Name is a name string for the entry point. A module cannot have two OpEntryPoint instructions with the same Execution Model and the same Name string.<br/>
      <br/>
-     Interface is a list of <id> of global OpVariable instructions with either Input or Output for its Storage Class operand. These declare the input/output interface of the entry point. They could be a subset of the input/output declarations of the module, and a superset of those referenced by the entry point’s static call tree. It is invalid for the entry point’s static call tree to reference such an <id> if it was not listed with this instruction.<br/>
+     Interface is a list of id of global OpVariable instructions with either Input or Output for its Storage Class operand. These declare the input/output interface of the entry point. They could be a subset of the input/output declarations of the module, and a superset of those referenced by the entry point’s static call tree. It is invalid for the entry point’s static call tree to reference such an id if it was not listed with this instruction.<br/>
      <br/>
-     Interface <id> are forward references. They allow declaration of all variables forming an interface for an entry point, whether or not all the variables are actually used by the entry point.
+     Interface id are forward references. They allow declaration of all variables forming an interface for an entry point, whether or not all the variables are actually used by the entry point.
      */
     void visitEntryPoint(ExecutionModel model, long entryPoint, String name, long[] interfaces);
 
     /**
-     * The block label instruction: Any reference to a block is through the Result <id> of its label.<br/>
+     * The block label instruction: Any reference to a block is through the Result id of its label.<br/>
      <br/>
      Must be the first instruction of any block, and appears only as the first instruction of a block.
      */
@@ -168,14 +168,14 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
      <br/>
      Result Type is the type of object to make.<br/>
      <br/>
-     Each consumption of Result <id> yields an arbitrary, possibly different bit pattern.
+     Each consumption of Result id yields an arbitrary, possibly different bit pattern.
      */
     void visitUndef(long resultType, long resultID);
 
     /**
      * Declare an execution mode for an entry point.<br/>
      <br/>
-     Entry Point must be the Entry Point <id> operand of an OpEntryPoint instruction.<br/>
+     Entry Point must be the Entry Point id operand of an OpEntryPoint instruction.<br/>
      <br/>
      Mode is the execution mode.
      */
