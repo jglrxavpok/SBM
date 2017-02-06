@@ -17,6 +17,10 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.setByteOrder(ByteOrder.BIG_ENDIAN);
     }
 
+    public ByteArray getBuffer() {
+        return buffer;
+    }
+
     @Override
     public void visitSource(SourceLanguage language, long version, long filenameStringID, String sourceCode) {
         newOpcode(OpSource, 2 + (filenameStringID == -1 ? 0 : 1 + sizeOf(sourceCode)));

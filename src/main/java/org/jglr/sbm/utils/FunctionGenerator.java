@@ -154,4 +154,10 @@ public class FunctionGenerator {
         generator.code.visitReturnValue(generator.getComponentID(value));
         return this;
     }
+
+    public ModulePointer createPointer(ModuleVariable variable, StorageClass storageClass) {
+        ModulePointer pointer = new ModulePointer(variable);
+       //todo generator.code.visitVariable(generator.getTypeID(pointer.getType()));
+        return null;
+    }
 }

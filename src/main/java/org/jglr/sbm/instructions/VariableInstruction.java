@@ -52,6 +52,6 @@ public class VariableInstruction extends ResultInstruction implements Resolvable
 
     @Override
     public String toString() {
-        return "VariableDeclaration "+nameOrID(getResultID(), name)+" "+nameOrID(resultTypeID, resultType) + " " + Arrays.toString(decorations.toArray());
+        return "VariableDeclaration "+nameOrID(getResultID(), name)+" "+nameOrID(resultTypeID, resultType) + " " + Arrays.toString(decorations.toArray())+" "+storageClass.name()+" = "+initializer;
     }
 }

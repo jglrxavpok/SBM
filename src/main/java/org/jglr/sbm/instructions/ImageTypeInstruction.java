@@ -81,6 +81,8 @@ public class ImageTypeInstruction extends ResultInstruction implements Resolvabl
 
     @Override
     public String toString() {
-        return "OpTypeImage "+nameOrID(sampledTypeID, sampledType);
+        return "OpTypeImage "+nameOrID(sampledTypeID, sampledType)+" "+sampling.name()+
+                ", multisampled: "+multisampled+", format: "+format.name()+", access: "+(access == null ? "n/a" : getAccess().name())+
+                ", dimensionality: "+dim.name()+", depth: "+depth.name()+", arrayed: "+arrayed;
     }
 }

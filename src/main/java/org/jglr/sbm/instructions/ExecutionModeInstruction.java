@@ -24,7 +24,7 @@ public class ExecutionModeInstruction extends SpvInstruction implements Resolvab
 
     @Override
     public String toString() {
-        return "OpExecutionMode "+nameOrID(entryPoint, entryPointName)+" = "+mode.toString();
+        return "OpExecutionMode "+nameOrID(entryPoint, entryPointName)+" = "+mode.toString()+" ("+mode.getOperandCount()+" operands)";
     }
 
     @Override

@@ -68,7 +68,7 @@ public class ImageSampleImplicitLodInstruction extends ResultInstruction impleme
     public String toString() {
         String operandStr;
         if(operands.getMask() == 0) {
-            operandStr = "";
+            operandStr = "<no operands>";
         } else {
             StringBuilder builder = new StringBuilder();
             builder.append("0x").append(Long.toHexString(operands.getMask())).append('(');
@@ -87,6 +87,6 @@ public class ImageSampleImplicitLodInstruction extends ResultInstruction impleme
             builder.append(')');
             operandStr = builder.toString();
         }
-        return "OpImageSampleImplicitLod ("+nameOrID(resultTypeID, resultType)+") "+nameOrID(sampledImage, sampledImageName)+" "+nameOrID(coordinate, coordinateName)+operandStr;
+        return "OpImageSampleImplicitLod ("+nameOrID(resultTypeID, resultType)+") "+nameOrID(sampledImage, sampledImageName)+" "+nameOrID(coordinate, coordinateName)+" "+operandStr;
     }
 }
