@@ -5,6 +5,7 @@ import org.jglr.sbm.*;
 import org.jglr.sbm.decorations.Decoration;
 import org.jglr.sbm.sampler.*;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteOrder;
 import java.util.Map;
 
@@ -37,12 +38,22 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     private void writeChars(String chars) {
         ByteOrder order = buffer.getByteOrder();
         buffer.setByteOrder(ByteOrder.LITTLE_ENDIAN);
-        buffer.putChars(chars+'\0');
+        buffer.putChars(chars);
         buffer.setByteOrder(order);
     }
 
     private int sizeOf(String string) {
-        return string == null ? 0 : (int) Math.ceil((string.length() + 1) / 4f);
+        if(string == null)
+            return 0;
+        int size = (int) Math.ceil((string.length()) / 4f);
+        try {
+            byte[] bytes = string.getBytes("UTF-8");
+            if(bytes.length % 4 == 0)
+                size++;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return size;
     }
 
     @Override
@@ -242,9 +253,12 @@ public class CodeWriter implements CodeVisitor, Opcodes {
 
     @Override
     public void visitExecutionMode(long entryPoint, ExecutionMode mode) {
-        newOpcode(OpExecutionMode, 2);
+        newOpcode(OpExecutionMode, 2 + mode.getOperandCount());
         buffer.putUnsignedInt(entryPoint);
         buffer.putUnsignedInt(mode.getType().ordinal());
+        if(mode.getOperandCount() > 0) {
+            // TODO
+        }
     }
 
     @Override
@@ -651,6 +665,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     }
 
     private void newOpcode(int opcode, int argCount) {
-        buffer.putUnsignedInt(((long)(argCount+1) << 16L | opcode));
+        buffer.putUnsignedInt(((long)(argCount+1) << 16L | (opcode & 0xFFFF)));
     }
 }

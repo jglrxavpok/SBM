@@ -825,35 +825,28 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
             long word = nextWord();
 
             // characters are encoded in little endian
-            byte b3 = (byte) (word >> 24 & 0xFF);
-            byte b2 = (byte) (word >> 16 & 0xFF);
-            byte b1 = (byte) (word >> 8 & 0xFF);
-            byte b0 = (byte) (word >> 0 & 0xFF);
+            byte b3 = (byte) ((word >> 24) & 0xFF);
+            byte b2 = (byte) ((word >> 16) & 0xFF);
+            byte b1 = (byte) ((word >> 8) & 0xFF);
+            byte b0 = (byte) ((word >> 0) & 0xFF);
 
             data[i*4] = b0;
-
-            if(b0 == 0)
-                break;
             data[i*4+1] = b1;
-            if(b1 == 0)
-                break;
             data[i*4+2] = b2;
-            if(b2 == 0)
-                break;
             data[i*4+3] = b3;
-            if(b3 == 0)
-                break;
         }
-        if(data[data.length-1] != '\0') {
-            throw new IOException("Invalid string, not null terminated: "+ Arrays.toString(data));
+        int len = data.length-1;
+        for (; len >= 0; len--) {
+            if(data[len] != 0)
+                break;
         }
         // -1 to remove the null character
-        return new String(data, 0, data.length-1, "UTF-8").replace("\0", "");
+        return new String(data, 0, len+1, "UTF-8").replace("\0", "");
     }
 
     private <T> T nextEnumValue(T[] values) throws IOException {
         long index = nextWord();
-        return values[(int) index];
+        return values[((int) index) & 0xFFFF];
     }
 
     private Type nextType(Map<Long, Type> types) throws IOException {
