@@ -13,6 +13,7 @@ public enum Decoration {
     GLSLPacked,
     CPacked,
     BuiltIn,
+    UNKNOWN_12,
     NoPerspective,
     Flat,
     Patch,
@@ -27,6 +28,7 @@ public enum Decoration {
     NonWritable,
     NonReadable,
     Uniform,
+    UNKNOWN_27,
     SaturatedConversion,
     Stream,
     Location,
@@ -43,5 +45,6 @@ public enum Decoration {
     LinkageAttributes,
     NoContraction,
     InputAttachmentIndex,
-    Alignment
+    Alignment,
+    MaxByteOffset,
 }

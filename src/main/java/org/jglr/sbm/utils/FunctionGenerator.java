@@ -2,8 +2,12 @@ package org.jglr.sbm.utils;
 
 import org.jglr.sbm.*;
 import org.jglr.sbm.decorations.*;
+import org.jglr.sbm.sampler.ImageOperands;
 import org.jglr.sbm.types.PointerType;
 import org.jglr.sbm.types.Type;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FunctionGenerator {
 
@@ -17,14 +21,11 @@ public class FunctionGenerator {
     }
 
     public void end() {
-        generator.code.visitFunctionEnd();
+        generator.getCode().visitFunctionEnd();
     }
 
     void init(long id, Label startLabel) {
-        if(function.getName() != null) {
-            generator.code.visitName(id, function.getName());
-        }
-        generator.code.visitFunction(generator.getTypeID(function.getReturnType()), id, function.getControl(), generator.getTypeID(function.getFunctionType()));
+        generator.getCode().visitFunction(generator.getTypeID(function.getReturnType()), id, function.getControl(), generator.getTypeID(function.getFunctionType()));
         label(startLabel);
     }
 
@@ -35,39 +36,19 @@ public class FunctionGenerator {
     public FunctionGenerator load(ModuleVariable resultHolder, ModuleVariable pointerVariable, MemoryAccess access) {
         checkType(pointerVariable, PointerType.class);
         checkCorrectPointerType(pointerVariable, resultHolder);
-        registerType(resultHolder.getType());
-        registerType(pointerVariable.getType());
-        registerVariable(resultHolder);
-        registerVariable(pointerVariable);
-        generator.code.visitLoad(generator.getTypeID(resultHolder.getType()), generator.getComponentID(resultHolder), generator.getComponentID(pointerVariable), access);
+        generator.getCode().visitLoad(generator.getTypeID(resultHolder.getType()), generator.getComponentID(resultHolder), generator.getComponentID(pointerVariable), access);
         return this;
     }
 
-    public FunctionGenerator store(ModuleVariable toStore, ModuleVariable pointerVariable) {
+    public FunctionGenerator store(ModuleComponent toStore, ModuleVariable pointerVariable) {
         return store(toStore, pointerVariable, null);
     }
 
-    public FunctionGenerator store(ModuleVariable toStore, ModuleVariable pointerVariable, MemoryAccess access) {
+    public FunctionGenerator store(ModuleComponent toStore, ModuleVariable pointerVariable, MemoryAccess access) {
         checkType(pointerVariable, PointerType.class);
         checkCorrectPointerType(pointerVariable, toStore);
-        registerType(toStore.getType());
-        registerType(pointerVariable.getType());
-        registerVariable(toStore);
-        registerVariable(pointerVariable);
-        generator.code.visitStore(generator.getComponentID(pointerVariable), generator.getComponentID(toStore), access);
+        generator.getCode().visitStore(generator.getComponentID(pointerVariable), generator.getComponentID(toStore), access);
         return this;
-    }
-
-    private void registerVariable(ModuleVariable var) {
-        if(!generator.hasComponentID(var)) {
-            registerType(var.getType());
-            if(var.getName() != null)
-                generator.code.visitName(generator.getComponentID(var), var.getName());
-            for (DecorationValue decorationValue : var.getDecorations()) {
-                visitDecoration(generator.getComponentID(var), decorationValue);
-            }
-            generator.code.visitVariable(generator.getTypeID(var.getType()), generator.getComponentID(var), var.getStorageClass(), -1);
-        }
     }
 
     private void visitDecoration(long id, DecorationValue decoration) {
@@ -87,28 +68,28 @@ public class FunctionGenerator {
             case XfbStride:
             case InputAttachmentIndex:
             case Alignment:
-                generator.code.visitIntDecoration(decoration.getType(), id, ((IntDecorationValue) decoration).getValue());
+                generator.getCode().visitIntDecoration(decoration.getType(), id, ((IntDecorationValue) decoration).getValue());
                 break;
 
             case FuncParamAttr:
-                generator.code.visitFunctionParameterAttributeDecoration(id, ((FunctionParameterAttributeDecorationValue) decoration).getAttribute());
+                generator.getCode().visitFunctionParameterAttributeDecoration(id, ((FunctionParameterAttributeDecorationValue) decoration).getAttribute());
                 break;
 
             case FPRoundingMode:
-                generator.code.visitFPRoundingModeDecoration(id, ((RoundingModeDecorationValue) decoration).getRoundingMode());
+                generator.getCode().visitFPRoundingModeDecoration(id, ((RoundingModeDecorationValue) decoration).getRoundingMode());
                 break;
 
             case FPFastMathMode:
-                generator.code.visitFPFastMathModeDecoration(id, ((FastMathDecorationValue) decoration).getFastMathMode());
+                generator.getCode().visitFPFastMathModeDecoration(id, ((FastMathDecorationValue) decoration).getFastMathMode());
                 break;
 
             case LinkageAttributes:
                 LinkageDecorationValue linkageDecoration = (LinkageDecorationValue) decoration;
-                generator.code.visitLinkageAttributesDecoration(id, linkageDecoration.getName(), linkageDecoration.getLinkageType());
+                generator.getCode().visitLinkageAttributesDecoration(id, linkageDecoration.getName(), linkageDecoration.getLinkageType());
                 break;
 
             default:
-                generator.code.visitDecoration(id, decoration.getType());
+                generator.getCode().visitDecoration(id, decoration.getType());
                 break;
         }
     }
@@ -117,7 +98,7 @@ public class FunctionGenerator {
         generator.getTypeID(type); // forces generator to generate an ID if none exist and register it
     }
 
-    private void checkCorrectPointerType(ModuleVariable pointerVariable, ModuleVariable object) {
+    private void checkCorrectPointerType(ModuleVariable pointerVariable, ModuleComponent object) {
         if(!generator.performsChecks())
             return;
         checkType(((PointerType)pointerVariable.getType()).getType(), object.getType().getClass());
@@ -136,28 +117,37 @@ public class FunctionGenerator {
     }
 
     public FunctionGenerator label(Label label) {
-        generator.code.visitLabel(generator.getLabelID(label));
+        generator.getCode().visitLabel(generator.getLabelID(label));
         return this;
     }
 
     public FunctionGenerator returnVoid() {
-        generator.code.visitReturn();
+        generator.getCode().visitReturn();
         return this;
     }
 
     public FunctionGenerator kill() {
-        generator.code.visitKill();
+        generator.getCode().visitKill();
         return this;
     }
 
     public FunctionGenerator returnValue(ModuleVariable value) {
-        generator.code.visitReturnValue(generator.getComponentID(value));
+        generator.getCode().visitReturnValue(generator.getComponentID(value));
         return this;
     }
 
-    public ModulePointer createPointer(ModuleVariable variable, StorageClass storageClass) {
-        ModulePointer pointer = new ModulePointer(variable);
-       //todo generator.code.visitVariable(generator.getTypeID(pointer.getType()));
-        return null;
+    public FunctionGenerator sampleImageImplicitLOD(ModuleVariable holder, ModuleComponent image, ModuleComponent coordinates) {
+        return sampleImageImplicitLOD(holder, image, coordinates, new ImageOperands(0x0), new HashMap<>());
     }
+
+    public FunctionGenerator sampleImageImplicitLOD(ModuleVariable holder, ModuleComponent image, ModuleComponent coordinates, ImageOperands operands, Map<Integer, long[]> operandMap) {
+        generator.getCode().visitImageSampleImplicitLod(generator.getTypeID(holder.getType()),
+                generator.getComponentID(holder),
+                generator.getComponentID(image),
+                generator.getComponentID(coordinates),
+                operands,
+                operandMap);
+        return this;
+    }
+
 }

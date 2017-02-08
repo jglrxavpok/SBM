@@ -1,6 +1,7 @@
 package org.jglr.sbm.utils;
 
 import org.jglr.sbm.*;
+import org.jglr.sbm.decorations.*;
 import org.jglr.sbm.sampler.Dimensionality;
 import org.jglr.sbm.sampler.ImageDepth;
 import org.jglr.sbm.sampler.Sampling;
@@ -19,10 +20,10 @@ public class ModuleGenerator {
     private final Map<String, Long> stringIDs;
     private final Map<String, Long> setIDs;
     private final Map<Type, Long> typeIDs;
-    private final Map<ModuleComponent, Long> componentIDs;
+    private final Map<String, Long> componentIDs;
     private final Map<Label, Long> labelIDs;
-    HeaderVisitor header;
-    CodeVisitor code;
+    private HeaderVisitor header;
+    private CodeVisitor code;
     private long currentID;
     private boolean checks;
 
@@ -58,7 +59,7 @@ public class ModuleGenerator {
     }
 
     public ModuleGenerator setSourceInfos(SourceLanguage language, long sourceVersion, String filename, String source) {
-        code.visitSource(language, sourceVersion, getStringID(filename), source);
+        getCode().visitSource(language, sourceVersion, getStringID(filename), source);
         return this;
     }
 
@@ -73,7 +74,7 @@ public class ModuleGenerator {
         if(string == null)
             return -1;
         if(!stringIDs.containsKey(string)) {
-            code.visitString(currentID, string); // register the string
+            getCode().visitString(currentID, string); // register the string
             stringIDs.put(string, currentID++);
         }
         return stringIDs.get(string);
@@ -84,17 +85,17 @@ public class ModuleGenerator {
     }
 
     public ModuleGenerator addCapability(Capability capability) {
-        code.visitCapability(capability);
+        getCode().visitCapability(capability);
         return this;
     }
 
     public ModuleGenerator addSourceExtension(String name) {
-        code.visitSourceExtension(name);
+        getCode().visitSourceExtension(name);
         return this;
     }
 
     public ModuleGenerator addSetImport(String name) {
-        code.visitExtendedInstructionSetImport(getSetID(name), name);
+        getCode().visitExtendedInstructionSetImport(getSetID(name), name);
         return this;
     }
 
@@ -118,14 +119,14 @@ public class ModuleGenerator {
     public long getComponentID(ModuleComponent component) {
         if(component == null)
             return -1;
-        if(!componentIDs.containsKey(component)) {
-            componentIDs.put(component, currentID++);
+        if(!componentIDs.containsKey(component.getName())) {
+            componentIDs.put(component.getName(), currentID++);
         }
-        return componentIDs.get(component);
+        return componentIDs.get(component.getName());
     }
 
     public ModuleGenerator setMemoryModel(AddressingModel addressingModel, MemoryModel memoryModel) {
-        code.visitMemoryModel(addressingModel, memoryModel);
+        getCode().visitMemoryModel(addressingModel, memoryModel);
         return this;
     }
 
@@ -157,75 +158,75 @@ public class ModuleGenerator {
     private void visitType(Type type, long currentID) {
         if(type instanceof ArrayType) {
             ArrayType arrayType = (ArrayType) type;
-            code.visitArrayType(currentID, getTypeID(arrayType.getElementType()), arrayType.getLength());
+            getCode().visitArrayType(currentID, getTypeID(arrayType.getElementType()), arrayType.getLength());
         } else if(type instanceof FloatType) {
             FloatType floatType = (FloatType) type;
-            code.visitFloatType(currentID, floatType.getWidth());
+            getCode().visitFloatType(currentID, floatType.getWidth());
         } else if(type instanceof FunctionType) {
             FunctionType functionType = (FunctionType) type;
-            code.visitFunctionType(currentID, getTypeID(functionType.getReturnType()), getTypeIDs(functionType.getParameters()));
+            getCode().visitFunctionType(currentID, getTypeID(functionType.getReturnType()), getTypeIDs(functionType.getParameters()));
         } else if(type instanceof ImageType) {
             ImageType imageType = (ImageType) type;
             long sampledType = getTypeID(imageType.getSampledType());
             Dimensionality dim = imageType.getDimensionality();
             Sampling sampling = imageType.getSampling();
             ImageDepth depth = imageType.getDepth();
-            code.visitImageType(currentID, sampledType, dim, depth, imageType.isArrayed(), imageType.isMultisampled(), sampling, imageType.getFormat(), imageType.getQualifier());
+            getCode().visitImageType(currentID, sampledType, dim, depth, imageType.isArrayed(), imageType.isMultisampled(), sampling, imageType.getFormat(), imageType.getQualifier());
         } else if(type instanceof IntType) {
             IntType intType = (IntType) type;
-            code.visitIntType(currentID, intType.getWidth(), intType.isSigned());
+            getCode().visitIntType(currentID, intType.getWidth(), intType.isSigned());
         } else if(type instanceof MatrixType) {
             MatrixType matrixType = (MatrixType) type;
-            code.visitMatrixType(currentID, getTypeID(matrixType.getColumnType()), matrixType.getColumnCount());
+            getCode().visitMatrixType(currentID, getTypeID(matrixType.getColumnType()), matrixType.getColumnCount());
         } else if(type instanceof VectorType) {
             VectorType vectorType = (VectorType) type;
-            code.visitVectorType(currentID, getTypeID(vectorType.getComponentType()), vectorType.getComponentCount());
+            getCode().visitVectorType(currentID, getTypeID(vectorType.getComponentType()), vectorType.getComponentCount());
         } else if(type instanceof OpaqueType) {
             OpaqueType opaqueType = (OpaqueType) type;
-            code.visitOpaqueType(currentID, opaqueType.getName());
+            getCode().visitOpaqueType(currentID, opaqueType.getName());
         } else if(type instanceof PipeType) {
             PipeType pipeType = (PipeType) type;
-            code.visitPipeType(currentID, pipeType.getQualifier());
+            getCode().visitPipeType(currentID, pipeType.getQualifier());
         } else if(type instanceof PointerType) {
             PointerType pointerType = (PointerType) type;
-            code.visitPointerType(currentID, pointerType.getStorageClass(), getTypeID(pointerType.getType()));
+            getCode().visitPointerType(currentID, pointerType.getStorageClass(), getTypeID(pointerType.getType()));
         } else if(type instanceof RuntimeArrayType) {
             RuntimeArrayType runtimeArrayType = (RuntimeArrayType) type;
-            code.visitRuntimeArrayType(currentID, getTypeID(runtimeArrayType.getElementType()));
+            getCode().visitRuntimeArrayType(currentID, getTypeID(runtimeArrayType.getElementType()));
         } else if(type instanceof SampledImageType) {
             SampledImageType sampledImageType = (SampledImageType) type;
-            code.visitSampledImageType(currentID, getTypeID(sampledImageType.getImageType()));
+            getCode().visitSampledImageType(currentID, getTypeID(sampledImageType.getImageType()));
         } else if(type instanceof StructType) {
             StructType structType = (StructType) type;
-            code.visitStructType(currentID, getTypeIDs(structType.getStructMembers()));
+            getCode().visitStructType(currentID, getTypeIDs(structType.getStructMembers()));
         } else {
             switch (type.getName()) {
                 case "bool":
-                    code.visitBoolType(currentID);
+                    getCode().visitBoolType(currentID);
                     break;
 
                 case "void":
-                    code.visitVoidType(currentID);
+                    getCode().visitVoidType(currentID);
                     break;
 
                 case "sampler":
-                    code.visitSamplerType(currentID);
+                    getCode().visitSamplerType(currentID);
                     break;
 
                 case "reserveID":
-                    code.visitReserveIDType(currentID);
+                    getCode().visitReserveIDType(currentID);
                     break;
 
                 case "queue":
-                    code.visitQueueType(currentID);
+                    getCode().visitQueueType(currentID);
                     break;
 
                 case "event":
-                    code.visitEventType(currentID);
+                    getCode().visitEventType(currentID);
                     break;
 
                 case "deviceEvent":
-                    code.visitDeviceEventType(currentID);
+                    getCode().visitDeviceEventType(currentID);
                     break;
 
                 default:
@@ -235,11 +236,11 @@ public class ModuleGenerator {
     }
 
     public void addEntryPoint(ModuleFunction function, ExecutionModel model, ModuleVariable[] interfaces) {
-        code.visitEntryPoint(model, getComponentID(function), function.getName(), getComponentIDs(interfaces));
+        getCode().visitEntryPoint(model, getComponentID(function), function.getName(), getComponentIDs(interfaces));
     }
 
     public void setExecutionMode(ModuleFunction entryPoint, ExecutionMode mode) {
-        code.visitExecutionMode(getComponentID(entryPoint), mode);
+        getCode().visitExecutionMode(getComponentID(entryPoint), mode);
     }
 
     public boolean performsChecks() {
@@ -252,7 +253,7 @@ public class ModuleGenerator {
     }
 
     public boolean hasComponentID(ModuleComponent component) {
-        return componentIDs.containsKey(component);
+        return componentIDs.containsKey(component.getName());
     }
 
     public long getLabelID(Label label) {
@@ -263,5 +264,103 @@ public class ModuleGenerator {
             labelIDs.put(label, id);
         }
         return labelIDs.get(label);
+    }
+
+    public ModuleConstant constantFloat(String name, FloatType type, float value) {
+        return constant(name, type, new long[]{Float.floatToRawIntBits(value)});
+    }
+
+    public ModuleConstant constant(String name, Type type, long[] bitPattern) {
+        ModuleConstant constant = new ModuleConstant(name, type, bitPattern);
+        getCode().visitConstant(getTypeID(type), getComponentID(constant), bitPattern);
+        return constant;
+    }
+
+    public ModuleConstant constantComposite(String name, Type type, ModuleConstant... constituentValues) {
+        long[] constituents = new long[constituentValues.length];
+        for (int i = 0; i < constituents.length; i++) {
+            constituents[i] = getComponentID(constituentValues[i]);
+        }
+        ModuleConstant constant = new ModuleConstant(name, type, new long[0]);
+        getCode().visitConstantComposite(getTypeID(type), getComponentID(constant), constituents);
+        return constant;
+    }
+
+    public ModuleVariable declareVariable(String name, Type type, StorageClass storageClass) {
+        ModuleVariable var = new ModuleVariable(name, type);
+        var.setStorageClass(storageClass);
+        getCode().visitVariable(getTypeID(var.getType()), getComponentID(var), var.getStorageClass(), -1);
+        return var;
+    }
+
+    public void end() {
+        header.visitBound(currentID);
+    }
+
+    /**
+     * Reserves an id for the given name. Use it for forward references
+     */
+    public ModuleVariable reserveName(String name) {
+        if( ! componentIDs.containsKey(name))
+            componentIDs.put(name, currentID++);
+        return new ModuleVariable(name, Type.VOID);
+    }
+
+    public CodeVisitor getCode() {
+        return code;
+    }
+
+    /**
+     * Registers a name that will be shown in the compiled code
+     * @param name
+     * @return
+     */
+    public ModuleGenerator name(String name) {
+        code.visitName(getComponentID(reserveName(name)), name);
+        return this;
+    }
+
+    public ModuleGenerator decorate(ModuleComponent toDecorate, DecorationValue decoration) {
+        switch(decoration.getType()) {
+            case SpecId:
+            case ArrayStride:
+            case MatrixStride:
+            case BuiltIn:
+            case Stream:
+            case Location:
+            case Component:
+            case Index:
+            case Binding:
+            case DescriptorSet:
+            case Offset:
+            case XfbBuffer:
+            case XfbStride:
+            case InputAttachmentIndex:
+            case Alignment:
+                code.visitIntDecoration(decoration.getType(), getComponentID(toDecorate), ((IntDecorationValue)decoration).getValue());
+                break;
+
+            case FuncParamAttr:
+                code.visitFunctionParameterAttributeDecoration(getComponentID(toDecorate), ((FunctionParameterAttributeDecorationValue) decoration).getAttribute());
+                break;
+
+            case FPRoundingMode:
+                code.visitFPRoundingModeDecoration(getComponentID(toDecorate), ((RoundingModeDecorationValue)decoration).getRoundingMode());
+                break;
+
+            case FPFastMathMode:
+                code.visitFPFastMathModeDecoration(getComponentID(toDecorate), ((FastMathDecorationValue)decoration).getFastMathMode());
+                break;
+
+            case LinkageAttributes:
+                LinkageDecorationValue linkDecoration = ((LinkageDecorationValue) decoration);
+                code.visitLinkageAttributesDecoration(getComponentID(toDecorate), linkDecoration.getName(), linkDecoration.getLinkageType());
+                break;
+
+            default:
+                code.visitDecoration(getComponentID(toDecorate), decoration.getType());
+                break;
+        }
+        return this;
     }
 }
