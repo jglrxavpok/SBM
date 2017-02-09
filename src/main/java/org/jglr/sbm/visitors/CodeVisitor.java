@@ -229,4 +229,13 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
      Process is a string describing a process and/or tool (processor) that did the processing. Its form is dependent on the processor.
      */
     void visitModuleProcessed(String process);
+
+    /**
+     * Construct a new composite object from a set of constituent objects that will fully form it.<br/>
+     <br/>
+     Result Type must be a composite type, whose top-level members/elements/components/columns have the same type as the types of the operands, with one exception. The exception is that for constructing a vector, the operands may also be vectors with the same component type as the Result Type component type. When constructing a vector, the total number of components in all the operands must equal the number of components in Result Type.<br/>
+     <br/>
+     Constituents will become members of a structure, or elements of an array, or components of a vector, or columns of a matrix. There must be exactly one Constituent for each top-level member/element/component/column of the result, with one exception. The exception is that for constructing a vector, a contiguous subset of the scalars consumed can be represented by a vector operand instead. The Constituents must appear in the order needed by the definition of the type of the result. When constructing a vector, there must be at least two Constituent operands.
+     */
+    void visitCompositeConstruct(long resultType, long resultID, long... constituents);
 }

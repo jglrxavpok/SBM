@@ -90,7 +90,9 @@ public interface Opcodes {
 
         OpFunctionParameter = 55,
 
-        OpModuleProcessed = 330
+        OpModuleProcessed = 330,
+
+        OpCompositeConstruct = 80
 
     ;
 

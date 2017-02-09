@@ -416,4 +416,9 @@ public class AbstractCodeVisitor implements CodeVisitor {
     public void visitModuleProcessed(String process) {
 
     }
+
+    @Override
+    public void visitCompositeConstruct(long resultType, long resultID, long... constituents) {
+
+    }
 }

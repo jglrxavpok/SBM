@@ -5,6 +5,7 @@ import org.jglr.sbm.decorations.*;
 import org.jglr.sbm.sampler.ImageOperands;
 import org.jglr.sbm.types.PointerType;
 import org.jglr.sbm.types.Type;
+import org.jglr.sbm.types.VectorType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,10 @@ public class FunctionGenerator {
     public FunctionGenerator(ModuleGenerator generator, ModuleFunction function) {
         this.generator = generator;
         this.function = function;
+    }
+
+    public ModuleFunction getFunction() {
+        return function;
     }
 
     public void end() {
@@ -94,10 +99,6 @@ public class FunctionGenerator {
         }
     }
 
-    private void registerType(Type type) {
-        generator.getTypeID(type); // forces generator to generate an ID if none exist and register it
-    }
-
     private void checkCorrectPointerType(ModuleVariable pointerVariable, ModuleComponent object) {
         if(!generator.performsChecks())
             return;
@@ -131,7 +132,7 @@ public class FunctionGenerator {
         return this;
     }
 
-    public FunctionGenerator returnValue(ModuleVariable value) {
+    public FunctionGenerator returnValue(ModuleComponent value) {
         generator.getCode().visitReturnValue(generator.getComponentID(value));
         return this;
     }
@@ -150,4 +151,17 @@ public class FunctionGenerator {
         return this;
     }
 
+    public ModuleVariable callFunction(ModuleFunction function, ModuleComponent... arguments) {
+        ModuleVariable result = new ModuleVariable("$tmp_functioncall$", function.getReturnType());
+        long[] argumentIDs = generator.getComponentIDs(arguments);
+        generator.getCode().visitFunctionCall(generator.getTypeID(function.getReturnType()), generator.getComponentID(result), generator.getComponentID(function), argumentIDs);
+        return result;
+    }
+
+    public ModuleComponent compositeConstruct(Type compositeType, ModuleComponent[] arguments) {
+        ModuleVariable result = new ModuleVariable("$tmp_compositeconstruct$", compositeType);
+        long[] argumentsIDs = generator.getComponentIDs(arguments);
+        generator.getCode().visitCompositeConstruct(generator.getTypeID(compositeType), generator.getComponentID(result), argumentsIDs);
+        return result;
+    }
 }

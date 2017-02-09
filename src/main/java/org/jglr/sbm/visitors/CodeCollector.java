@@ -454,6 +454,11 @@ public class CodeCollector implements CodeVisitor {
     }
 
     @Override
+    public void visitCompositeConstruct(long resultType, long resultID, long... constituents) {
+        addInstruction(new CompositeConstructInstruction(resultType, resultID, constituents));
+    }
+
+    @Override
     public void visitConstantComposite(long resultType, long resultID, long[] constituents) {
         addInstruction(new ConstantCompositeInstruction(resultType, resultID, constituents));
     }
