@@ -363,4 +363,8 @@ public class ModuleGenerator {
         }
         return this;
     }
+
+    public void lineNumber(String filename, int line, int column) {
+        code.visitLine(getStringID(filename), line, column);
+    }
 }
