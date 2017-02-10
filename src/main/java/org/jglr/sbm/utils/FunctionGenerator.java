@@ -164,4 +164,8 @@ public class FunctionGenerator {
         generator.getCode().visitCompositeConstruct(generator.getTypeID(compositeType), generator.getComponentID(result), argumentsIDs);
         return result;
     }
+
+    public ModuleGenerator getGenerator() {
+        return generator;
+    }
 }
