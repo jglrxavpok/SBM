@@ -367,4 +367,14 @@ public class ModuleGenerator {
     public void lineNumber(String filename, int line, int column) {
         code.visitLine(getStringID(filename), line, column);
     }
+
+    public ModuleConstant constantBool(String name, boolean value) {
+        ModuleConstant constant = new ModuleConstant(name, Type.BOOL, new long[]{value ? 1 : 0});
+        if(value) {
+            code.visitTrueConstant(getTypeID(Type.BOOL), getComponentID(constant));
+        } else {
+            code.visitFalseConstant(getTypeID(Type.BOOL), getComponentID(constant));
+        }
+        return constant;
+    }
 }
