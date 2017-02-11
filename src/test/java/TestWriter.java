@@ -63,7 +63,7 @@ public class TestWriter {
             }
         });
         Label startLabel = new Label();
-        FunctionGenerator functionGenerator = generator.createFunction(mainFunction, startLabel);
+        FunctionGenerator functionGenerator = generator.createFunction(mainFunction).label(startLabel);
         ModuleVariable object = new ModuleVariable("object", objectType);
         object.addDecoration(new FastMathDecorationValue(new FPFastMathMode(FPFastMathMode.FLAG_NOT_INF | FPFastMathMode.FLAG_NOT_NAN)));
         ModuleVariable pointer = new ModuleVariable("pointer", new PointerType(StorageClass.Function, objectType));

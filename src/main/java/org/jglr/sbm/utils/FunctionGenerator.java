@@ -29,9 +29,8 @@ public class FunctionGenerator {
         generator.getCode().visitFunctionEnd();
     }
 
-    void init(long id, Label startLabel) {
+    void init(long id) {
         generator.getCode().visitFunction(generator.getTypeID(function.getReturnType()), id, function.getControl(), generator.getTypeID(function.getFunctionType()));
-        label(startLabel);
     }
 
     public FunctionGenerator load(ModuleVariable resultHolder, ModuleVariable pointerVariable) {

@@ -130,9 +130,9 @@ public class ModuleGenerator {
         return this;
     }
 
-    public FunctionGenerator createFunction(ModuleFunction function, Label startLabel) {
+    public FunctionGenerator createFunction(ModuleFunction function) {
         FunctionGenerator generator = new FunctionGenerator(this, function);
-        generator.init(getComponentID(function), startLabel);
+        generator.init(getComponentID(function));
         return generator;
     }
 
@@ -235,12 +235,18 @@ public class ModuleGenerator {
         }
     }
 
-    public void addEntryPoint(ModuleFunction function, ExecutionModel model, ModuleVariable[] interfaces) {
-        getCode().visitEntryPoint(model, getComponentID(function), function.getName(), getComponentIDs(interfaces));
+    public ModuleGenerator addNamedEntryPoint(String name, ModuleFunction function, ExecutionModel model, ModuleVariable[] interfaces) {
+        getCode().visitEntryPoint(model, getComponentID(function), name, getComponentIDs(interfaces));
+        return this;
     }
 
-    public void setExecutionMode(ModuleFunction entryPoint, ExecutionMode mode) {
+    public ModuleGenerator addEntryPoint(ModuleFunction function, ExecutionModel model, ModuleVariable[] interfaces) {
+        return addNamedEntryPoint(function.getName(), function, model, interfaces);
+    }
+
+    public ModuleGenerator setExecutionMode(ModuleFunction entryPoint, ExecutionMode mode) {
         getCode().visitExecutionMode(getComponentID(entryPoint), mode);
+        return this;
     }
 
     public boolean performsChecks() {
