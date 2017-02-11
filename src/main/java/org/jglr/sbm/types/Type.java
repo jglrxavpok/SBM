@@ -3,7 +3,12 @@ package org.jglr.sbm.types;
 public class Type {
 
     public static final Type VOID = new Type("void");
-    public static final Type BOOL = new Type("bool");
+    public static final Type BOOL = new Type("bool") {
+        @Override
+        public boolean isScalar() {
+            return true;
+        }
+    };
     public static final Type SAMPLER = new Type("sampler");
     public static final Type EVENT = new Type("event");
     public static final Type DEVICE_EVENT = new Type("deviceEvent");
@@ -35,5 +40,9 @@ public class Type {
     @Override
     public int hashCode() {
         return getName().hashCode();
+    }
+
+    public boolean isScalar() {
+        return false;
     }
 }

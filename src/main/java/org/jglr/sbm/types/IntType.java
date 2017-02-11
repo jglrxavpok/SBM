@@ -10,6 +10,11 @@ public class IntType extends Type {
         this.isSigned = isSigned;
     }
 
+    @Override
+    public boolean isScalar() {
+        return true;
+    }
+
     public boolean isSigned() {
         return isSigned;
     }

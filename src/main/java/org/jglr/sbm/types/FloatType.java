@@ -8,6 +8,11 @@ public class FloatType extends Type {
         this.width = width;
     }
 
+    @Override
+    public boolean isScalar() {
+        return true;
+    }
+
     public long getWidth() {
         return width;
     }
