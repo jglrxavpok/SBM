@@ -263,7 +263,7 @@ public class CodeCollector implements CodeVisitor {
     @Override
     public void visitSampledImageType(long resultID, long imageType) {
         addInstruction(new SampledImageTypeInstruction(resultID, imageType));
-        infoPool.registerType(resultID, new SampledImageType(infoPool.getType(imageType)));
+        infoPool.registerType(resultID, new SampledImageType((ImageType) infoPool.getType(imageType)));
     }
 
     @Override

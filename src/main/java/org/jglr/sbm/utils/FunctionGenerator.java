@@ -168,4 +168,9 @@ public class FunctionGenerator {
     public ModuleGenerator getGenerator() {
         return generator;
     }
+
+    public FunctionGenerator parameter(ModuleVariable parameter) {
+        generator.getCode().visitFunctionParameter(generator.getTypeID(parameter.getType()), generator.getComponentID(parameter));
+        return this;
+    }
 }
