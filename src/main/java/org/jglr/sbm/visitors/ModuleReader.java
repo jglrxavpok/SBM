@@ -663,6 +663,22 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                 }
                 break;
 
+                case OpSNegate: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long operand = nextWord();
+                    visitor.visitSNegate(resultTypeID, resultID, operand);
+                }
+                break;
+
+                case OpFNegate: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long operand = nextWord();
+                    visitor.visitFNegate(resultTypeID, resultID, operand);
+                }
+                break;
+
                 default:
                     System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);
                     position += (wordCount-1)*4;

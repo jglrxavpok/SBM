@@ -459,6 +459,16 @@ public class CodeCollector implements CodeVisitor {
     }
 
     @Override
+    public void visitSNegate(long resultTypeID, long resultID, long operandID) {
+        addInstruction(new IntegerNegateInstruction(resultTypeID, resultID, operandID));
+    }
+
+    @Override
+    public void visitFNegate(long resultTypeID, long resultID, long operandID) {
+        addInstruction(new FloatNegateInstruction(resultTypeID, resultID, operandID));
+    }
+
+    @Override
     public void visitConstantComposite(long resultType, long resultID, long[] constituents) {
         addInstruction(new ConstantCompositeInstruction(resultType, resultID, constituents));
     }

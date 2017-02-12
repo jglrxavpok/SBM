@@ -172,4 +172,14 @@ public class FunctionGenerator {
         generator.getCode().visitFunctionParameter(generator.getTypeID(parameter.getType()), generator.getComponentID(parameter));
         return this;
     }
+
+    public FunctionGenerator negateInt(ModuleVariable result, ModuleComponent toNegate) {
+        generator.getCode().visitSNegate(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(toNegate));
+        return this;
+    }
+
+    public FunctionGenerator negateFloat(ModuleVariable result, ModuleComponent toNegate) {
+        generator.getCode().visitFNegate(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(toNegate));
+        return this;
+    }
 }

@@ -421,4 +421,14 @@ public class AbstractCodeVisitor implements CodeVisitor {
     public void visitCompositeConstruct(long resultType, long resultID, long... constituents) {
 
     }
+
+    @Override
+    public void visitSNegate(long resultTypeID, long resultID, long operandID) {
+
+    }
+
+    @Override
+    public void visitFNegate(long resultTypeID, long resultID, long operandID) {
+
+    }
 }

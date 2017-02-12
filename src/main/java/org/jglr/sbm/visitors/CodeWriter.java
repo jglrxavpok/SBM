@@ -615,6 +615,18 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     }
 
     @Override
+    public void visitSNegate(long resultTypeID, long resultID, long operandID) {
+        newOpcode(OpSNegate, 3);
+        buffer.putUnsignedInts(resultTypeID, resultID, operandID);
+    }
+
+    @Override
+    public void visitFNegate(long resultTypeID, long resultID, long operandID) {
+        newOpcode(OpFNegate, 3);
+        buffer.putUnsignedInts(resultTypeID, resultID, operandID);
+    }
+
+    @Override
     public void visitConstantComposite(long resultType, long resultID, long[] constituents) {
         newOpcode(OpConstantComposite, 2 + constituents.length);
         buffer.putUnsignedInts(resultType, resultID);

@@ -238,4 +238,27 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
      Constituents will become members of a structure, or elements of an array, or components of a vector, or columns of a matrix. There must be exactly one Constituent for each top-level member/element/component/column of the result, with one exception. The exception is that for constructing a vector, a contiguous subset of the scalars consumed can be represented by a vector operand instead. The Constituents must appear in the order needed by the definition of the type of the result. When constructing a vector, there must be at least two Constituent operands.
      */
     void visitCompositeConstruct(long resultType, long resultID, long... constituents);
+
+    /**
+     * Signed-integer subtract of Operand from zero.<br/>
+     <br/>
+     Result Type must be a scalar or vector of integer type. <br/>
+     <br/>
+     Operand’s type must be a scalar or vector of integer type. It must have the same number of components as Result Type. The component width must equal the component width in Result Type. <br/>
+     <br/>
+     Results are computed per component
+     */
+    void visitSNegate(long resultTypeID, long resultID, long operandID);
+
+    /**
+     * Floating-point subtract of Operand from zero.<br/>
+     <br/>
+     Result Type must be a scalar or vector of floating-point type. <br/>
+     <br/>
+     The type of Operand must be the same as Result Type. <br/>
+     <br/>
+     Results are computed per component.
+     */
+    void visitFNegate(long resultTypeID, long resultID, long operandID);
+
 }
