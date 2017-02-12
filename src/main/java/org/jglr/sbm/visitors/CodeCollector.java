@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static org.jglr.sbm.Opcodes.*;
+
 public class CodeCollector implements CodeVisitor {
 
     private final List<SpvInstruction> instructions;
@@ -507,6 +509,63 @@ public class CodeCollector implements CodeVisitor {
     public void visitFunctionParameter(long resultType, long resultID) {
         addInstruction(new FunctionParameterInstruction(resultType, resultID));
     }
+
+    public void visitIAdd(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpIAdd, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitFAdd(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpFAdd, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitISub(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpISub, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitFSub(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpFSub, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitIMul(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpIMul, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitFMul(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpFMul, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitUDiv(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpUDiv, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitSDiv(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpSDiv, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitFDiv(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpFDiv, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitUMod(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpUMod, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitSRem(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpSRem, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitSMod(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpSMod, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitFRem(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpFRem, resultTypeID, resultID, leftID, rightID));
+    }
+
+    public void visitFMod(long resultTypeID, long resultID, long leftID, long rightID) {
+        addInstruction(new ArithmeticInstruction(OpFMod, resultTypeID, resultID, leftID, rightID));
+    }
+
 
     public List<SpvInstruction> getInstructions() {
         return instructions;

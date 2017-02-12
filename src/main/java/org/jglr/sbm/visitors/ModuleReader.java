@@ -679,6 +679,132 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                 }
                 break;
 
+                case OpIAdd: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitIAdd(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpFAdd: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitFAdd(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpISub: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitISub(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpFSub: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitFSub(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpIMul: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitIMul(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpFMul: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitFMul(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpUDiv: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitUDiv(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpSDiv: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitSDiv(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpFDiv: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitFDiv(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpUMod: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitUMod(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpSRem: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitSRem(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpSMod: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitSMod(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpFRem: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitFRem(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
+                case OpFMod: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long leftID = nextWord();
+                    long rightID = nextWord();
+                    visitor.visitFMod(resultTypeID, resultID, leftID, rightID);
+                }
+                break;
+
                 default:
                     System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);
                     position += (wordCount-1)*4;

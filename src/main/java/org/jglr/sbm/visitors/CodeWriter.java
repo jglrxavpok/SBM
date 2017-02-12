@@ -626,6 +626,76 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInts(resultTypeID, resultID, operandID);
     }
 
+    public void visitIAdd(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpIAdd, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitFAdd(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpFAdd, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitISub(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpISub, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitFSub(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpFSub, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitIMul(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpIMul, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitFMul(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpFMul, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitUDiv(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpUDiv, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitSDiv(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpSDiv, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitFDiv(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpFDiv, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitUMod(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpUMod, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitSRem(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpSRem, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitSMod(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpSMod, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitFRem(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpFRem, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
+    public void visitFMod(long resultTypeID, long resultID, long leftID, long rightID) {
+        newOpcode(OpFMod, 4);
+        buffer.putUnsignedInts(resultTypeID, resultID, leftID, rightID);
+    }
+
     @Override
     public void visitConstantComposite(long resultType, long resultID, long[] constituents) {
         newOpcode(OpConstantComposite, 2 + constituents.length);

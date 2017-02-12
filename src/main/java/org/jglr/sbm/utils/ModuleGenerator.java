@@ -26,6 +26,7 @@ public class ModuleGenerator {
     private CodeVisitor code;
     private long currentID;
     private boolean checks;
+    private int tmpID;
 
     public ModuleGenerator() {
         this(new ModuleWriter());
@@ -382,5 +383,9 @@ public class ModuleGenerator {
             code.visitFalseConstant(getTypeID(Type.BOOL), getComponentID(constant));
         }
         return constant;
+    }
+
+    public int nextTmpID() {
+        return tmpID++;
     }
 }

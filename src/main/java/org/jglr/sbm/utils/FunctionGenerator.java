@@ -5,7 +5,6 @@ import org.jglr.sbm.decorations.*;
 import org.jglr.sbm.sampler.ImageOperands;
 import org.jglr.sbm.types.PointerType;
 import org.jglr.sbm.types.Type;
-import org.jglr.sbm.types.VectorType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -151,17 +150,21 @@ public class FunctionGenerator {
     }
 
     public ModuleVariable callFunction(ModuleFunction function, ModuleComponent... arguments) {
-        ModuleVariable result = new ModuleVariable("$tmp_functioncall$", function.getReturnType());
+        ModuleVariable result = new ModuleVariable("$tmp_functioncall"+nextTmpID()+"$", function.getReturnType());
         long[] argumentIDs = generator.getComponentIDs(arguments);
         generator.getCode().visitFunctionCall(generator.getTypeID(function.getReturnType()), generator.getComponentID(result), generator.getComponentID(function), argumentIDs);
         return result;
     }
 
     public ModuleComponent compositeConstruct(Type compositeType, ModuleComponent[] arguments) {
-        ModuleVariable result = new ModuleVariable("$tmp_compositeconstruct$", compositeType);
+        ModuleVariable result = new ModuleVariable("$tmp_compositeconstruct"+nextTmpID()+"$", compositeType);
         long[] argumentsIDs = generator.getComponentIDs(arguments);
         generator.getCode().visitCompositeConstruct(generator.getTypeID(compositeType), generator.getComponentID(result), argumentsIDs);
         return result;
+    }
+
+    private int nextTmpID() {
+        return getGenerator().nextTmpID();
     }
 
     public ModuleGenerator getGenerator() {
@@ -180,6 +183,46 @@ public class FunctionGenerator {
 
     public FunctionGenerator negateFloat(ModuleVariable result, ModuleComponent toNegate) {
         generator.getCode().visitFNegate(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(toNegate));
+        return this;
+    }
+
+    public FunctionGenerator addInt(ModuleVariable result, ModuleComponent left, ModuleComponent right) {
+        generator.getCode().visitIAdd(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(left), generator.getComponentID(right));
+        return this;
+    }
+
+    public FunctionGenerator addFloat(ModuleVariable result, ModuleComponent left, ModuleComponent right) {
+        generator.getCode().visitFAdd(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(left), generator.getComponentID(right));
+        return this;
+    }
+
+    public FunctionGenerator subInt(ModuleVariable result, ModuleComponent left, ModuleComponent right) {
+        generator.getCode().visitISub(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(left), generator.getComponentID(right));
+        return this;
+    }
+
+    public FunctionGenerator subFloat(ModuleVariable result, ModuleComponent left, ModuleComponent right) {
+        generator.getCode().visitFSub(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(left), generator.getComponentID(right));
+        return this;
+    }
+
+    public FunctionGenerator mulInt(ModuleVariable result, ModuleComponent left, ModuleComponent right) {
+        generator.getCode().visitIMul(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(left), generator.getComponentID(right));
+        return this;
+    }
+
+    public FunctionGenerator mulFloat(ModuleVariable result, ModuleComponent left, ModuleComponent right) {
+        generator.getCode().visitFMul(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(left), generator.getComponentID(right));
+        return this;
+    }
+
+    public FunctionGenerator divInt(ModuleVariable result, ModuleComponent left, ModuleComponent right) {
+        generator.getCode().visitSDiv(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(left), generator.getComponentID(right));
+        return this;
+    }
+
+    public FunctionGenerator divFloat(ModuleVariable result, ModuleComponent left, ModuleComponent right) {
+        generator.getCode().visitFDiv(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(left), generator.getComponentID(right));
         return this;
     }
 }

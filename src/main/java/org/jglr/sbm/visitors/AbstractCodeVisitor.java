@@ -431,4 +431,74 @@ public class AbstractCodeVisitor implements CodeVisitor {
     public void visitFNegate(long resultTypeID, long resultID, long operandID) {
 
     }
+
+    @Override
+    public void visitIAdd(long resultTypeID, long resultID, long leftID, long rightID) {
+        
+    }
+
+    @Override
+    public void visitFAdd(long resultTypeID, long resultID, long leftID, long rightID) {
+
+    }
+
+    @Override
+    public void visitISub(long resultType, long resultID, long leftID, long rightID) {
+
+    }
+
+    @Override
+    public void visitFSub(long resultType, long resultID, long leftID, long rightID) {
+
+    }
+
+    @Override
+    public void visitIMul(long resultType, long resultID, long leftID, long rightID) {
+
+    }
+
+    @Override
+    public void visitFMul(long resultType, long resultID, long leftID, long rightID) {
+
+    }
+
+    @Override
+    public void visitUDiv(long resultType, long resultID, long leftID, long rightID) {
+
+    }
+
+    @Override
+    public void visitSDiv(long resultType, long resultID, long leftID, long rightID) {
+
+    }
+
+    @Override
+    public void visitFDiv(long resultType, long resultID, long leftID, long rightID) {
+
+    }
+
+    @Override
+    public void visitUMod(long resultType, long resultID, long leftID, long rightID) {
+
+    }
+
+    @Override
+    public void visitSRem(long resultType, long resultID, long leftID, long rightID) {
+
+    }
+
+    @Override
+    public void visitSMod(long resultType, long resultID, long leftID, long rightID) {
+
+    }
+
+    @Override
+    public void visitFRem(long resultType, long resultID, long leftID, long rightID) {
+
+    }
+
+    @Override
+    public void visitFMod(long resultType, long resultID, long leftID, long rightID) {
+
+    }
 }

@@ -261,4 +261,39 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
      */
     void visitFNegate(long resultTypeID, long resultID, long operandID);
 
+    /**
+     * Integer addition of Operand 1 and Operand 2.<br/>
+     <br/>
+     Result Type must be a scalar or vector of integer type. <br/>
+     <br/>
+     The type of Operand 1 and Operand 2 must be a scalar or vector of integer type. They must have the same number of components as Result Type. They must have the same component width as Result Type. <br/>
+     <br/>
+     Results are computed per component.
+     */
+    void visitIAdd(long resultTypeID, long resultID, long leftID, long rightID);
+
+    /**
+     * Floating-point addition of Operand 1 and Operand 2.<br/>
+     <br/>
+     Result Type must be a scalar or vector of floating-point type. <br/>
+     <br/>
+     The types of Operand 1 and Operand 2 both must be the same as Result Type. <br/>
+     <br/>
+     Results are computed per component.
+     */
+    void visitFAdd(long resultTypeID, long resultID, long leftID, long rightID);
+
+    void visitISub(long resultType, long resultID, long leftID, long rightID);
+    void visitFSub(long resultType, long resultID, long leftID, long rightID);
+    void visitIMul(long resultType, long resultID, long leftID, long rightID);
+    void visitFMul(long resultType, long resultID, long leftID, long rightID);
+    void visitUDiv(long resultType, long resultID, long leftID, long rightID);
+    void visitSDiv(long resultType, long resultID, long leftID, long rightID);
+    void visitFDiv(long resultType, long resultID, long leftID, long rightID);
+    void visitUMod(long resultType, long resultID, long leftID, long rightID);
+    void visitSRem(long resultType, long resultID, long leftID, long rightID);
+    void visitSMod(long resultType, long resultID, long leftID, long rightID);
+    void visitFRem(long resultType, long resultID, long leftID, long rightID);
+    void visitFMod(long resultType, long resultID, long leftID, long rightID);
+
 }

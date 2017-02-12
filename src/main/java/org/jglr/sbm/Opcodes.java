@@ -96,7 +96,21 @@ public interface Opcodes {
 
         // Arithmetic
         OpSNegate = 126,
-        OpFNegate = 127
+        OpFNegate = 127,
+        OpIAdd = 128,
+        OpFAdd = 129,
+        OpISub = 130,
+        OpFSub = 131,
+        OpIMul = 132,
+        OpFMul = 133,
+        OpUDiv = 134,
+        OpSDiv = 135,
+        OpFDiv = 136,
+        OpUMod = 137,
+        OpSRem = 138,
+        OpSMod = 139,
+        OpFRem = 140,
+        OpFMod = 141
 
     ;
 
