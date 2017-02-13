@@ -805,6 +805,15 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                 }
                 break;
 
+                case OpCompositeExtract: {
+                    long resultTypeID = nextWord();
+                    long resultID = nextWord();
+                    long compositeID = nextWord();
+                    long[] indexes = nextWords(wordCount-4);
+                    visitor.visitCompositeExtract(resultTypeID, resultID, compositeID, indexes);
+                }
+                break;
+
                 default:
                     System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);
                     position += (wordCount-1)*4;

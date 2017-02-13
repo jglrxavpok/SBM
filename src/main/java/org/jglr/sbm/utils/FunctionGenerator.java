@@ -225,4 +225,13 @@ public class FunctionGenerator {
         generator.getCode().visitFDiv(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(left), generator.getComponentID(right));
         return this;
     }
+
+    public FunctionGenerator compositeExtract(ModuleVariable result, ModuleComponent composite, int... indexes) {
+        long[] indexesAsLongs = new long[indexes.length];
+        for (int i = 0; i < indexes.length; i++) {
+            indexesAsLongs[i] = (long) indexes[i];
+        }
+        generator.getCode().visitCompositeExtract(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(composite), indexesAsLongs);
+        return this;
+    }
 }

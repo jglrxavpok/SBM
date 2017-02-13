@@ -697,6 +697,13 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     }
 
     @Override
+    public void visitCompositeExtract(long resultTypeID, long resultID, long compositeID, long[] indexes) {
+        newOpcode(OpCompositeExtract, 3+indexes.length);
+        buffer.putUnsignedInts(resultTypeID, resultID, compositeID);
+        buffer.putUnsignedInts(indexes);
+    }
+
+    @Override
     public void visitConstantComposite(long resultType, long resultID, long[] constituents) {
         newOpcode(OpConstantComposite, 2 + constituents.length);
         buffer.putUnsignedInts(resultType, resultID);

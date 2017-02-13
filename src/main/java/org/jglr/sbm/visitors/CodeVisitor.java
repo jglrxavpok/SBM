@@ -296,4 +296,14 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     void visitFRem(long resultType, long resultID, long leftID, long rightID);
     void visitFMod(long resultType, long resultID, long leftID, long rightID);
 
+    /**
+     * Extract a part of a composite object. <br/>
+     <br/>
+     Result Type must be the type of object selected by the last provided index. The instruction result is the extracted object.<br/>
+     <br/>
+     Composite is the composite to extract from.<br/>
+     <br/>
+     Indexes walk the type hierarchy, potentially down to component granularity, to select the part to extract. All indexes must be in bounds. All composite constituents use zero-based numbering, as described by their OpType… instruction.
+     */
+    void visitCompositeExtract(long resultTypeID, long resultID, long compositeID, long[] indexes);
 }

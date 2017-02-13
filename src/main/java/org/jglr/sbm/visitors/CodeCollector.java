@@ -566,6 +566,11 @@ public class CodeCollector implements CodeVisitor {
         addInstruction(new ArithmeticInstruction(OpFMod, resultTypeID, resultID, leftID, rightID));
     }
 
+    @Override
+    public void visitCompositeExtract(long resultTypeID, long resultID, long compositeID, long[] indexes) {
+        addInstruction(new CompositeExtractInstruction(resultTypeID, resultID, compositeID, indexes));
+    }
+
 
     public List<SpvInstruction> getInstructions() {
         return instructions;

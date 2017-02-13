@@ -93,6 +93,7 @@ public interface Opcodes {
         OpModuleProcessed = 330,
 
         OpCompositeConstruct = 80,
+        OpCompositeExtract = 81,
 
         // Arithmetic
         OpSNegate = 126,

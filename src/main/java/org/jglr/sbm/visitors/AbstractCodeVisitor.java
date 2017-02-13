@@ -501,4 +501,9 @@ public class AbstractCodeVisitor implements CodeVisitor {
     public void visitFMod(long resultType, long resultID, long leftID, long rightID) {
 
     }
+
+    @Override
+    public void visitCompositeExtract(long resultTypeID, long resultID, long compositeID, long[] indexes) {
+
+    }
 }
