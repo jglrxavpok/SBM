@@ -172,6 +172,7 @@ public class FunctionGenerator {
     }
 
     public FunctionGenerator parameter(ModuleVariable parameter) {
+        // FIXME: When parameters from two different functions are declared, there is an id conflict
         generator.getCode().visitFunctionParameter(generator.getTypeID(parameter.getType()), generator.getComponentID(parameter));
         return this;
     }
