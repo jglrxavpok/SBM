@@ -506,8 +506,8 @@ public class StructuredCodeWriter extends CodeWriter {
 
     @Override
     public byte[] toBytes() {
-        return ByteArray.join(capabilities, extensions, instructionsImports, memoryModel, entryPoints, executionModes,
+        return ByteArray.joinAndReset(capabilities, extensions, instructionsImports, memoryModel, entryPoints, executionModes,
                 stringAndSources, nameInstructions, annotations, typeDeclarations, constants, globalVars,
-                ByteArray.join(functions.toArray(new ByteArray[0]))).backingArray();
+                ByteArray.joinAndReset(functions.toArray(new ByteArray[0]))).backingArray();
     }
 }
