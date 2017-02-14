@@ -14,11 +14,13 @@ public class ModuleVariable implements ModuleComponent {
     private final Type type;
     private StorageClass storageClass;
     private List<DecorationValue> decorations;
+    private Scope scope;
 
     public ModuleVariable(String name, Type type) {
         this.name = name;
         this.type = type;
         setStorageClass(StorageClass.Function);
+        setScope(Scope.GLOBAL);
         decorations = new LinkedList<>();
     }
 
@@ -46,5 +48,14 @@ public class ModuleVariable implements ModuleComponent {
 
     public List<DecorationValue> getDecorations() {
         return decorations;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
+
+    @Override
+    public Scope getScope() {
+        return scope;
     }
 }

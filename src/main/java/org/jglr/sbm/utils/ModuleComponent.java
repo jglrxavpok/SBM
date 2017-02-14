@@ -7,4 +7,12 @@ public interface ModuleComponent {
     Type getType();
 
     String getName();
+
+    default Scope getScope() {
+        return Scope.GLOBAL;
+    }
+
+    default String getID() {
+        return getName()+getScope().getName();
+    }
 }

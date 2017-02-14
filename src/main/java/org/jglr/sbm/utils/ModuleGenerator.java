@@ -120,10 +120,10 @@ public class ModuleGenerator {
     public long getComponentID(ModuleComponent component) {
         if(component == null)
             return -1;
-        if(!componentIDs.containsKey(component.getName())) {
-            componentIDs.put(component.getName(), currentID++);
+        if(!componentIDs.containsKey(component.getID())) {
+            componentIDs.put(component.getID(), currentID++);
         }
-        return componentIDs.get(component.getName());
+        return componentIDs.get(component.getID());
     }
 
     public ModuleGenerator setMemoryModel(AddressingModel addressingModel, MemoryModel memoryModel) {
@@ -258,10 +258,6 @@ public class ModuleGenerator {
     public ModuleGenerator performChecks(boolean checks) {
         this.checks = checks;
         return this;
-    }
-
-    public boolean hasComponentID(ModuleComponent component) {
-        return componentIDs.containsKey(component.getName());
     }
 
     public long getLabelID(Label label) {

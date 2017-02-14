@@ -14,6 +14,7 @@ public class FunctionGenerator {
     private final ModuleGenerator generator;
     private final ModuleFunction function;
     private long id;
+    private Scope functionScope;
 
     public FunctionGenerator(ModuleGenerator generator, ModuleFunction function) {
         this.generator = generator;
@@ -29,6 +30,7 @@ public class FunctionGenerator {
     }
 
     void init(long id) {
+        functionScope = new Scope(function.getName()+function.getFunctionType());
         generator.getCode().visitFunction(generator.getTypeID(function.getReturnType()), id, function.getControl(), generator.getTypeID(function.getFunctionType()));
     }
 
@@ -172,7 +174,7 @@ public class FunctionGenerator {
     }
 
     public FunctionGenerator parameter(ModuleVariable parameter) {
-        // FIXME: When parameters from two different functions are declared, there is an id conflict
+        parameter.setScope(functionScope);
         generator.getCode().visitFunctionParameter(generator.getTypeID(parameter.getType()), generator.getComponentID(parameter));
         return this;
     }
