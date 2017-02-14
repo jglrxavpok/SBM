@@ -10,8 +10,8 @@ import java.nio.channels.ByteChannel;
 
 public class ModuleWriter implements ModuleVisitor {
 
-    private final HeaderWriter headerWriter;
-    private final CodeWriter codeWriter;
+    protected final HeaderWriter headerWriter;
+    protected CodeWriter codeWriter;
 
     public ModuleWriter() {
         headerWriter = new HeaderWriter();

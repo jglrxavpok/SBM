@@ -815,7 +815,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                 break;
 
                 default:
-                    System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount);
+                    System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount+" at "+position);
                     position += (wordCount-1)*4;
                     break;
             }

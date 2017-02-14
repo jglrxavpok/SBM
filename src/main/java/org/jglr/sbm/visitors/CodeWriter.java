@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class CodeWriter implements CodeVisitor, Opcodes {
 
-    private final ByteArray buffer;
+    protected ByteArray buffer;
 
     public CodeWriter() {
         buffer = new ByteArray();
