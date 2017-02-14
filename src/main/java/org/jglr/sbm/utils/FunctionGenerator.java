@@ -237,4 +237,10 @@ public class FunctionGenerator {
         generator.getCode().visitCompositeExtract(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(composite), indexesAsLongs);
         return this;
     }
+
+    public FunctionGenerator accessChain(ModuleVariable result, ModuleComponent base, ModuleComponent... indexes) {
+        long[] indexesAsLongs = generator.getComponentIDs(indexes);
+        generator.getCode().visitAccessChain(generator.getTypeID(result.getType()), generator.getComponentID(result), generator.getComponentID(base), indexesAsLongs);
+        return this;
+    }
 }
