@@ -131,7 +131,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                 }
                 break;
 
-                case OpTypeVec: {
+                case OpTypeVector: {
                     long resultID = nextWord();
                     long componentType = nextWord();
                     long componentCount = nextWord();
@@ -234,7 +234,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                 }
                 break;
 
-                case OpTypeReservedID: {
+                case OpTypeReserveId: {
                     long resultID = nextWord();
                     visitor.visitReserveIDType(resultID);
                 }

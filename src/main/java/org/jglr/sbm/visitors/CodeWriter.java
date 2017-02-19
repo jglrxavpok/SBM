@@ -437,7 +437,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
 
     @Override
     public void visitVectorType(long resultID, long componentType, long componentCount) {
-        newOpcode(OpTypeVec, 3);
+        newOpcode(OpTypeVector, 3);
         buffer.putUnsignedInt(resultID);
         buffer.putUnsignedInt(componentType);
         buffer.putUnsignedInt(componentCount);
@@ -541,7 +541,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
 
     @Override
     public void visitReserveIDType(long resultID) {
-        newOpcode(OpTypeReservedID, 1);
+        newOpcode(OpTypeReserveId, 1);
         buffer.putUnsignedInt(resultID);
     }
 

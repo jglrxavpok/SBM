@@ -5,13 +5,27 @@ group 'org.jglr'
 version '1.0-INDEV'
 
 apply plugin: 'java'
+apply plugin: "kotlin"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+buildscript {
+    ext.kotlin_version = '1.0.6'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 repositories {
     mavenCentral()
     mavenLocal()
+    jcenter()
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots/"
     }
@@ -34,6 +48,7 @@ sourceSets {
             srcDirs = ["src/test/resources"]
         }
     }
+    main.java.srcDirs += 'src/main/kotlin'
 }
 project.ext.lwjglVersion = '3.0.0-SNAPSHOT'
 
@@ -44,4 +59,6 @@ dependencies {
     testCompile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-linux"
     testCompile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-osx"
     testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'com.beust:klaxon:0.27'
 }
