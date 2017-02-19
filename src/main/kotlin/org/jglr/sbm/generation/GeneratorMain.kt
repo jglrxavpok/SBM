@@ -5,6 +5,6 @@ import java.io.File
 object GeneratorMain {
     @JvmStatic
     fun main(args: Array<String>) {
-        SPIRVOpcodes.generate(File("./src/main/gen/org/jglr/sbm", "Opcodes.java"))
+        SPIRVOpcodesGenerator.generate(File("./src/main/gen/org/jglr/sbm", "Opcodes.java"))
     }
 }

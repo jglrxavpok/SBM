@@ -1,13 +1,14 @@
 package org.jglr.sbm.generation
 
+import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 
-private fun parse(inputStream: InputStream): JsonObject {
-    return Parser().parse(inputStream) as JsonObject
+private fun parse(inputStream: InputStream): Any? {
+    return Parser().parse(inputStream)
 }
 
 private fun select(defaultPath: String, filename: String): InputStream {
@@ -19,5 +20,6 @@ private fun select(defaultPath: String, filename: String): InputStream {
 }
 
 private val defaultPath = System.getenv("VK_SDK_PATH") + "/include/vulkan"
-val SPIRVData = parse(select(defaultPath, "spirv.json"))
-val SPIRVGrammar = parse(select(defaultPath, "spirv.core.grammar.json"))
+val SPIRVData = parse(select(defaultPath, "spirv.json")) as JsonObject
+@Suppress("UNCHECKED_CAST")
+val SPIRVOpcodes = parse(select(defaultPath, "spirv-opcodesonly.json")) as JsonArray<JsonObject>
