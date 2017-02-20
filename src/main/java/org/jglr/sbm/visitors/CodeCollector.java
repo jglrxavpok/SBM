@@ -486,8 +486,13 @@ public class CodeCollector implements CodeVisitor {
     }
 
     @Override
-    public void visitSpecConstantBool(long resultType, long resultID, boolean defaultValue) {
-        addInstruction(new SpecConstantBoolInstruction(resultType, resultID, defaultValue));
+    public void visitSpecConstantTrue(long resultType, long resultID) {
+        addInstruction(new SpecConstantBoolInstruction(resultType, resultID, true));
+    }
+
+    @Override
+    public void visitSpecConstantFalse(long resultType, long resultID) {
+        addInstruction(new SpecConstantBoolInstruction(resultType, resultID, false));
     }
 
     @Override

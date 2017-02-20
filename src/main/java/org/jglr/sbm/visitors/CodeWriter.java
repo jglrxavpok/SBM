@@ -723,10 +723,17 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     }
 
     @Override
-    public void visitSpecConstantBool(long resultType, long resultID, boolean defaultValue) {
-        newOpcode(defaultValue ? OpSpecConstantTrue : OpSpecConstantFalse, 3);
+    public void visitSpecConstantTrue(long resultType, long resultID) {
+        newOpcode(OpSpecConstantTrue, 3);
         buffer.putUnsignedInts(resultType, resultID);
-        buffer.putUnsignedBool(defaultValue);
+        buffer.putUnsignedBool(true);
+    }
+
+    @Override
+    public void visitSpecConstantFalse(long resultType, long resultID) {
+        newOpcode(OpSpecConstantFalse, 3);
+        buffer.putUnsignedInts(resultType, resultID);
+        buffer.putUnsignedBool(false);
     }
 
     @Override

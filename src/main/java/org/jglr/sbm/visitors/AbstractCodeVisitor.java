@@ -38,7 +38,12 @@ public class AbstractCodeVisitor implements CodeVisitor {
     }
 
     @Override
-    public void visitSpecConstantBool(long resultType, long resultID, boolean defaultValue) {
+    public void visitSpecConstantTrue(long resultType, long resultID) {
+
+    }
+
+    @Override
+    public void visitSpecConstantFalse(long resultType, long resultID) {
 
     }
 

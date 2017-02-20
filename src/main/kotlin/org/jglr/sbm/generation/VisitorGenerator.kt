@@ -50,6 +50,9 @@ abstract class VisitorGenerator : ClassGenerator() {
             "FunctionControl" -> {
                 return "FunctionControl"
             }
+            "SamplerFilterMode" -> {
+                return "SamplerFilterMode"
+            }
         }
         when (name) {
             "Arrayed" -> {

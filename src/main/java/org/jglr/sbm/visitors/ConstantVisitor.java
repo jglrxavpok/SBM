@@ -84,7 +84,9 @@ public interface ConstantVisitor {
      <br/>
      See Specialization.
      */
-    void visitSpecConstantBool(long resultType, long resultID, boolean defaultValue);
+    void visitSpecConstantTrue(long resultType, long resultID);
+
+    void visitSpecConstantFalse(long resultType, long resultID);
 
     /**
      * Declare a new integer-type or floating-point-type scalar specialization constant.<br/>

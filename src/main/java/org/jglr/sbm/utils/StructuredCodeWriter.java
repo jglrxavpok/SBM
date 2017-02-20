@@ -125,9 +125,16 @@ public class StructuredCodeWriter extends CodeWriter {
     }
 
     @Override
-    public void visitSpecConstantBool(long resultType, long resultID, boolean defaultValue) {
+    public void visitSpecConstantTrue(long resultType, long resultID) {
         switchTo(constants);
-        super.visitSpecConstantBool(resultType, resultID, defaultValue);
+        super.visitSpecConstantTrue(resultType, resultID);
+        switchTo(last);
+    }
+
+    @Override
+    public void visitSpecConstantFalse(long resultType, long resultID) {
+        switchTo(constants);
+        super.visitSpecConstantFalse(resultType, resultID);
         switchTo(last);
     }
 

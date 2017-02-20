@@ -605,14 +605,14 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                 case OpSpecConstantTrue: {
                     long resultType = nextWord();
                     long resultID = nextWord();
-                    visitor.visitSpecConstantBool(resultType, resultID, true);
+                    visitor.visitSpecConstantTrue(resultType, resultID);
                 }
                 break;
 
                 case OpSpecConstantFalse: {
                     long resultType = nextWord();
                     long resultID = nextWord();
-                    visitor.visitSpecConstantBool(resultType, resultID, false);
+                    visitor.visitSpecConstantFalse(resultType, resultID);
                 }
                 break;
 
