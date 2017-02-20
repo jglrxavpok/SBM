@@ -12,7 +12,6 @@ import org.jglr.sbm.types.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -265,9 +264,9 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                     long type = nextWord();
                     long resultID = nextWord();
                     if (opcodeID == OpConstantFalse)
-                        visitor.visitFalseConstant(type, resultID);
+                        visitor.visitConstantFalse(type, resultID);
                     else
-                        visitor.visitTrueConstant(type, resultID);
+                        visitor.visitConstantTrue(type, resultID);
                 }
                 break;
 

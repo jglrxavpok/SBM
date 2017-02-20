@@ -10,14 +10,14 @@ public interface ConstantVisitor {
      <br/>
      Result Type must be the scalar Boolean type.
      */
-    void visitTrueConstant(long type, long resultID);
+    void visitConstantTrue(long type, long resultID);
 
     /**
      * Declare a false Boolean-type scalar constant.<br/>
      <br/>
      Result Type must be the scalar Boolean type.
      */
-    void visitFalseConstant(long type, long resultID);
+    void visitConstantFalse(long type, long resultID);
 
     /**
      * Declare a new integer-type or floating-point-type scalar constant.<br/>

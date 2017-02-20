@@ -99,14 +99,14 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     }
 
     @Override
-    public void visitTrueConstant(long type, long resultID) {
+    public void visitConstantTrue(long type, long resultID) {
         newOpcode(OpConstantTrue, 2);
         buffer.putUnsignedInt(type);
         buffer.putUnsignedInt(resultID);
     }
 
     @Override
-    public void visitFalseConstant(long type, long resultID) {
+    public void visitConstantFalse(long type, long resultID) {
         newOpcode(OpConstantFalse, 2);
         buffer.putUnsignedInt(type);
         buffer.putUnsignedInt(resultID);

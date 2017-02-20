@@ -83,16 +83,16 @@ public class StructuredCodeWriter extends CodeWriter {
     }
 
     @Override
-    public void visitTrueConstant(long type, long resultID) {
+    public void visitConstantTrue(long type, long resultID) {
         switchTo(constants);
-        super.visitTrueConstant(type, resultID);
+        super.visitConstantTrue(type, resultID);
         switchTo(last);
     }
 
     @Override
-    public void visitFalseConstant(long type, long resultID) {
+    public void visitConstantFalse(long type, long resultID) {
         switchTo(constants);
-        super.visitFalseConstant(type, resultID);
+        super.visitConstantFalse(type, resultID);
         switchTo(last);
     }
 
