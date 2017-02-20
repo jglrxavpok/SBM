@@ -47,6 +47,9 @@ abstract class VisitorGenerator : ClassGenerator() {
             "LiteralString" -> {
                 return "String"
             }
+            "FunctionControl" -> {
+                return "FunctionControl"
+            }
         }
         when (name) {
             "Arrayed" -> {

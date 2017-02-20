@@ -1,8 +1,9 @@
-package org.jglr.sbm.visitors;
+package sbm.old;
 
 import org.jglr.sbm.FunctionControl;
 
-public interface FunctionVisitor {
+@Deprecated
+public interface FunctionVisitor_Old {
 
     /**
      *

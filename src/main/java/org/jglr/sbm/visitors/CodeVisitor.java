@@ -2,8 +2,6 @@ package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
 import org.jglr.sbm.sampler.ImageOperands;
-import org.jglr.sbm.sampler.SamplerAddressingMode;
-import org.jglr.sbm.sampler.SamplerFilterMode;
 
 import java.util.Map;
 
