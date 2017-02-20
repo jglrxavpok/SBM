@@ -6,5 +6,6 @@ object GeneratorMain {
     @JvmStatic
     fun main(args: Array<String>) {
         SPIRVOpcodesGenerator.generate(File("./src/main/gen/org/jglr/sbm", "Opcodes.java"))
+        SPIRVTypeVisitorGenerator.generate(File("./src/main/gen/org/jglr/sbm/visitors", "TypeVisitor.java"))
     }
 }

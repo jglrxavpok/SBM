@@ -27,7 +27,7 @@ object SPIRVOpcodesGenerator : ClassGenerator() {
         members.add(ClassFunction("getName", "String", listOf("opcode"), listOf("int"), body, true))
     }
 
-    override val headerComment = "Generated from spirv.core.grammar.json"
+    override val headerComment = "Generated from spirv-opcodesonly.json"
     override val packageName = "org.jglr.sbm"
     override val title = "Opcodes"
     override val type = ClassType.INTERFACE

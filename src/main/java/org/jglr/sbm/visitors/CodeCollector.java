@@ -317,7 +317,7 @@ public class CodeCollector implements CodeVisitor {
     }
 
     @Override
-    public void visitReserveIDType(long resultID) {
+    public void visitReserveIdType(long resultID) {
         addInstruction(new EventTypeInstruction(resultID));
         infoPool.registerType(resultID, new Type("reserveID"));
     }
@@ -335,7 +335,7 @@ public class CodeCollector implements CodeVisitor {
     }
 
     @Override
-    public void visitForwardType(long type, StorageClass storageClass) {
+    public void visitForwardPointerType(long type, StorageClass storageClass) {
         addInstruction(new ForwardPointerTypeInstruction(type, storageClass));
     }
 

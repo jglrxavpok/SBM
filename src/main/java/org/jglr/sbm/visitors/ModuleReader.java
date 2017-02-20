@@ -236,7 +236,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
 
                 case OpTypeReserveId: {
                     long resultID = nextWord();
-                    visitor.visitReserveIDType(resultID);
+                    visitor.visitReserveIdType(resultID);
                 }
                 break;
 
@@ -256,7 +256,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
                 case OpTypeForwardPointer: {
                     long pointerType = nextWord();
                     StorageClass storageClass = nextEnumValue(StorageClass.values());
-                    visitor.visitForwardType(pointerType, storageClass);
+                    visitor.visitForwardPointerType(pointerType, storageClass);
                 }
                 break;
 

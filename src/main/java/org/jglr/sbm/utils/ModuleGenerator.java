@@ -216,7 +216,7 @@ public class ModuleGenerator {
                     break;
 
                 case "reserveID":
-                    getCode().visitReserveIDType(currentID);
+                    getCode().visitReserveIdType(currentID);
                     break;
 
                 case "queue":

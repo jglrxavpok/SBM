@@ -273,9 +273,9 @@ public class StructuredCodeWriter extends CodeWriter {
     }
 
     @Override
-    public void visitReserveIDType(long resultID) {
+    public void visitReserveIdType(long resultID) {
         switchTo(typeDeclarations);
-        super.visitReserveIDType(resultID);
+        super.visitReserveIdType(resultID);
         switchTo(last);
     }
 
@@ -294,9 +294,9 @@ public class StructuredCodeWriter extends CodeWriter {
     }
 
     @Override
-    public void visitForwardType(long type, StorageClass storageClass) {
+    public void visitForwardPointerType(long type, StorageClass storageClass) {
         switchTo(typeDeclarations);
-        super.visitForwardType(type, storageClass);
+        super.visitForwardPointerType(type, storageClass);
         switchTo(last);
     }
 

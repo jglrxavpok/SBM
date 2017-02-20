@@ -540,7 +540,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     }
 
     @Override
-    public void visitReserveIDType(long resultID) {
+    public void visitReserveIdType(long resultID) {
         newOpcode(OpTypeReserveId, 1);
         buffer.putUnsignedInt(resultID);
     }
@@ -559,7 +559,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     }
 
     @Override
-    public void visitForwardType(long type, StorageClass storageClass) {
+    public void visitForwardPointerType(long type, StorageClass storageClass) {
         newOpcode(OpTypeForwardPointer, 2);
         buffer.putUnsignedInt(type);
         buffer.putUnsignedInt(storageClass.ordinal());

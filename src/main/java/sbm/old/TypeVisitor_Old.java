@@ -1,4 +1,4 @@
-package org.jglr.sbm.visitors;
+package sbm.old;
 
 import org.jglr.sbm.AccessQualifier;
 import org.jglr.sbm.StorageClass;
@@ -7,7 +7,8 @@ import org.jglr.sbm.sampler.ImageDepth;
 import org.jglr.sbm.sampler.ImageFormat;
 import org.jglr.sbm.sampler.Sampling;
 
-public interface TypeVisitor {
+@Deprecated
+public interface TypeVisitor_Old {
     /**
      * Declare the void type.
      */

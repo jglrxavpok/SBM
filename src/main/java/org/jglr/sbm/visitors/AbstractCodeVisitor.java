@@ -143,7 +143,7 @@ public class AbstractCodeVisitor implements CodeVisitor {
     }
 
     @Override
-    public void visitReserveIDType(long resultID) {
+    public void visitReserveIdType(long result) {
 
     }
 
@@ -158,7 +158,7 @@ public class AbstractCodeVisitor implements CodeVisitor {
     }
 
     @Override
-    public void visitForwardType(long type, StorageClass storageClass) {
+    public void visitForwardPointerType(long pointerType, StorageClass storageClass) {
 
     }
 

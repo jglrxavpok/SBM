@@ -1,8 +1,11 @@
-// Generated from spirv.core.grammar.json
+// Generated from spirv-opcodesonly.json
 package org.jglr.sbm;
+
 import java.util.HashMap;
 import java.lang.reflect.Field;
+
 public interface Opcodes {
+    
     int OpNop = 0;
     int OpUndef = 1;
     int OpSizeOf = 321;
@@ -311,6 +314,7 @@ public interface Opcodes {
     int OpConstantPipeStorage = 323;
     int OpCreatePipeFromPipeStorage = 324;
     HashMap<Integer, String> names = new HashMap<>();
+    
     static String getName(int opcode) {
         if(names.isEmpty()) {
             Field[] fields = Opcodes.class.getDeclaredFields();
