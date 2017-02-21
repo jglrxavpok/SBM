@@ -11,6 +11,7 @@ import org.jglr.sbm.sampler.Sampling;
 public interface TypeVisitor {
     
     
+    
     /**
     OpTypeVoid
     <br/>
@@ -18,12 +19,14 @@ public interface TypeVisitor {
     */
     void visitVoidType(long result);
     
+    
     /**
     OpTypeBool
     <br/>
     <br/>Declare the Boolean type.  Values of this type can only be either true or false. There is no physical size or bit pattern defined for these values.  If they are stored (in conjunction with OpVariable), they can only be used with logical addressing operations, not physical, and only with non-externally visible shader Storage Classes: Workgroup, CrossWorkgroup, Private, and Function.
     */
     void visitBoolType(long result);
+    
     
     /**
     OpTypeInt
@@ -39,6 +42,7 @@ public interface TypeVisitor {
     */
     void visitIntType(long result, long width, boolean signedness);
     
+    
     /**
     OpTypeFloat
     <br/>
@@ -47,6 +51,7 @@ public interface TypeVisitor {
     <br/>Width specifies how many bits wide the type is. The bit pattern of a floating-point value is as described by the IEEE 754 standard.
     */
     void visitFloatType(long result, long width);
+    
     
     /**
     OpTypeVector
@@ -61,6 +66,7 @@ public interface TypeVisitor {
     */
     void visitVectorType(long result, long componentType, long componentCount);
     
+    
     /**
     OpTypeMatrix
     <br/>
@@ -73,6 +79,7 @@ public interface TypeVisitor {
     <br/>Matrix columns are numbered consecutively, starting with 0. This is true independently of any Decorations describing the memory layout of a matrix (e.g., RowMajor or MatrixStride).
     */
     void visitMatrixType(long result, long columnType, long columnCount);
+    
     
     /**
     OpTypeImage
@@ -107,7 +114,8 @@ public interface TypeVisitor {
     <br/>
     <br/>Access Qualifier is an image Access Qualifier.
     */
-    void visitImageType(long result, long sampledType, Dimensionality dim, ImageDepth depth, boolean arrayed, boolean mS, Sampling sampled, ImageFormat imageFormat, AccessQualifier optional);
+    void visitImageType(long result, long sampledType, Dimensionality dim, ImageDepth depth, boolean arrayed, boolean mS, Sampling sampled, ImageFormat imageFormat, AccessQualifier optionalAccessQualifier);
+    
     
     /**
     OpTypeSampler
@@ -115,6 +123,7 @@ public interface TypeVisitor {
     <br/>Declare the sampler type. Consumed by OpSampledImage. This type is opaque: values of this type have no defined physical size or bit pattern.
     */
     void visitSamplerType(long result);
+    
     
     /**
     OpTypeSampledImage
@@ -124,6 +133,7 @@ public interface TypeVisitor {
     <br/>Image Type must be an OpTypeImage.  It is the type of the image in the combined sampler and image type.
     */
     void visitSampledImageType(long result, long imageType);
+    
     
     /**
     OpTypeArray
@@ -138,6 +148,7 @@ public interface TypeVisitor {
     */
     void visitArrayType(long result, long elementType, long length);
     
+    
     /**
     OpTypeRuntimeArray
     <br/>
@@ -151,6 +162,7 @@ public interface TypeVisitor {
     */
     void visitRuntimeArrayType(long result, long elementType);
     
+    
     /**
     OpTypeStruct
     <br/>
@@ -162,12 +174,14 @@ public interface TypeVisitor {
     */
     void visitStructType(long result, long[] members);
     
+    
     /**
     OpTypeOpaque
     <br/>
     <br/>Declare a structure type with no body specified.
     */
     void visitOpaqueType(long result, String theNameOfTheOpaqueType);
+    
     
     /**
     OpTypePointer
@@ -179,6 +193,7 @@ public interface TypeVisitor {
     <br/>Type is the type of the object pointed to.
     */
     void visitPointerType(long result, StorageClass storageClass, long type);
+    
     
     /**
     OpTypeFunction
@@ -193,12 +208,14 @@ public interface TypeVisitor {
     */
     void visitFunctionType(long result, long returnType, long[] parameters);
     
+    
     /**
     OpTypeEvent
     <br/>
     <br/>Declare an OpenCL event type.
     */
     void visitEventType(long result);
+    
     
     /**
     OpTypeDeviceEvent
@@ -207,6 +224,7 @@ public interface TypeVisitor {
     */
     void visitDeviceEventType(long result);
     
+    
     /**
     OpTypeReserveId
     <br/>
@@ -214,12 +232,14 @@ public interface TypeVisitor {
     */
     void visitReserveIdType(long result);
     
+    
     /**
     OpTypeQueue
     <br/>
     <br/>Declare an OpenCL queue type.
     */
     void visitQueueType(long result);
+    
     
     /**
     OpTypePipe
@@ -229,6 +249,7 @@ public interface TypeVisitor {
     <br/>Qualifier is the pipe access qualifier.
     */
     void visitPipeType(long result, AccessQualifier qualifier);
+    
     
     /**
     OpTypeForwardPointer
@@ -241,12 +262,14 @@ public interface TypeVisitor {
     */
     void visitForwardPointerType(long pointerType, StorageClass storageClass);
     
+    
     /**
     OpTypePipeStorage
     <br/>
     <br/>Declare the OpenCL pipe-storage type.
     */
     void visitPipeStorageType(long result);
+    
     
     /**
     OpTypeNamedBarrier

@@ -16,11 +16,15 @@ object SPIRVTypeVisitorGenerator : VisitorGenerator() {
                 return@forEach
             }
             val opname = op["Name"]as String
-            val type = opname.substring("OpType".length).capitalize()
-            val functionName = "visit${type}Type"
+            val functionName = transformTypeOpName(opname)
             val function = createVisitFunction(functionName, op)
             members.add(function)
         }
+    }
+
+    fun transformTypeOpName(opname: String): String {
+        val type = opname.substring("OpType".length).capitalize()
+        return "visit${type}Type"
     }
 
     override val headerComment = "Generated from spirv-opcodesonly.json"

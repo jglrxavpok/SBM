@@ -9,14 +9,7 @@ abstract class VisitorGenerator : ClassGenerator() {
         val argumentTypes = mutableListOf<String>()
         @Suppress("UNCHECKED_CAST")
         val operands = instruction["Operands"] as JsonArray<JsonObject>
-
-        operands.forEachIndexed { i, infos ->
-            val opname = infos["Name"] as String
-            argumentNames.add(opname.decapitalize())
-
-            val type = getType(opname, infos["Type"] as String)
-            argumentTypes.add(type)
-        }
+        fillOperandNameAndTypes(operands, argumentNames, argumentTypes)
         val function = ClassFunction(name, "void", argumentNames, argumentTypes, "")
         function.documentation = instruction["DescriptionPlain"] as String?
         function.documentation?.let { function.documentation = function.documentation?.replace("\n", "\n<br/>") }
@@ -24,7 +17,37 @@ abstract class VisitorGenerator : ClassGenerator() {
         return function
     }
 
-    private fun getType(name: String, typeID: String): String {
+    fun fillOperandNameAndTypes(operands: JsonArray<JsonObject>, argumentNames: MutableList<String>, argumentTypes: MutableList<String>) {
+        operands.forEachIndexed { i, infos ->
+            var opname = if(infos["Name"] == null) "nullNamePleaseFix" else infos["Name"] as String
+            val readType = if(infos["Type"] == null) "NullTypePleaseFix" else infos["Type"] as String
+            val type = getType(opname, readType)
+            when(opname) {
+                "Optional" -> {
+                    opname = "optional"+type.capitalize()
+                }
+                "default" -> {
+                    opname = "defaultValue"
+                }
+                else -> {
+                    opname = opname.decapitalize()
+                }
+            }
+
+            if(argumentNames.contains(opname)) {
+                var index = 2
+                while(argumentNames.contains(opname+index)) {
+                    index++
+                }
+                opname += index
+            }
+            argumentNames.add(opname)
+
+            argumentTypes.add(type)
+        }
+    }
+
+    protected fun getType(name: String, typeID: String): String {
         if(typeID.endsWith("?")) {
             return getType(name, typeID.substring(0, typeID.length-1))
         }
@@ -54,23 +77,25 @@ abstract class VisitorGenerator : ClassGenerator() {
                 return "SamplerFilterMode"
             }
         }
-        when (name) {
+        return when (name) {
             "Arrayed" -> {
-                return "boolean"
+                "boolean"
             }
             "MS" -> {
-                return "boolean"
+                "boolean"
             }
             "Sampled" -> {
-                return "Sampling"
+                "Sampling"
             }
             "Depth" -> {
-                return "ImageDepth"
+                "ImageDepth"
             }
             "Signedness" -> {
-                return "boolean"
+                "boolean"
+            }
+            else -> {
+                "long"
             }
         }
-        return "long"
     }
 }

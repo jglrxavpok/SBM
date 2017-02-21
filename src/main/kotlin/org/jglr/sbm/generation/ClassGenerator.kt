@@ -14,6 +14,8 @@ abstract class ClassGenerator {
     open val headerComment = "Auto-generated from "+javaClass.canonicalName
 
     abstract val headerDoc: String?
+    open val extends: String? = null
+    open val interfaces: List<String> = emptyList()
 
     fun generate(output: File) {
         if(!output.parentFile.exists())
@@ -22,25 +24,16 @@ abstract class ClassGenerator {
         val members = mutableListOf<ClassMember>()
         val functions = mutableListOf<ClassFunction>()
         with(writer) {
-            write("// $headerComment\n")
-            packageName?.let { write("package $packageName;\n\n") }
-            imports.forEach { i -> write("import $i;\n") }
-            headerDoc?.let { write("\n/**\n$headerDoc\n*/\n") }
-            write("\npublic ${type.name.toLowerCase()} $title {")
+            writeHeader()
             incrementIndentation()
             write("\n\n")
             fillMemberList(members)
             fillFunctionList(functions)
             members.forEach { m ->
-                m.documentation?.let { write("/**\n${m.documentation}\n*/\n") }
-                if( ! (m.access == MemberAccess.PUBLIC && type == ClassType.INTERFACE))
-                    write(m.access.name.toLowerCase()+" ")
-                write("${m.type} ${m.name}")
-                m.value?.let { v -> write(" = $v") }
-                write(";\n")
+                writeMember(m)
             }
             functions.forEach { f ->
-                write("\n")
+                write("\n\n")
                 f.documentation?.let { write("/**\n${f.documentation}\n*/\n") }
                 if( ! (f.access == MemberAccess.PUBLIC && type == ClassType.INTERFACE))
                     write(f.access.name.toLowerCase()+" ")
@@ -69,6 +62,30 @@ abstract class ClassGenerator {
             flush()
             close()
         }
+    }
+
+    private fun IndentableWriter.writeMember(m: ClassMember) {
+        m.documentation?.let { write("/**\n${m.documentation}\n*/\n") }
+        if( ! (m.access == MemberAccess.PUBLIC && type == ClassType.INTERFACE))
+            write(m.access.name.toLowerCase()+" ")
+        write("${m.type} ${m.name}")
+        m.value?.let { v -> write(" = $v") }
+        write(";\n")
+    }
+
+    private fun IndentableWriter.writeHeader() {
+        write("// $headerComment\n")
+        packageName?.let { write("package $packageName;\n\n") }
+        imports.forEach { i -> write("import $i;\n") }
+        headerDoc?.let { write("\n/**\n$headerDoc\n*/\n") }
+        write("\npublic ${type.name.toLowerCase()} $title ")
+        if(extends != null) {
+            write("extends $extends ")
+        }
+        if(interfaces.isNotEmpty()) {
+            write("implements ${interfaces.joinToString(", ") { t->t }} ")
+        }
+        write("{")
     }
 
     abstract fun fillMemberList(members: MutableList<ClassMember>): Unit

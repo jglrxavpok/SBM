@@ -315,6 +315,7 @@ public interface Opcodes {
     int OpCreatePipeFromPipeStorage = 324;
     HashMap<Integer, String> names = new HashMap<>();
     
+    
     static String getName(int opcode) {
         if(names.isEmpty()) {
             Field[] fields = Opcodes.class.getDeclaredFields();

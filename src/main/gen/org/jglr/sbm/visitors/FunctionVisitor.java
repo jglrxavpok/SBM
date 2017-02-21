@@ -6,6 +6,7 @@ import org.jglr.sbm.FunctionControl;
 public interface FunctionVisitor {
     
     
+    
     /**
     OpFunction
     <br/>
@@ -19,6 +20,7 @@ public interface FunctionVisitor {
     */
     void visitFunction(long resultType, long result, FunctionControl functionControl, long functionType);
     
+    
     /**
     OpFunctionParameter
     <br/>
@@ -30,12 +32,14 @@ public interface FunctionVisitor {
     */
     void visitFunctionParameter(long resultType, long result);
     
+    
     /**
     OpFunctionEnd
     <br/>
     <br/>Last instruction of a function.
     */
     void visitFunctionEnd();
+    
     
     /**
     OpFunctionCall
