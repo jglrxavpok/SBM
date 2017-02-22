@@ -79,8 +79,8 @@
     "HasResultType": false,
     "Operands": [
       {
-        "Name": "ContinuedSource",
-        "Type": "LiteralString"
+        "Name": "Source",
+        "Type": "LiteralStringContinued"
       }
     ]
   },
@@ -289,8 +289,8 @@
         "Type": "Decoration"
       },
       {
-        "Name": null,
-        "Type": null
+        "Name": "Decoration",
+        "Type": "Literal[]"
       }
     ]
   },
@@ -320,8 +320,8 @@
         "Type": "Decoration"
       },
       {
-        "Name": null,
-        "Type": null
+        "Name": "Decoration",
+        "Type": "Literal[]"
       }
     ]
   },
@@ -385,8 +385,8 @@
         "Type": "ID"
       },
       {
-        "Name": "<id>s",
-        "Type": "ID[]"
+        "Name": "Targets",
+        "Type": "Pair<ID,LiteralNumber>[]"
       }
     ]
   },
@@ -562,8 +562,8 @@
     "HasResultType": false,
     "Operands": [
       {
-        "Name": "<null>",
-        "Type": "<null>"
+        "Name": "Capability",
+        "Type": "Capability"
       }
     ]
   },
@@ -677,8 +677,8 @@
         "Type": "ID"
       },
       {
-        "Name": "ComponentCount",
-        "Type": "LiteralNumber"
+        "Name": "Count",
+        "Type": "LiteralNumberComponent"
       }
     ]
   },
@@ -706,8 +706,8 @@
         "Type": "ID"
       },
       {
-        "Name": "ColumnCount",
-        "Type": "LiteralNumber"
+        "Name": "Count",
+        "Type": "LiteralNumberColumn"
       }
     ]
   },
@@ -899,8 +899,8 @@
         "Type": "ID"
       },
       {
-        "Name": "TheNameOfTheOpaqueType",
-        "Type": "LiteralString"
+        "Name": "Type",
+        "Type": "LiteralStringTheNameOfTheOpaque"
       }
     ]
   },
@@ -1202,8 +1202,8 @@
         "Type": "ID"
       },
       {
-        "Name": null,
-        "Type": null
+        "Name": "Value",
+        "Type": "Literal[]"
       }
     ]
   },
@@ -1362,8 +1362,8 @@
         "Type": "ID"
       },
       {
-        "Name": null,
-        "Type": null
+        "Name": "Value",
+        "Type": "Literal[]"
       }
     ]
   },
@@ -1736,8 +1736,8 @@
         "Type": "ID"
       },
       {
-        "Name": "ArrayMember",
-        "Type": "LiteralNumber"
+        "Name": "Member",
+        "Type": "LiteralNumberArray"
       }
     ]
   },
@@ -3845,8 +3845,8 @@
         "Type": "ID"
       },
       {
-        "Name": null,
-        "Type": null
+        "Name": "Components",
+        "Type": "Literal[]"
       }
     ]
   },
@@ -3903,8 +3903,8 @@
         "Type": "ID"
       },
       {
-        "Name": null,
-        "Type": null
+        "Name": "Indexes",
+        "Type": "Literal[]"
       }
     ]
   },
@@ -3938,8 +3938,8 @@
         "Type": "ID"
       },
       {
-        "Name": null,
-        "Type": null
+        "Name": "Indexes",
+        "Type": "Literal[]"
       }
     ]
   },
@@ -6698,8 +6698,8 @@
         "Type": "LoopControl"
       },
       {
-        "Name": null,
-        "Type": null
+        "Name": "Parameters",
+        "Type": "Literal[]"
       }
     ]
   },
@@ -6790,8 +6790,8 @@
         "Type": "ID"
       },
       {
-        "Name": null,
-        "Type": null
+        "Name": "weights",
+        "Type": "Literal[]"
       }
     ]
   },
@@ -9572,12 +9572,12 @@
         "Type": "ID"
       },
       {
-        "Name": "PacketSize",
-        "Type": "LiteralNumber"
+        "Name": "Size",
+        "Type": "LiteralNumberPacket"
       },
       {
-        "Name": "PacketAlignment",
-        "Type": "LiteralNumber"
+        "Name": "Alignment",
+        "Type": "LiteralNumberPacket"
       },
       {
         "Name": "Capacity",

@@ -64,7 +64,7 @@ public interface TypeVisitor {
     <br/>
     <br/>Components are numbered consecutively, starting with 0.
     */
-    void visitVectorType(long result, long componentType, long componentCount);
+    void visitVectorType(long result, long componentType, long count);
     
     
     /**
@@ -78,7 +78,7 @@ public interface TypeVisitor {
     <br/>
     <br/>Matrix columns are numbered consecutively, starting with 0. This is true independently of any Decorations describing the memory layout of a matrix (e.g., RowMajor or MatrixStride).
     */
-    void visitMatrixType(long result, long columnType, long columnCount);
+    void visitMatrixType(long result, long columnType, long count);
     
     
     /**
@@ -180,7 +180,7 @@ public interface TypeVisitor {
     <br/>
     <br/>Declare a structure type with no body specified.
     */
-    void visitOpaqueType(long result, String theNameOfTheOpaqueType);
+    void visitOpaqueType(long result, String type);
     
     
     /**

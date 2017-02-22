@@ -17,7 +17,7 @@ object SPIRVTypeVisitorGenerator : VisitorGenerator() {
             }
             val opname = op["Name"]as String
             val functionName = transformTypeOpName(opname)
-            val function = createVisitFunction(functionName, op)
+            val function = createVisitFunction(opname, functionName, op)
             members.add(function)
         }
     }

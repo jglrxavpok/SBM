@@ -4,12 +4,12 @@ import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 
 abstract class VisitorGenerator : ClassGenerator() {
-    protected fun createVisitFunction(name: String, instruction: JsonObject): ClassFunction {
+    protected fun createVisitFunction(opname: String, name: String, instruction: JsonObject): ClassFunction {
         val argumentNames = mutableListOf<String>()
         val argumentTypes = mutableListOf<String>()
         @Suppress("UNCHECKED_CAST")
         val operands = instruction["Operands"] as JsonArray<JsonObject>
-        fillOperandNameAndTypes(operands, argumentNames, argumentTypes)
+        fillOperandNameAndTypes(opname, operands, argumentNames, argumentTypes)
         val function = ClassFunction(name, "void", argumentNames, argumentTypes, "")
         function.documentation = instruction["DescriptionPlain"] as String?
         function.documentation?.let { function.documentation = function.documentation?.replace("\n", "\n<br/>") }
@@ -17,16 +17,19 @@ abstract class VisitorGenerator : ClassGenerator() {
         return function
     }
 
-    fun fillOperandNameAndTypes(operands: JsonArray<JsonObject>, argumentNames: MutableList<String>, argumentTypes: MutableList<String>) {
+    fun fillOperandNameAndTypes(instructionName: String, operands: JsonArray<JsonObject>, argumentNames: MutableList<String>, argumentTypes: MutableList<String>) {
         operands.forEachIndexed { i, infos ->
             var opname = if(infos["Name"] == null) "nullNamePleaseFix" else infos["Name"] as String
             val readType = if(infos["Type"] == null) "NullTypePleaseFix" else infos["Type"] as String
-            val type = getType(opname, readType)
+            var type = getType(opname, readType)
+            if(opname == "Param" && instructionName == "OpConstantSampler") {
+                type = "boolean"
+            }
             when(opname) {
                 "Optional" -> {
-                    opname = "optional"+type.capitalize()
+                    opname = "optional"+type.capitalize().replace("[]", "Array")
                 }
-                "default" -> {
+                "Default" -> {
                     opname = "defaultValue"
                 }
                 else -> {
@@ -76,7 +79,32 @@ abstract class VisitorGenerator : ClassGenerator() {
             "SamplerFilterMode" -> {
                 return "SamplerFilterMode"
             }
+            "Capability" -> {
+                return "Capability"
+            }
+            "SourceLanguage" -> {
+                return "SourceLanguage"
+            }
+            "SamplerAddressingMode" -> {
+                return "SamplerAddressingMode"
+            }
+            "ExecutionMode" -> {
+                return "ExecutionMode"
+            }
+            "MemoryModel" -> {
+                return "MemoryModel"
+            }
+            "AddressingModel" -> {
+                return "AddressingModel"
+            }
+            "ImageOperands" -> {
+                return "ImageOperands"
+            }
         }
+        if(typeID.startsWith("LiteralString"))
+            return "String"
+        if(name.startsWith("LiteralString"))
+            return "String"
         return when (name) {
             "Arrayed" -> {
                 "boolean"

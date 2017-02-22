@@ -55,20 +55,25 @@ object SPIRVCodeWriterGenerator : VisitorGenerator() {
                         SPIRVTypeVisitorGenerator.transformTypeOpName(opname)
                     }
                     else -> {
-                        "visit$opname"
+                        if(opname == "OpExtInst") {
+                            "visitExecExtendedInstruction"
+                        } else {
+                            // remove "Op" from name
+                            "visit${opname.substring(2)}"
+                        }
                     }
                 }
-            members.add(createWriteFunction(functionName, op))
+            members.add(createWriteFunction(opname, functionName, op))
         }
     }
 
-    private fun createWriteFunction(name: String, instruction: JsonObject): ClassFunction {
+    private fun createWriteFunction(opname: String, name: String, instruction: JsonObject): ClassFunction {
         val argumentNames = mutableListOf<String>()
         val argumentTypes = mutableListOf<String>()
         @Suppress("UNCHECKED_CAST")
         val operands = instruction["Operands"] as JsonArray<JsonObject>
 
-        fillOperandNameAndTypes(operands, argumentNames, argumentTypes)
+        fillOperandNameAndTypes(opname, operands, argumentNames, argumentTypes)
         var argCount = argumentTypes.mapIndexed { i, t -> sizeStringOf(argumentNames[i], t)}.joinToString(" + ") { size -> size }
         if(argCount.isBlank()) {
             argCount = "0"
