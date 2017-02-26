@@ -1,0 +1,120 @@
+@Override
+public void visitIntDecoration(Decoration decoration, long target, long value) {
+    newOpcode(OpDecorate, 3);
+    buffer.putUnsignedInt(target);
+    buffer.putUnsignedInt(decoration.ordinal());
+    buffer.putUnsignedInt(value);
+}
+
+@Override
+public void visitFunctionParameterAttributeDecoration(long target, FunctionParameterAttribute attribute) {
+    newOpcode(OpDecorate, 3);
+    buffer.putUnsignedInt(target);
+    buffer.putUnsignedInt(Decoration.FuncParamAttr.ordinal());
+    buffer.putUnsignedInt(attribute.ordinal());
+}
+
+@Override
+public void visitFPRoundingModeDecoration(long target, FPRoundingMode roundingMode) {
+    newOpcode(OpDecorate, 3);
+    buffer.putUnsignedInt(target);
+    buffer.putUnsignedInt(Decoration.FPRoundingMode.ordinal());
+    buffer.putUnsignedInt(roundingMode.ordinal());
+}
+
+@Override
+public void visitFPFastMathModeDecoration(long target, FPFastMathMode fastMathMode) {
+    newOpcode(OpDecorate, 3);
+    buffer.putUnsignedInt(target);
+    buffer.putUnsignedInt(Decoration.FPFastMathMode.ordinal());
+    buffer.putUnsignedInt(fastMathMode.getMask());
+}
+
+@Override
+public void visitLinkageAttributesDecoration(long target, String name, LinkageType type) {
+    newOpcode(OpDecorate, 3);
+    buffer.putUnsignedInt(target);
+    buffer.putUnsignedInt(Decoration.LinkageAttributes.ordinal());
+    buffer.putUnsignedInt(type.ordinal());
+}
+
+@Override
+public void visitDecoration(long target, Decoration decoration) {
+    newOpcode(OpDecorate, 2);
+    buffer.putUnsignedInt(target);
+    buffer.putUnsignedInt(decoration.ordinal());
+}
+
+@Override
+public void visitIntMemberDecoration(Decoration decoration, long structureType, long member, long value) {
+    newOpcode(OpMemberDecorate, 4);
+    buffer.putUnsignedInt(structureType);
+    buffer.putUnsignedInt(member);
+    buffer.putUnsignedInt(decoration.ordinal());
+    buffer.putUnsignedInt(value);
+}
+
+@Override
+public void visitFunctionParameterAttributeMemberDecoration(long structureType, long member, FunctionParameterAttribute attribute) {
+    newOpcode(OpMemberDecorate, 4);
+    buffer.putUnsignedInt(structureType);
+    buffer.putUnsignedInt(member);
+    buffer.putUnsignedInt(Decoration.FuncParamAttr.ordinal());
+    buffer.putUnsignedInt(attribute.ordinal());
+}
+
+@Override
+public void visitFPRoundingModeMemberDecoration(long structureType, long member, FPRoundingMode roundingMode) {
+    newOpcode(OpMemberDecorate, 4);
+    buffer.putUnsignedInt(structureType);
+    buffer.putUnsignedInt(member);
+    buffer.putUnsignedInt(Decoration.FPRoundingMode.ordinal());
+    buffer.putUnsignedInt(roundingMode.ordinal());
+}
+
+@Override
+public void visitFPFastMathModeMemberDecoration(long structureType, long member, FPFastMathMode mathMode) {
+    newOpcode(OpMemberDecorate, 4);
+    buffer.putUnsignedInt(structureType);
+    buffer.putUnsignedInt(member);
+    buffer.putUnsignedInt(Decoration.FPFastMathMode.ordinal());
+    buffer.putUnsignedInt(mathMode.getMask());
+}
+
+@Override
+public void visitLinkageAttributesMemberDecoration(long structureType, long member, String name, LinkageType linkageType) {
+    newOpcode(OpMemberDecorate, 4 + sizeOf(name));
+    buffer.putUnsignedInt(structureType);
+    buffer.putUnsignedInt(member);
+    buffer.putUnsignedInt(Decoration.LinkageAttributes.ordinal());
+    writeChars(name);
+    buffer.putUnsignedInt(linkageType.ordinal());
+}
+
+@Override
+public void visitMemberDecoration(long structureType, long member, Decoration decoration) {
+    newOpcode(OpMemberDecorate, 3);
+    buffer.putUnsignedInt(structureType);
+    buffer.putUnsignedInt(member);
+    buffer.putUnsignedInt(decoration.ordinal());
+}
+
+@Override
+public void visitDecorationGroup(long resultID) {
+    newOpcode(OpDecorationGroup, 1);
+    buffer.putUnsignedInt(resultID);
+}
+
+@Override
+public void visitGroupDecoration(long decorationGroup, long[] targets) {
+    newOpcode(OpGroupDecorate, 1 + targets.length);
+    buffer.putUnsignedInt(decorationGroup);
+    buffer.putUnsignedInts(targets);
+}
+
+@Override
+public void visitGroupMemberDecoration(long decorationGroup, long[] memberTargets) {
+    newOpcode(OpDecorationGroup, 1 + memberTargets.length);
+    buffer.putUnsignedInt(decorationGroup);
+    buffer.putUnsignedInts(memberTargets);
+}

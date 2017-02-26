@@ -176,7 +176,7 @@ public class ImageOperands extends MaskValue {
         if(sample)
             set(result, FLAG_SAMPLE, operands[position++]);
         if(minLod)
-            set(result, FLAG_MIN_LOD, operands[position++]);
+            set(result, FLAG_MIN_LOD, operands[position]);
     }
 
     private void set(Map<Integer, long[]> result, int key, long... values) {

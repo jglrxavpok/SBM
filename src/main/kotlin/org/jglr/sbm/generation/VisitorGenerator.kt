@@ -48,6 +48,12 @@ abstract class VisitorGenerator : ClassGenerator() {
 
             argumentTypes.add(type)
         }
+
+        if(argumentTypes.contains("ImageOperands")) {
+            val index = argumentTypes.indexOfFirst { t -> t == "ImageOperands" }
+            argumentTypes[index+1] = "Map<Integer, long[]>"
+            argumentNames[index+1] = "splitOperands"
+        }
     }
 
     protected fun getType(name: String, typeID: String): String {
@@ -99,6 +105,12 @@ abstract class VisitorGenerator : ClassGenerator() {
             }
             "ImageOperands" -> {
                 return "ImageOperands"
+            }
+            "ExecutionModel" -> {
+                return "ExecutionModel"
+            }
+            "MemoryAccess" -> {
+                return "MemoryAccess"
             }
         }
         if(typeID.startsWith("LiteralString"))

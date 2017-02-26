@@ -6,7 +6,7 @@ public class OutputVerticesExecutionMode extends ExecutionMode {
     private final long count;
 
     public OutputVerticesExecutionMode(long count) {
-        super(Type.OutputVertices);
+        super(Type.OutputVertices, count);
         this.count = count;
     }
 

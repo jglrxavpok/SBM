@@ -57,11 +57,16 @@ abstract class ClassGenerator {
                     write("\n}")
                 }
             }
+            writeFooter(writer)
             decrementIndentation()
             write("\n}\n")
             flush()
             close()
         }
+    }
+
+    protected open fun writeFooter(writer: IndentableWriter) {
+
     }
 
     private fun IndentableWriter.writeMember(m: ClassMember) {

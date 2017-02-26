@@ -21,5 +21,6 @@ private fun select(defaultPath: String, filename: String): InputStream {
 
 private val defaultPath = System.getenv("VK_SDK_PATH") + "/include/vulkan"
 val SPIRVData = parse(select(defaultPath, "spirv.json")) as JsonObject
+val SPIRVGrammar = parse(select(defaultPath, "spirv.core.grammar.json")) as JsonObject
 @Suppress("UNCHECKED_CAST")
 val SPIRVOpcodes = parse(select(defaultPath, "spirv-opcodesonly.json")) as JsonArray<JsonObject>

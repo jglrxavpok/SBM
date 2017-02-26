@@ -850,12 +850,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
             }
 
         }
-        return new ExecutionMode(type) {
-            @Override
-            public int getOperandCount() {
-                return opCount;
-            }
-        };
+        return new ExecutionMode(type);
     }
 
     private String nextString() throws IOException {

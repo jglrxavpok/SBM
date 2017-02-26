@@ -56,12 +56,7 @@ public class TestWriter {
         Type objectType = new FloatType(32);
         ModuleFunction mainFunction = new ModuleFunction("main", new FunctionType(objectType, new IntType(32, false)));
         generator.addEntryPoint(mainFunction, ExecutionModel.Fragment, new ModuleVariable[0]);
-        generator.setExecutionMode(mainFunction, new ExecutionMode(ExecutionMode.Type.OriginLowerLeft) {
-            @Override
-            public int getOperandCount() {
-                return 0;
-            }
-        });
+        generator.setExecutionMode(mainFunction, new ExecutionMode(ExecutionMode.Type.OriginLowerLeft));
         Label startLabel = new Label();
         FunctionGenerator functionGenerator = generator.createFunction(mainFunction).label(startLabel);
         ModuleVariable object = new ModuleVariable("object", objectType);

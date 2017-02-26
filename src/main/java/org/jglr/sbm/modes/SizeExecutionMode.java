@@ -8,7 +8,7 @@ public class SizeExecutionMode extends ExecutionMode {
     private final long z;
 
     public SizeExecutionMode(Type type, long x, long y, long z) {
-        super(type);
+        super(type, x, y, z);
         this.x = x;
         this.y = y;
         this.z = z;

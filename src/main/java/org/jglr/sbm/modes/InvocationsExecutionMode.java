@@ -6,7 +6,7 @@ public class InvocationsExecutionMode extends ExecutionMode {
     private final long invocationCount;
 
     public InvocationsExecutionMode(long invocationCount) {
-        super(Type.Invocations);
+        super(Type.Invocations, invocationCount);
         this.invocationCount = invocationCount;
     }
 

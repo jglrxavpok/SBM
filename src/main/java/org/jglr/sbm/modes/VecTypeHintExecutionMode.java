@@ -18,7 +18,7 @@ public class VecTypeHintExecutionMode extends ExecutionMode {
     }
 
     public VecTypeHintExecutionMode(long componentCount, DataType type) {
-        super(Type.VecTypeHint);
+        super(Type.VecTypeHint, componentCount, type.ordinal());
         this.componentCount = componentCount;
         this.type = type;
     }

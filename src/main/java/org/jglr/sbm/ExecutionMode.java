@@ -1,6 +1,6 @@
 package org.jglr.sbm;
 
-public abstract class ExecutionMode {
+public class ExecutionMode {
 
     public enum Type {
         Invocations,
@@ -37,12 +37,20 @@ public abstract class ExecutionMode {
     }
 
     private final Type type;
+    private final long[] operands;
 
-    public ExecutionMode(Type type) {
+    public ExecutionMode(Type type, long... operands) {
         this.type = type;
+        this.operands = operands;
     }
 
-    public abstract int getOperandCount();
+    public long[] getOperands() {
+        return operands;
+    }
+
+    public int getOperandCount() {
+        return operands.length;
+    }
 
     public Type getType() {
         return type;

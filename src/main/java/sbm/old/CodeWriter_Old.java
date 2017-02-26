@@ -1,19 +1,20 @@
-package org.jglr.sbm.visitors;
+package sbm.old;
 
 import org.jglr.flows.io.ByteArray;
 import org.jglr.sbm.*;
 import org.jglr.sbm.decorations.Decoration;
 import org.jglr.sbm.sampler.*;
+import org.jglr.sbm.visitors.CodeVisitor;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteOrder;
 import java.util.Map;
 
-public class CodeWriter implements CodeVisitor, Opcodes {
+public class CodeWriter_Old implements CodeVisitor, Opcodes {
 
     protected ByteArray buffer;
 
-    public CodeWriter() {
+    public CodeWriter_Old() {
         buffer = new ByteArray();
         buffer.setByteOrder(ByteOrder.BIG_ENDIAN);
     }
@@ -257,7 +258,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(entryPoint);
         buffer.putUnsignedInt(mode.getType().ordinal());
         if(mode.getOperandCount() > 0) {
-            // TODO
+            buffer.putUnsignedInts(mode.getOperands());
         }
     }
 
