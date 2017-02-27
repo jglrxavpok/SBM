@@ -178,7 +178,7 @@ public class ModuleGenerator {
             getCode().visitIntType(currentID, intType.getWidth(), intType.isSigned());
         } else if(type instanceof MatrixType) {
             MatrixType matrixType = (MatrixType) type;
-            // FIXME: Declare Matrix capability
+            getCode().visitCapability(Capability.Matrix);
             getCode().visitMatrixType(currentID, getTypeID(matrixType.getColumnType()), matrixType.getColumnCount());
         } else if(type instanceof VectorType) {
             VectorType vectorType = (VectorType) type;

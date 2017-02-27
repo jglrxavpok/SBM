@@ -15,8 +15,6 @@ import java.util.*;
  */
 public class StructuredCodeWriter extends CodeWriter {
 
-    // TODO: OpLine
-
     private final ByteArray capabilities;
     private final ByteArray instructionsImports;
     private final ByteArray extensions;
