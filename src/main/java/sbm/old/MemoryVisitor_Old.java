@@ -1,11 +1,11 @@
-package org.jglr.sbm.visitors;
+package sbm.old;
 
 import org.jglr.sbm.AddressingModel;
 import org.jglr.sbm.MemoryAccess;
 import org.jglr.sbm.MemoryModel;
 import org.jglr.sbm.StorageClass;
 
-public interface MemoryVisitor {
+public interface MemoryVisitor_Old {
 
     /**
      * Copy from the memory pointed to by Source to the memory pointed to by Target. Both operands must be non-void pointers of the same type. Matching Storage Class is not required. The amount of memory copied is the size of the type pointed to.<br/>

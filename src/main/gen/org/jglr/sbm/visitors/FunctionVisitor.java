@@ -2,6 +2,11 @@
 package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.FunctionControl;
+import org.jglr.sbm.AddressingModel;
+import org.jglr.sbm.MemoryModel;
+import org.jglr.sbm.ExecutionModel;
+import org.jglr.sbm.ExecutionMode;
+import org.jglr.sbm.Capability;
 
 public interface FunctionVisitor {
     

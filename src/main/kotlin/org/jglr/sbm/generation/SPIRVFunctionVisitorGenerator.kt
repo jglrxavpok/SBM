@@ -3,7 +3,9 @@ package org.jglr.sbm.generation
 import com.beust.klaxon.JsonObject
 
 object SPIRVFunctionVisitorGenerator : VisitorGenerator() {
-    override val imports: List<String> = listOf("org.jglr.sbm.FunctionControl")
+    override val imports: List<String> = listOf("org.jglr.sbm.FunctionControl", "org.jglr.sbm.AddressingModel",
+            "org.jglr.sbm.MemoryModel", "org.jglr.sbm.ExecutionModel", "org.jglr.sbm.ExecutionMode",
+            "org.jglr.sbm.Capability")
 
     override fun fillFunctionList(members: MutableList<ClassFunction>) {
         SPIRVOpcodes.forEach { op ->

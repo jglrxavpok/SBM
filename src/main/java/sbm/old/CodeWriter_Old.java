@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteOrder;
 import java.util.Map;
 
+@Deprecated
 public class CodeWriter_Old implements CodeVisitor, Opcodes {
 
     protected ByteArray buffer;
@@ -166,6 +167,11 @@ public class CodeWriter_Old implements CodeVisitor, Opcodes {
     }
 
     @Override
+    public void visitImageTexelPointer(long resultType, long result, long image, long coordinate, long sample) {
+
+    }
+
+    @Override
     public void visitConstant(long type, long resultID, long[] bitPattern) {
         newOpcode(OpConstant, 2 + bitPattern.length);
         buffer.putUnsignedInt(type);
@@ -206,6 +212,31 @@ public class CodeWriter_Old implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(base);
         for(long l : indexes)
             buffer.putUnsignedInt(l);
+    }
+
+    @Override
+    public void visitInBoundsAccessChain(long resultType, long result, long base, long[] indexes) {
+
+    }
+
+    @Override
+    public void visitPtrAccessChain(long resultType, long result, long base, long element, long[] indexes) {
+
+    }
+
+    @Override
+    public void visitArrayLength(long resultType, long result, long structure, long member) {
+
+    }
+
+    @Override
+    public void visitGenericPtrMemSemantics(long resultType, long result, long pointer) {
+
+    }
+
+    @Override
+    public void visitInBoundsPtrAccessChain(long resultType, long result, long base, long element, long[] indexes) {
+
     }
 
     @Override

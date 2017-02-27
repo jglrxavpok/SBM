@@ -283,9 +283,40 @@ public class AbstractCodeVisitor implements CodeVisitor {
     }
 
     @Override
+    public void visitInBoundsAccessChain(long resultType, long result, long base, long[] indexes) {
+
+    }
+
+    @Override
+    public void visitPtrAccessChain(long resultType, long result, long base, long element, long[] indexes) {
+
+    }
+
+    @Override
+    public void visitArrayLength(long resultType, long result, long structure, long member) {
+
+    }
+
+    @Override
+    public void visitGenericPtrMemSemantics(long resultType, long result, long pointer) {
+
+    }
+
+    @Override
+    public void visitInBoundsPtrAccessChain(long resultType, long result, long base, long element, long[] indexes) {
+
+    }
+
+    @Override
     public void visitVariable(long resultType, long resultID, StorageClass storageClass, long initializer) {
 
     }
+
+    @Override
+    public void visitImageTexelPointer(long resultType, long result, long image, long coordinate, long sample) {
+
+    }
+
 
     @Override
     public void visitFunction(long resultType, long resultID, FunctionControl control, long funcType) {

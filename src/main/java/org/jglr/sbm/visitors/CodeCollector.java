@@ -103,6 +103,11 @@ public class CodeCollector implements CodeVisitor {
     }
 
     @Override
+    public void visitImageTexelPointer(long resultType, long result, long image, long coordinate, long sample) {
+
+    }
+
+    @Override
     public void visitConstant(long type, long resultID, long[] bitPattern) {
         addInstruction(new ConstantInstruction(type, resultID, bitPattern));
     }
@@ -359,6 +364,31 @@ public class CodeCollector implements CodeVisitor {
     @Override
     public void visitAccessChain(long resultType, long resultID, long base, long[] indexes) {
         addInstruction(new AccessChainInstruction(resultType, resultID, base, indexes));
+    }
+
+    @Override
+    public void visitInBoundsAccessChain(long resultType, long result, long base, long[] indexes) {
+
+    }
+
+    @Override
+    public void visitPtrAccessChain(long resultType, long result, long base, long element, long[] indexes) {
+
+    }
+
+    @Override
+    public void visitArrayLength(long resultType, long result, long structure, long member) {
+
+    }
+
+    @Override
+    public void visitGenericPtrMemSemantics(long resultType, long result, long pointer) {
+
+    }
+
+    @Override
+    public void visitInBoundsPtrAccessChain(long resultType, long result, long base, long element, long[] indexes) {
+
     }
 
     @Override
