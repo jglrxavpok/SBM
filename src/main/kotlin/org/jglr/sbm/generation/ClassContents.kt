@@ -10,6 +10,7 @@ data class ClassFunction(val name: String, val returnType: String, val argumentN
                          val access: MemberAccess = MemberAccess.PUBLIC) {
     var documentation: String? = null
     var bodyless: Boolean = false
+    var exceptions = emptyList<String>()
 }
 
 enum class MemberAccess {

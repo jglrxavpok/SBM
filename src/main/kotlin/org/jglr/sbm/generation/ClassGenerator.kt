@@ -49,6 +49,10 @@ abstract class ClassGenerator {
                 if(f.bodyless) {
                     write(";\n")
                 } else {
+                    if(f.exceptions.isNotEmpty()) {
+                        write(" throws ")
+                        write(f.exceptions.reduce { a, b -> a + ", " + b })
+                    }
                     write(" {")
                     incrementIndentation()
                     write("\n")

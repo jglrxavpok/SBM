@@ -10,5 +10,6 @@ object GeneratorMain {
         SPIRVFunctionVisitorGenerator.generate(File("./src/main/gen/org/jglr/sbm/visitors", "FunctionVisitor.java"))
         SPIRVCodeWriterGenerator.generate(File("./src/main/gen/org/jglr/sbm/visitors", "CodeWriter.java"))
         SPIRVMemoryVisitorGenerator.generate(File("./src/main/gen/org/jglr/sbm/visitors", "MemoryVisitor.java"))
+        ModuleReaderDispatcherGenerator.generate(File("./src/main/gen/org/jglr/sbm/visitors", "ModuleReaderDispatcher0.java"))
     }
 }
