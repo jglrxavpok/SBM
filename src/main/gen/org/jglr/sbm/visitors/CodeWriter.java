@@ -35,10 +35,12 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         return buffer.backingArray();
     }
     
+    @Override
     public void visitEnd() {
         
     }
     
+    @Override
     public void reset() {
         buffer.reset();
     }

@@ -262,13 +262,6 @@ class ModuleReaderDispatcher implements Opcodes {
             }
             break;
 
-            case OpDecorate: {
-                long target = reader.nextWord();
-                Decoration decoration = reader.nextEnumValue(Decoration.values());
-                reader.visitDecoration(visitor, decoration, target, wordCount);
-            }
-            break;
-
             case OpMemberDecorate: {
                 long structureType = reader.nextWord();
                 long member = reader.nextWord();
@@ -404,14 +397,6 @@ class ModuleReaderDispatcher implements Opcodes {
                     memoryAccess = new MemoryAccess(0);
                 }
                 visitor.visitLoad(resultType, resultID, pointer, memoryAccess);
-            }
-            break;
-
-            case OpExecutionMode: {
-                long entryPoint = reader.nextWord();
-                ExecutionMode.Type type = reader.nextEnumValue(ExecutionMode.Type.values());
-                ExecutionMode mode = reader.readMode(type);
-                visitor.visitExecutionMode(entryPoint, mode);
             }
             break;
 

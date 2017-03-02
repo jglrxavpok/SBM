@@ -14,6 +14,9 @@ data class ClassFunction(val name: String, val returnType: String, val argumentN
     var annotations = emptyList<String>()
 }
 
+fun BodylessClassFunction(name: String, returnType: String, argumentNames: List<String>, argumentTypes: List<String>, static: Boolean = false, access: MemberAccess = MemberAccess.PUBLIC) =
+        ClassFunction(name, returnType, argumentNames, argumentTypes, "", static, access).apply { bodyless = true }
+
 enum class MemberAccess {
     PUBLIC, PRIVATE, PROTECTED
 }

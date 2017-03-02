@@ -40,8 +40,8 @@ object SPIRVCodeWriterGenerator : VisitorGenerator() {
         members.add(ClassFunction("getBuffer", "ByteArray", emptyList(), emptyList(), "return buffer;"))
         members.add(ClassFunction("newOpcode", "void", listOf("opcode", "argCount"), listOf("int", "int"), "buffer.putUnsignedInt(((long)(argCount+1) << 16L | (opcode & 0xFFFF)));", false, MemberAccess.PRIVATE))
         members.add(ClassFunction("toBytes", "byte[]", emptyList(), emptyList(), "return buffer.backingArray();"))
-        members.add(ClassFunction("visitEnd", "void", emptyList(), emptyList(), ""))
-        members.add(ClassFunction("reset", "void", emptyList(), emptyList(), "buffer.reset();"))
+        members.add(ClassFunction("visitEnd", "void", emptyList(), emptyList(), "").apply { annotations = listOf("Override") })
+        members.add(ClassFunction("reset", "void", emptyList(), emptyList(), "buffer.reset();").apply { annotations = listOf("Override") })
         members.add(ClassFunction("writeChars", "void", listOf("chars"), listOf("String"), "ByteOrder order = buffer.getByteOrder();\nbuffer.setByteOrder(ByteOrder.LITTLE_ENDIAN);\nbuffer.putChars(chars);\nbuffer.setByteOrder(order);", false, MemberAccess.PRIVATE))
         members.add(ClassFunction("sizeOf", "int", listOf("string"), listOf("String"),
                 "if(string == null)\n" +

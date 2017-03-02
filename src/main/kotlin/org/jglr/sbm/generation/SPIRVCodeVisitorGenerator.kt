@@ -35,6 +35,8 @@ object SPIRVCodeVisitorGenerator : VisitorGenerator() {
     }
 
     override fun fillFunctionList(members: MutableList<ClassFunction>) {
+        members.add(BodylessClassFunction("reset", "void", emptyList(), emptyList()))
+        members.add(BodylessClassFunction("visitEnd", "void", emptyList(), emptyList()))
         SPIRVOpcodes.filter{ op -> op["Category"] != "Annotation"
                 && op["Category"] != "Memory" && op["Category"] != "Annotation"
                 && op["Category"] != "Function" && op["Category"] != "Type-Declaration" }

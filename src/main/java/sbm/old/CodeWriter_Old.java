@@ -11,7 +11,7 @@ import java.nio.ByteOrder;
 import java.util.Map;
 
 @Deprecated
-public class CodeWriter_Old implements CodeVisitor, Opcodes {
+public class CodeWriter_Old implements CodeVisitor_Old, Opcodes {
 
     protected ByteArray buffer;
 

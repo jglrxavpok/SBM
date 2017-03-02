@@ -41,9 +41,18 @@ object ModuleReaderDispatcherGenerator : VisitorGenerator() {
             write("switch (opcodeID) {")
             incrementIndentation()
                 write("\n")
-                SPIRVOpcodes.forEach { op ->
+                SPIRVOpcodes.filter { op ->
+                    val name = op["Name"] as String
+                    when(name) {
+                        "OpDecorate", "OpMemberDecorate", "OpGroupDecorate", "OpGroupMemberDecorate", "OpExecutionMode" -> false
+                        else -> true
+                    }
+                }.forEach { op ->
                     writeDispatchCase(op)
                 }
+
+                javaClass.getResourceAsStream("/generation/fragments/ModuleReaderDecorateCases.txt").bufferedReader()
+                        .lines().forEach { l -> writer.write("\n$l") }
 
                 write("\ndefault:")
                 incrementIndentation()
@@ -71,7 +80,21 @@ object ModuleReaderDispatcherGenerator : VisitorGenerator() {
         fillOperandNameAndTypes(opName, operands, names, types)
         names.forEachIndexed { i, name ->
             val type = types[i]
-            writeOperandValueRead(i, name, type)
+            if(type == "Map<Integer, long[]>") {
+                write("$type $name = Collections.emptyMap();\n")
+                val imgOperands = names[i-1]
+                write("if(wordCount > ${i+1}) {")
+                incrementIndentation()
+                write("\n")
+                write("int count_$imgOperands = $imgOperands.getOperandCount();\n")
+                write("long[] values_$imgOperands = reader.nextWords(count_$imgOperands);\n")
+                write("$name = new HashMap<>();\n")
+                write("$imgOperands.splitOperands(values_$imgOperands, $name);")
+                decrementIndentation()
+                write("\n}\n")
+            } else {
+                writeOperandValueRead(i, name, type)
+            }
         }
         val functionName = getCorrespondingVisitFunction(instruction)
         val args = if(names.isEmpty()) "" else names.reduce { a, b -> a+", "+b }
@@ -85,6 +108,10 @@ object ModuleReaderDispatcherGenerator : VisitorGenerator() {
         if("optional" in opname && "$" !in opname) {
             if(type == "long")
                 write("long $name = -1;\n")
+            else if(type == "Map<Integer, long[]>")
+                write("$type $name = Collections.emptyMap();")
+            else if(type in listOf("ImageOperands", "FPFastMathMode", "FunctionControl", "MemoryAccess"))
+                write("$type $name = new $type(0);")
             else
                 write("$type $name = null;\n")
             write("if(wordCount > ${i+1}) {")
@@ -104,6 +131,7 @@ object ModuleReaderDispatcherGenerator : VisitorGenerator() {
             "SourceLanguage", "AddressingModel", "MemoryModel", "ExecutionModel", "Capability", "Dimensionality",
             "ImageDepth", "Sampling", "ImageFormat", "StorageClass", "AccessQualifier", "SamplerAddressingMode",
             "SamplerFilterMode" -> "reader.nextEnumValue($type.values())"
+            "FPFastMathMode", "FunctionControl", "MemoryAccess", "ImageOperands" -> "new $type(reader.nextWord())"
             else -> "null /* FIXME */"
         }
         if('$' in opname) // already initialized

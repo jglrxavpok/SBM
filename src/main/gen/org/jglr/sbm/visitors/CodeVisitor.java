@@ -17,6 +17,12 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     
     
     
+    void reset();
+    
+    
+    void visitEnd();
+    
+    
     /**
     OpNop
     <br/>
