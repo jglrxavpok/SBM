@@ -282,6 +282,21 @@ class ModuleReaderDispatcher implements Opcodes {
             }
             break;
 
+            case OpDecorate: {
+                long target = reader.nextWord();
+                Decoration decoration = reader.nextEnumValue(Decoration.values());
+                reader.visitDecoration(visitor, decoration, target, wordCount);
+            }
+            break;
+
+            case OpExecutionMode: {
+                long entryPoint = reader.nextWord();
+                ExecutionMode.Type type = reader.nextEnumValue(ExecutionMode.Type.values());
+                ExecutionMode mode = reader.readMode(type);
+                visitor.visitExecutionMode(entryPoint, mode);
+            }
+            break;
+
             case OpExtension: {
                 int strSize = wordCount - 1;
                 String extension = reader.nextString(strSize);
