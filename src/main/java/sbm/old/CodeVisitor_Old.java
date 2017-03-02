@@ -1,14 +1,18 @@
-package org.jglr.sbm.visitors;
+package sbm.old;
 
-import org.jglr.sbm.*;
+import org.jglr.sbm.Capability;
+import org.jglr.sbm.ExecutionMode;
+import org.jglr.sbm.ExecutionModel;
+import org.jglr.sbm.SourceLanguage;
 import org.jglr.sbm.sampler.ImageOperands;
+import org.jglr.sbm.visitors.*;
 
 import java.util.Map;
 
 /**
  * Documentation for the instructions copied from <a href="https://www.khronos.org/registry/spir-v/specs/1.1/SPIRV.html">the SPIR-V Specification </a>
  */
-public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVisitor, FunctionVisitor, MemoryVisitor {
+public interface CodeVisitor_Old extends TypeVisitor, DecorationVisitor, ConstantVisitor, FunctionVisitor, MemoryVisitor {
 
     /**
      *

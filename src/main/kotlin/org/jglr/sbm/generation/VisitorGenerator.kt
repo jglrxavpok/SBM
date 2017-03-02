@@ -56,6 +56,25 @@ abstract class VisitorGenerator : ClassGenerator() {
         }
     }
 
+    fun getCorrespondingVisitFunction(instruction: JsonObject): String {
+        val opName = instruction["Name"] as String
+        return when (instruction["Category"]) {
+            "Type-Declaration" -> {
+                SPIRVTypeVisitorGenerator.transformTypeOpName(opName)
+            }
+            else -> {
+                if (opName == "OpExtInst") {
+                    "visitExecExtendedInstruction"
+                } else if (opName == "OpExtInstImport") {
+                    "visitExtendedInstructionSetImport"
+                } else {
+                    // remove "Op" from name
+                    "visit${opName.substring(2)}"
+                }
+            }
+        }
+    }
+
     protected fun getType(name: String, typeID: String): String {
         if(typeID.endsWith("?")) {
             return getType(name, typeID.substring(0, typeID.length-1))

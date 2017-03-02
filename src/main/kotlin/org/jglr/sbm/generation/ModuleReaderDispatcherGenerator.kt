@@ -73,7 +73,7 @@ object ModuleReaderDispatcherGenerator : VisitorGenerator() {
             val type = types[i]
             writeOperandValueRead(i, name, type)
         }
-        val functionName = "visit${opName.substring(2)}"
+        val functionName = getCorrespondingVisitFunction(instruction)
         val args = if(names.isEmpty()) "" else names.reduce { a, b -> a+", "+b }
         write("visitor.$functionName($args);")
         decrementIndentation()

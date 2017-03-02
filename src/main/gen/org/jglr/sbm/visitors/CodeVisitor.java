@@ -1,4 +1,4 @@
-// Auto-generated from org.jglr.sbm.generation.SPIRVCodeWriterGenerator
+// Auto-generated from org.jglr.sbm.generation.SPIRVCodeVisitorGenerator
 package org.jglr.sbm.visitors;
 
 import org.jglr.flows.io.ByteArray;
@@ -13,67 +13,17 @@ import java.util.Map;
 Generated from spirv-opcodesonly.json
 */
 
-public class CodeWriter implements CodeVisitor, Opcodes {
-    
-    protected ByteArray buffer;
+public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVisitor, FunctionVisitor, MemoryVisitor {
     
     
-    public  CodeWriter() {
-        buffer = new ByteArray();
-        buffer.setByteOrder(ByteOrder.BIG_ENDIAN);
-    }
-    
-    public ByteArray getBuffer() {
-        return buffer;
-    }
-    
-    private void newOpcode(int opcode, int argCount) {
-        buffer.putUnsignedInt(((long)(argCount+1) << 16L | (opcode & 0xFFFF)));
-    }
-    
-    public byte[] toBytes() {
-        return buffer.backingArray();
-    }
-    
-    public void visitEnd() {
-        
-    }
-    
-    public void reset() {
-        buffer.reset();
-    }
-    
-    private void writeChars(String chars) {
-        ByteOrder order = buffer.getByteOrder();
-        buffer.setByteOrder(ByteOrder.LITTLE_ENDIAN);
-        buffer.putChars(chars);
-        buffer.setByteOrder(order);
-    }
-    
-    private int sizeOf(String string) {
-        if(string == null)
-            return 0;
-        int size = (int) Math.ceil((string.length()) / 4f);
-        try {
-            byte[] bytes = string.getBytes("UTF-8");
-            if(bytes.length % 4 == 0)
-                size++;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return size;
-        
-    }
     
     /**
     OpNop
     <br/>
     <br/> This has no semantic impact and can safely be removed from a module.
     */
-    @Override
-    public void visitNop() {
-        newOpcode(OpNop, 0);
-    }
+    void visitNop();
+    
     
     /**
     OpUndef
@@ -84,13 +34,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Each consumption of Result &lt;id&gt; yields an arbitrary, possibly different bit pattern.
     */
-    @Override
-    public void visitUndef(long resultType, long result) {
-        newOpcode(OpUndef, 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        
-    }
+    void visitUndef(long resultType, long result);
+    
     
     /**
     OpSizeOf
@@ -101,14 +46,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Pointer must point to a concrete type.
     */
-    @Override
-    public void visitSizeOf(long resultType, long result, long pointer) {
-        newOpcode(OpSizeOf, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        
-    }
+    void visitSizeOf(long resultType, long result, long pointer);
+    
     
     /**
     OpSourceContinued
@@ -119,12 +58,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>The previous instruction must be an OpSource or an OpSourceContinued instruction. As is true for all literal strings, the previous instruction&#8217;s string was nul terminated. That terminating 0 word from the previous instruction is not part of the source text; the first character of Continued Source logically immediately follows the last character of Source before its nul.
     */
-    @Override
-    public void visitSourceContinued(String source) {
-        newOpcode(OpSourceContinued, sizeOf(source));
-        writeChars(source);
-        
-    }
+    void visitSourceContinued(String source);
+    
     
     /**
     OpSource
@@ -139,21 +74,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Each client API describes what form the Version operand takes, per source language.
     */
-    @Override
-    public void visitSource(SourceLanguage sourceLanguage, long version, long optionalLong, String optionalString) {
-        newOpcode(OpSource, 1 + 1 + (optionalLong == -1 ? 0 : 1) + (optionalString != null ? sizeOf(optionalString) : 0));
-        buffer.putUnsignedInt(sourceLanguage.ordinal());
-        buffer.putUnsignedInt(version);
-        if(optionalLong != -1) {
-        buffer.putUnsignedInt(optionalLong);
-            
-        }
-        if(optionalString != null) {
-        writeChars(optionalString);
-            
-        }
-        
-    }
+    void visitSource(SourceLanguage sourceLanguage, long version, long optionalLong, String optionalString);
+    
     
     /**
     OpSourceExtension
@@ -162,12 +84,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Extension is a string describing a source-language extension. Its form is dependent on the how the source language describes extensions.
     */
-    @Override
-    public void visitSourceExtension(String extension) {
-        newOpcode(OpSourceExtension, sizeOf(extension));
-        writeChars(extension);
-        
-    }
+    void visitSourceExtension(String extension);
+    
     
     /**
     OpName
@@ -178,13 +96,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Name is the string to assign.
     */
-    @Override
-    public void visitName(long target, String name) {
-        newOpcode(OpName, 1 + sizeOf(name));
-        buffer.putUnsignedInt(target);
-        writeChars(name);
-        
-    }
+    void visitName(long target, String name);
+    
     
     /**
     OpMemberName
@@ -197,14 +110,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Name is the string to assign to the member.
     */
-    @Override
-    public void visitMemberName(long type, long member, String name) {
-        newOpcode(OpMemberName, 1 + 1 + sizeOf(name));
-        buffer.putUnsignedInt(type);
-        buffer.putUnsignedInt(member);
-        writeChars(name);
-        
-    }
+    void visitMemberName(long type, long member, String name);
+    
     
     /**
     OpString
@@ -213,13 +120,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>String is the literal string being assigned a Result &lt;id&gt;.
     */
-    @Override
-    public void visitString(long result, String string) {
-        newOpcode(OpString, 1 + sizeOf(string));
-        buffer.putUnsignedInt(result);
-        writeChars(string);
-        
-    }
+    void visitString(long result, String string);
+    
     
     /**
     OpLine
@@ -243,14 +145,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> - if a branch merge instruction is used, the last OpLine in the block must be before its merge instruction
     */
-    @Override
-    public void visitLine(long file, long line, long column) {
-        newOpcode(OpLine, 1 + 1 + 1);
-        buffer.putUnsignedInt(file);
-        buffer.putUnsignedInt(line);
-        buffer.putUnsignedInt(column);
-        
-    }
+    void visitLine(long file, long line, long column);
+    
     
     /**
     OpNoLine
@@ -259,10 +155,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction can only appear after the annotation instructions (see the Logical Layout section). It cannot be the last instruction in a block, or the second-to-last instruction if the block has a merge instruction. There is not a requirement that there is a preceding OpLine instruction.
     */
-    @Override
-    public void visitNoLine() {
-        newOpcode(OpNoLine, 0);
-    }
+    void visitNoLine();
+    
     
     /**
     OpModuleProcessed
@@ -271,12 +165,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Process is a string describing a process and/or tool (processor) that did the processing. Its form is dependent on the processor.
     */
-    @Override
-    public void visitModuleProcessed(String process) {
-        newOpcode(OpModuleProcessed, sizeOf(process));
-        writeChars(process);
-        
-    }
+    void visitModuleProcessed(String process);
+    
     
     /**
     OpExtension
@@ -285,12 +175,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Name is the extension&#8217;s name string.
     */
-    @Override
-    public void visitExtension(String name) {
-        newOpcode(OpExtension, sizeOf(name));
-        writeChars(name);
-        
-    }
+    void visitExtension(String name);
+    
     
     /**
     OpExtInstImport
@@ -301,13 +187,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>See Extended Instruction Sets for more information.
     */
-    @Override
-    public void visitExtendedInstructionSetImport(long result, String name) {
-        newOpcode(OpExtInstImport, 1 + sizeOf(name));
-        buffer.putUnsignedInt(result);
-        writeChars(name);
-        
-    }
+    void visitExtendedInstructionSetImport(long result, String name);
+    
     
     /**
     OpExtInst
@@ -322,16 +203,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Operand 1, &#8230; are the operands to the extended instruction.
     */
-    @Override
-    public void visitExecExtendedInstruction(long resultType, long result, long set, long instruction, long[] operands) {
-        newOpcode(OpExtInst, 1 + 1 + 1 + 1 + operands.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(set);
-        buffer.putUnsignedInt(instruction);
-        buffer.putUnsignedInts(operands);
-        
-    }
+    void visitExecExtendedInstruction(long resultType, long result, long set, long instruction, long[] operands);
+    
     
     /**
     OpMemoryModel
@@ -342,13 +215,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Memory Model selects the module&#8217;s memory model, see Memory Model.
     */
-    @Override
-    public void visitMemoryModel(AddressingModel addressingModel, MemoryModel memoryModel) {
-        newOpcode(OpMemoryModel, 1 + 1);
-        buffer.putUnsignedInt(addressingModel.ordinal());
-        buffer.putUnsignedInt(memoryModel.ordinal());
-        
-    }
+    void visitMemoryModel(AddressingModel addressingModel, MemoryModel memoryModel);
+    
     
     /**
     OpEntryPoint
@@ -365,15 +233,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Interface &lt;id&gt; are forward references.  They allow declaration of all variables forming an interface for an entry point, whether or not all the variables are actually used by the entry point.
     */
-    @Override
-    public void visitEntryPoint(ExecutionModel executionModel, long entryPoint, String name, long[] interfaces) {
-        newOpcode(OpEntryPoint, 1 + 1 + sizeOf(name) + interfaces.length);
-        buffer.putUnsignedInt(executionModel.ordinal());
-        buffer.putUnsignedInt(entryPoint);
-        writeChars(name);
-        buffer.putUnsignedInts(interfaces);
-        
-    }
+    void visitEntryPoint(ExecutionModel executionModel, long entryPoint, String name, long[] interfaces);
+    
     
     /**
     OpExecutionMode
@@ -384,14 +245,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Mode is the execution mode. See Execution Mode.
     */
-    @Override
-    public void visitExecutionMode(long entryPoint, ExecutionMode mode) {
-        newOpcode(OpExecutionMode, 1 + 1);
-        buffer.putUnsignedInt(entryPoint);
-        buffer.putUnsignedInt(mode.getType().ordinal());
-        buffer.putUnsignedInts(mode.getOperands());
-        
-    }
+    void visitExecutionMode(long entryPoint, ExecutionMode mode);
+    
     
     /**
     OpCapability
@@ -402,401 +257,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>See the capabilities section for more detail.
     */
-    @Override
-    public void visitCapability(Capability capability) {
-        newOpcode(OpCapability, 1);
-        buffer.putUnsignedInt(capability.ordinal());
-        
-    }
+    void visitCapability(Capability capability);
     
-    /**
-    OpTypeVoid
-    <br/>
-    <br/>Declare the void type.
-    */
-    @Override
-    public void visitVoidType(long result) {
-        newOpcode(OpTypeVoid, 1);
-        buffer.putUnsignedInt(result);
-        
-    }
-    
-    /**
-    OpTypeBool
-    <br/>
-    <br/>Declare the Boolean type.  Values of this type can only be either true or false. There is no physical size or bit pattern defined for these values.  If they are stored (in conjunction with OpVariable), they can only be used with logical addressing operations, not physical, and only with non-externally visible shader Storage Classes: Workgroup, CrossWorkgroup, Private, and Function.
-    */
-    @Override
-    public void visitBoolType(long result) {
-        newOpcode(OpTypeBool, 1);
-        buffer.putUnsignedInt(result);
-        
-    }
-    
-    /**
-    OpTypeInt
-    <br/>
-    <br/>Declare a new integer type.
-    <br/>
-    <br/>Width specifies how many bits wide the type is. This literal operand is limited to a single word. The bit pattern of a signed integer value is two&#8217;s complement.
-    <br/>
-    <br/>Signedness specifies whether there are signed semantics to preserve or validate.
-    <br/>0 indicates unsigned, or no signedness semantics
-    <br/>1 indicates signed semantics.
-    <br/>In all cases, the type of operation of an instruction comes from the instruction&#8217;s opcode, not the signedness of the operands.
-    */
-    @Override
-    public void visitIntType(long result, long width, boolean signedness) {
-        newOpcode(OpTypeInt, 1 + 1 + 1);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(width);
-        buffer.putUnsignedInt(signedness ? 1 : 0);
-        
-    }
-    
-    /**
-    OpTypeFloat
-    <br/>
-    <br/>Declare a new floating-point type.
-    <br/>
-    <br/>Width specifies how many bits wide the type is. The bit pattern of a floating-point value is as described by the IEEE 754 standard.
-    */
-    @Override
-    public void visitFloatType(long result, long width) {
-        newOpcode(OpTypeFloat, 1 + 1);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(width);
-        
-    }
-    
-    /**
-    OpTypeVector
-    <br/>
-    <br/>Declare a new vector type.
-    <br/>
-    <br/>Component Type is the type of each component in the resulting type.  It must be a scalar type.
-    <br/>
-    <br/>Component Count is the number of components in the resulting type.  It must be at least 2.
-    <br/>
-    <br/>Components are numbered consecutively, starting with 0.
-    */
-    @Override
-    public void visitVectorType(long result, long componentType, long count) {
-        newOpcode(OpTypeVector, 1 + 1 + 1);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(componentType);
-        buffer.putUnsignedInt(count);
-        
-    }
-    
-    /**
-    OpTypeMatrix
-    <br/>
-    <br/>Declare a new matrix type.
-    <br/>
-    <br/>Column Type is the type of each column in the matrix.  It must be vector type.
-    <br/>
-    <br/>Column Count is the number of columns in the new matrix type. It must be at least 2.
-    <br/>
-    <br/>Matrix columns are numbered consecutively, starting with 0. This is true independently of any Decorations describing the memory layout of a matrix (e.g., RowMajor or MatrixStride).
-    */
-    @Override
-    public void visitMatrixType(long result, long columnType, long count) {
-        newOpcode(OpTypeMatrix, 1 + 1 + 1);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(columnType);
-        buffer.putUnsignedInt(count);
-        
-    }
-    
-    /**
-    OpTypeImage
-    <br/>
-    <br/>Declare a new image type. Consumed, for example, by OpTypeSampledImage. This type is opaque: values of this type have no defined physical size or bit pattern.
-    <br/>
-    <br/>Sampled Type is the type of the components that result from sampling or reading from this image type. Must be a scalar numerical type or OpTypeVoid.
-    <br/>
-    <br/>Dim is the image dimensionality (Dim).
-    <br/>
-    <br/>Depth is whether or not this image is a depth image. (Note that whether or not depth comparisons are actually done is a property of the sampling opcode, not of this type declaration.)
-    <br/>0 indicates not a depth image
-    <br/>1 indicates a depth image
-    <br/>2 means no indication as to whether this is a depth or non-depth image
-    <br/>
-    <br/>Arrayed must be one of the following indicated values:
-    <br/>0 indicates non-arrayed content
-    <br/>1 indicates arrayed content
-    <br/>
-    <br/>MS must be one of the following indicated values:
-    <br/>0 indicates single-sampled content
-    <br/>1 indicates multisampled content
-    <br/>
-    <br/>Sampled indicates whether or not this image will be accessed in combination with a sampler, and must be one of the following values:
-    <br/>0 indicates this is only known at run time, not at compile time
-    <br/>1 indicates will be used with sampler
-    <br/>2 indicates will be used without a sampler (a storage image)
-    <br/>
-    <br/>Image Format is the Image Format, which can be Unknown, depending on the client API.
-    <br/>
-    <br/>If Dim is SubpassData, Sampled must be 2, Image Format must be Unknown, and the Execution Model must be Fragment.
-    <br/>
-    <br/>Access Qualifier is an image Access Qualifier.
-    */
-    @Override
-    public void visitImageType(long result, long sampledType, Dimensionality dim, ImageDepth depth, boolean arrayed, boolean mS, Sampling sampled, ImageFormat imageFormat, AccessQualifier optionalAccessQualifier) {
-        newOpcode(OpTypeImage, 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + (optionalAccessQualifier != null ? 1 : 0));
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledType);
-        buffer.putUnsignedInt(dim.ordinal());
-        buffer.putUnsignedInt(depth.ordinal());
-        buffer.putUnsignedInt(arrayed ? 1 : 0);
-        buffer.putUnsignedInt(mS ? 1 : 0);
-        buffer.putUnsignedInt(sampled.ordinal());
-        buffer.putUnsignedInt(imageFormat.ordinal());
-        if(optionalAccessQualifier != null) {
-        buffer.putUnsignedInt(optionalAccessQualifier.ordinal());
-            
-        }
-        
-    }
-    
-    /**
-    OpTypeSampler
-    <br/>
-    <br/>Declare the sampler type. Consumed by OpSampledImage. This type is opaque: values of this type have no defined physical size or bit pattern.
-    */
-    @Override
-    public void visitSamplerType(long result) {
-        newOpcode(OpTypeSampler, 1);
-        buffer.putUnsignedInt(result);
-        
-    }
-    
-    /**
-    OpTypeSampledImage
-    <br/>
-    <br/>Declare a sampled image type, the Result Type of OpSampledImage, or an externally combined sampler and image. This type is opaque: values of this type have no defined physical size or bit pattern.
-    <br/>
-    <br/>Image Type must be an OpTypeImage.  It is the type of the image in the combined sampler and image type.
-    */
-    @Override
-    public void visitSampledImageType(long result, long imageType) {
-        newOpcode(OpTypeSampledImage, 1 + 1);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(imageType);
-        
-    }
-    
-    /**
-    OpTypeArray
-    <br/>
-    <br/>Declare a new array type: a dynamically-indexable ordered aggregate of elements all having the same type.
-    <br/>
-    <br/>Element Type is the type of each element in the array.
-    <br/>
-    <br/>Length is the number of elements in the array.  It must be at least 1. Length must come from a constant instruction of an integer-type scalar whose value is at least 1.
-    <br/>
-    <br/>Array elements are number consecutively, starting with 0.
-    */
-    @Override
-    public void visitArrayType(long result, long elementType, long length) {
-        newOpcode(OpTypeArray, 1 + 1 + 1);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(elementType);
-        buffer.putUnsignedInt(length);
-        
-    }
-    
-    /**
-    OpTypeRuntimeArray
-    <br/>
-    <br/>Declare a new run-time array type.  Its length is not known at compile time.
-    <br/>
-    <br/>Element Type is the type of each element in the array. It must be a concrete type.
-    <br/>
-    <br/> See OpArrayLength for getting the Length of an array of this type.
-    <br/>
-    <br/>Objects of this type can only be created with OpVariable using the Uniform Storage Class.
-    */
-    @Override
-    public void visitRuntimeArrayType(long result, long elementType) {
-        newOpcode(OpTypeRuntimeArray, 1 + 1);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(elementType);
-        
-    }
-    
-    /**
-    OpTypeStruct
-    <br/>
-    <br/>Declare a new structure type: an aggregate of potentially heterogeneous members.
-    <br/>
-    <br/>Member N type is the type of member N of the structure. The first member is member 0, the next is member 1, &#8230;
-    <br/>
-    <br/>If an operand is not yet defined, it must be defined by an OpTypePointer, where the type pointed to is an OpTypeStruct.
-    */
-    @Override
-    public void visitStructType(long result, long[] members) {
-        newOpcode(OpTypeStruct, 1 + members.length);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInts(members);
-        
-    }
-    
-    /**
-    OpTypeOpaque
-    <br/>
-    <br/>Declare a structure type with no body specified.
-    */
-    @Override
-    public void visitOpaqueType(long result, String type) {
-        newOpcode(OpTypeOpaque, 1 + sizeOf(type));
-        buffer.putUnsignedInt(result);
-        writeChars(type);
-        
-    }
-    
-    /**
-    OpTypePointer
-    <br/>
-    <br/>Declare a new pointer type.
-    <br/>
-    <br/>Storage Class is the Storage Class of the memory holding the object pointed to. If there was a forward reference to this type from an OpTypeForwardPointer, the Storage Class of that instruction must equal the Storage Class of this instruction.
-    <br/>
-    <br/>Type is the type of the object pointed to.
-    */
-    @Override
-    public void visitPointerType(long result, StorageClass storageClass, long type) {
-        newOpcode(OpTypePointer, 1 + 1 + 1);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(storageClass.ordinal());
-        buffer.putUnsignedInt(type);
-        
-    }
-    
-    /**
-    OpTypeFunction
-    <br/>
-    <br/>Declare a new function type.
-    <br/>
-    <br/>OpFunction will use this to declare the return type and parameter types of a function. OpFunction is the only valid use of OpTypeFunction.
-    <br/>
-    <br/>Return Type is the type of the return value of functions of this type. It must be a concrete or abstract type, or a pointer to such a type. If the function has no return value, Return Type must be OpTypeVoid.
-    <br/>
-    <br/>Parameter N Type is the type &lt;id&gt; of the type of parameter N.
-    */
-    @Override
-    public void visitFunctionType(long result, long returnType, long[] parameters) {
-        newOpcode(OpTypeFunction, 1 + 1 + parameters.length);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(returnType);
-        buffer.putUnsignedInts(parameters);
-        
-    }
-    
-    /**
-    OpTypeEvent
-    <br/>
-    <br/>Declare an OpenCL event type.
-    */
-    @Override
-    public void visitEventType(long result) {
-        newOpcode(OpTypeEvent, 1);
-        buffer.putUnsignedInt(result);
-        
-    }
-    
-    /**
-    OpTypeDeviceEvent
-    <br/>
-    <br/>Declare an OpenCL device-side event type.
-    */
-    @Override
-    public void visitDeviceEventType(long result) {
-        newOpcode(OpTypeDeviceEvent, 1);
-        buffer.putUnsignedInt(result);
-        
-    }
-    
-    /**
-    OpTypeReserveId
-    <br/>
-    <br/>Declare an OpenCL reservation id type.
-    */
-    @Override
-    public void visitReserveIdType(long result) {
-        newOpcode(OpTypeReserveId, 1);
-        buffer.putUnsignedInt(result);
-        
-    }
-    
-    /**
-    OpTypeQueue
-    <br/>
-    <br/>Declare an OpenCL queue type.
-    */
-    @Override
-    public void visitQueueType(long result) {
-        newOpcode(OpTypeQueue, 1);
-        buffer.putUnsignedInt(result);
-        
-    }
-    
-    /**
-    OpTypePipe
-    <br/>
-    <br/>Declare an OpenCL pipe type.
-    <br/>
-    <br/>Qualifier is the pipe access qualifier.
-    */
-    @Override
-    public void visitPipeType(long result, AccessQualifier qualifier) {
-        newOpcode(OpTypePipe, 1 + 1);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(qualifier.ordinal());
-        
-    }
-    
-    /**
-    OpTypeForwardPointer
-    <br/>
-    <br/>Declare the Storage Class for a forward reference to a pointer.
-    <br/>
-    <br/>Pointer Type is a forward reference to the result of an OpTypePointer. The type of object the pointer points to is declared by the OpTypePointer instruction, not this instruction. Subsequent OpTypeStruct instructions can use Pointer Type as an operand.
-    <br/>
-    <br/>Storage Class is the Storage Class of the memory holding the object pointed to.
-    */
-    @Override
-    public void visitForwardPointerType(long pointerType, StorageClass storageClass) {
-        newOpcode(OpTypeForwardPointer, 1 + 1);
-        buffer.putUnsignedInt(pointerType);
-        buffer.putUnsignedInt(storageClass.ordinal());
-        
-    }
-    
-    /**
-    OpTypePipeStorage
-    <br/>
-    <br/>Declare the OpenCL pipe-storage type.
-    */
-    @Override
-    public void visitPipeStorageType(long result) {
-        newOpcode(OpTypePipeStorage, 1);
-        buffer.putUnsignedInt(result);
-        
-    }
-    
-    /**
-    OpTypeNamedBarrier
-    <br/>
-    <br/>Declare the named-barrier type.
-    */
-    @Override
-    public void visitNamedBarrierType(long result) {
-        newOpcode(OpTypeNamedBarrier, 1);
-        buffer.putUnsignedInt(result);
-        
-    }
     
     /**
     OpConstantTrue
@@ -805,13 +267,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result Type must be the scalar Boolean type.
     */
-    @Override
-    public void visitConstantTrue(long resultType, long result) {
-        newOpcode(OpConstantTrue, 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        
-    }
+    void visitConstantTrue(long resultType, long result);
+    
     
     /**
     OpConstantFalse
@@ -820,13 +277,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result Type must be the scalar Boolean type.
     */
-    @Override
-    public void visitConstantFalse(long resultType, long result) {
-        newOpcode(OpConstantFalse, 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        
-    }
+    void visitConstantFalse(long resultType, long result);
+    
     
     /**
     OpConstant
@@ -837,14 +289,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Value is the bit pattern for the constant. Types 32 bits wide or smaller take one word. Larger types take multiple words, with low-order words appearing first.
     */
-    @Override
-    public void visitConstant(long resultType, long result, long[] value) {
-        newOpcode(OpConstant, 1 + 1 + value.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInts(value);
-        
-    }
+    void visitConstant(long resultType, long result, long[] value);
+    
     
     /**
     OpConstantComposite
@@ -855,14 +301,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Constituents will become members of a structure, or elements of an array, or components of a vector, or columns of a matrix. There must be exactly one Constituent for each top-level member/element/component/column of the result. The Constituents must appear in the order needed by the definition of the Result Type. The Constituents must all be &lt;id&gt;s of other constant declarations or an OpUndef.
     */
-    @Override
-    public void visitConstantComposite(long resultType, long result, long[] constituents) {
-        newOpcode(OpConstantComposite, 1 + 1 + constituents.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInts(constituents);
-        
-    }
+    void visitConstantComposite(long resultType, long result, long[] constituents);
+    
     
     /**
     OpConstantSampler
@@ -879,16 +319,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Sampler Filter Mode is the filter mode; a literal from Sampler Filter Mode.
     */
-    @Override
-    public void visitConstantSampler(long resultType, long result, SamplerAddressingMode samplerAddressingMode, boolean param, SamplerFilterMode samplerFilterMode) {
-        newOpcode(OpConstantSampler, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(samplerAddressingMode.ordinal());
-        buffer.putUnsignedInt(param ? 1 : 0);
-        buffer.putUnsignedInt(samplerFilterMode.ordinal());
-        
-    }
+    void visitConstantSampler(long resultType, long result, SamplerAddressingMode samplerAddressingMode, boolean param, SamplerFilterMode samplerFilterMode);
+    
     
     /**
     OpConstantNull
@@ -913,13 +345,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/> -  Queue type
     <br/> -  Composite type
     */
-    @Override
-    public void visitConstantNull(long resultType, long result) {
-        newOpcode(OpConstantNull, 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        
-    }
+    void visitConstantNull(long resultType, long result);
+    
     
     /**
     OpSpecConstantTrue
@@ -932,13 +359,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>See Specialization.
     */
-    @Override
-    public void visitSpecConstantTrue(long resultType, long result) {
-        newOpcode(OpSpecConstantTrue, 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        
-    }
+    void visitSpecConstantTrue(long resultType, long result);
+    
     
     /**
     OpSpecConstantFalse
@@ -951,13 +373,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>See Specialization.
     */
-    @Override
-    public void visitSpecConstantFalse(long resultType, long result) {
-        newOpcode(OpSpecConstantFalse, 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        
-    }
+    void visitSpecConstantFalse(long resultType, long result);
+    
     
     /**
     OpSpecConstant
@@ -972,14 +389,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>See Specialization.
     */
-    @Override
-    public void visitSpecConstant(long resultType, long result, long[] value) {
-        newOpcode(OpSpecConstant, 1 + 1 + value.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInts(value);
-        
-    }
+    void visitSpecConstant(long resultType, long result, long[] value);
+    
     
     /**
     OpSpecConstantComposite
@@ -994,14 +405,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>See Specialization.
     */
-    @Override
-    public void visitSpecConstantComposite(long resultType, long result, long[] constituents) {
-        newOpcode(OpSpecConstantComposite, 1 + 1 + constituents.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInts(constituents);
-        
-    }
+    void visitSpecConstantComposite(long resultType, long result, long[] constituents);
+    
     
     /**
     OpSpecConstantOp
@@ -1051,350 +456,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>See Specialization.
     */
-    @Override
-    public void visitSpecConstantOp(long resultType, long result, long opcode, long[] operands) {
-        newOpcode(OpSpecConstantOp, 1 + 1 + 1 + operands.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(opcode);
-        buffer.putUnsignedInts(operands);
-        
-    }
+    void visitSpecConstantOp(long resultType, long result, long opcode, long[] operands);
     
-    /**
-    OpVariable
-    <br/>
-    <br/>Allocate an object in memory, resulting in a pointer to it, which can be used with OpLoad and OpStore.
-    <br/>
-    <br/> Result Type must be an OpTypePointer. Its Type operand is the type of object in memory.
-    <br/>
-    <br/>Storage Class is the Storage Class of the memory holding the object. It cannot be Generic.
-    <br/>
-    <br/>Initializer is optional.  If Initializer is present, it will be the initial value of the variable&#8217;s memory content. Initializer must be an &lt;id&gt; from a constant instruction or a global (module scope) OpVariable instruction. Initializer must have the same type as the type pointed to by Result Type.
-    */
-    @Override
-    public void visitVariable(long resultType, long result, StorageClass storageClass, long optionalLong) {
-        newOpcode(OpVariable, 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(storageClass.ordinal());
-        if(optionalLong != -1) {
-        buffer.putUnsignedInt(optionalLong);
-            
-        }
-        
-    }
-    
-    /**
-    OpImageTexelPointer
-    <br/>
-    <br/>Form a pointer to a texel of an image. Use of such a pointer is limited to atomic operations.
-    <br/>
-    <br/>Result Type must be an OpTypePointer whose Storage Class operand is Image. Its Type operand must be a scalar numerical type or OpTypeVoid.
-    <br/>
-    <br/>Image must have a type of OpTypePointer with Type OpTypeImage. The Sampled Type of the type of Image must be the same as the Type pointed to by Result Type. The Dim operand of Type cannot be SubpassData.
-    <br/>
-    <br/>Coordinate and Sample specify which texel and sample within the image to form a pointer to.
-    <br/>
-    <br/>Coordinate must be a scalar or vector of integer type.  It must have the number of components specified below, given the following Arrayed and Dim operands of the type of the OpTypeImage.
-    <br/>
-    <br/>If Arrayed is 0:
-    <br/>1D: scalar
-    <br/>2D: 2 components
-    <br/>3D: 3 components
-    <br/>Cube: 3 components
-    <br/>Rect: 2 components
-    <br/>Buffer: scalar
-    <br/>
-    <br/>If Arrayed is 1:
-    <br/>1D: 2 components
-    <br/>2D: 3 components
-    <br/>Cube: 4 components
-    <br/>
-    <br/>Sample must be an integer type scalar. It specifies which sample to select at the given coordinate.  It must be a valid &lt;id&gt; for the value 0 if the OpTypeImage has MS of 0.
-    */
-    @Override
-    public void visitImageTexelPointer(long resultType, long result, long image, long coordinate, long sample) {
-        newOpcode(OpImageTexelPointer, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(image);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(sample);
-        
-    }
-    
-    /**
-    OpLoad
-    <br/>
-    <br/>Load through a pointer.
-    <br/>
-    <br/>Result Type is the type of the loaded object.
-    <br/>
-    <br/>Pointer is the pointer to load through.  Its type must be an OpTypePointer whose Type operand is the same as Result Type.
-    <br/>
-    <br/>Memory Access must be a Memory Access literal. If not present, it is the same as specifying None.
-    */
-    @Override
-    public void visitLoad(long resultType, long result, long pointer, MemoryAccess optionalMemoryAccess) {
-        newOpcode(OpLoad, 1 + 1 + 1 + (optionalMemoryAccess != null ? 1 : 0));
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        if(optionalMemoryAccess != null) {
-        buffer.putUnsignedInt(optionalMemoryAccess.getMask());
-            
-        }
-        
-    }
-    
-    /**
-    OpStore
-    <br/>
-    <br/>Store through a pointer.
-    <br/>
-    <br/>Pointer is the pointer to store through.  Its type must be an OpTypePointer whose Type operand is the same as the type of Object.
-    <br/>
-    <br/>Object is the object to store.
-    <br/>
-    <br/>Memory Access must be a Memory Access literal. If not present, it is the same as specifying None.
-    */
-    @Override
-    public void visitStore(long pointer, long object, MemoryAccess optionalMemoryAccess) {
-        newOpcode(OpStore, 1 + 1 + (optionalMemoryAccess != null ? 1 : 0));
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(object);
-        if(optionalMemoryAccess != null) {
-        buffer.putUnsignedInt(optionalMemoryAccess.getMask());
-            
-        }
-        
-    }
-    
-    /**
-    OpCopyMemory
-    <br/>
-    <br/>Copy from the memory pointed to by Source to the memory pointed to by Target. Both operands must be non-void pointers of the same type.  Matching Storage Class is not required. The amount of memory copied is the size of the type pointed to.
-    <br/>
-    <br/>Memory Access must be a Memory Access literal. If not present, it is the same as specifying None.
-    */
-    @Override
-    public void visitCopyMemory(long target, long source, MemoryAccess optionalMemoryAccess) {
-        newOpcode(OpCopyMemory, 1 + 1 + (optionalMemoryAccess != null ? 1 : 0));
-        buffer.putUnsignedInt(target);
-        buffer.putUnsignedInt(source);
-        if(optionalMemoryAccess != null) {
-        buffer.putUnsignedInt(optionalMemoryAccess.getMask());
-            
-        }
-        
-    }
-    
-    /**
-    OpCopyMemorySized
-    <br/>
-    <br/>Copy from the memory pointed to by Source to the memory pointed to by Target. 
-    <br/>
-    <br/>Size is the number of bytes to copy. It must have a scalar integer type. If it is a constant instruction, the constant value cannot be 0. It is invalid for both the constant&#8217;s type to have Signedness of 1 and to have the sign bit set. Otherwise, as a run-time value, Size is treated as unsigned, and if its value is 0, no memory access will be made.
-    <br/>
-    <br/>Memory Access must be a Memory Access literal. If not present, it is the same as specifying None.
-    */
-    @Override
-    public void visitCopyMemorySized(long target, long source, long size, MemoryAccess optionalMemoryAccess) {
-        newOpcode(OpCopyMemorySized, 1 + 1 + 1 + (optionalMemoryAccess != null ? 1 : 0));
-        buffer.putUnsignedInt(target);
-        buffer.putUnsignedInt(source);
-        buffer.putUnsignedInt(size);
-        if(optionalMemoryAccess != null) {
-        buffer.putUnsignedInt(optionalMemoryAccess.getMask());
-            
-        }
-        
-    }
-    
-    /**
-    OpAccessChain
-    <br/>
-    <br/>Create a pointer into a composite object that can be used with OpLoad and OpStore. 
-    <br/>
-    <br/> Result Type must be an OpTypePointer. Its Type operand must be the type reached by walking the Base&#8217;s type hierarchy down to the last provided index in Indexes, and its Storage Class operand must be the same as the Storage Class of Base.
-    <br/>
-    <br/>Base must be a pointer, pointing to the base of a composite object.
-    <br/>
-    <br/>Indexes walk the type hierarchy to the desired depth, potentially down to scalar granularity. The first index in Indexes will select the top-level member/element/component/element of the base composite. All composite constituents use zero-based numbering, as described by their OpType&#8230; instruction. The second index will apply similarly to that result, and so on. Once any non-composite type is reached, there must be no remaining (unused) indexes. Each of the Indexes must:
-    <br/>- be a scalar integer type,
-    <br/>- be an OpConstant when indexing into a structure.
-    */
-    @Override
-    public void visitAccessChain(long resultType, long result, long base, long[] indexes) {
-        newOpcode(OpAccessChain, 1 + 1 + 1 + indexes.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(base);
-        buffer.putUnsignedInts(indexes);
-        
-    }
-    
-    /**
-    OpInBoundsAccessChain
-    <br/>
-    <br/>Has the same semantics as OpAccessChain, with the addition that the resulting pointer is known to point within the base object.
-    */
-    @Override
-    public void visitInBoundsAccessChain(long resultType, long result, long base, long[] indexes) {
-        newOpcode(OpInBoundsAccessChain, 1 + 1 + 1 + indexes.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(base);
-        buffer.putUnsignedInts(indexes);
-        
-    }
-    
-    /**
-    OpPtrAccessChain
-    <br/>
-    <br/>Has the same semantics as OpAccessChain, with the addition of the Element operand.
-    <br/>
-    <br/>Element is used to do the initial dereference of Base: Base is treated as the address of the first element of an array, and the Element element&#8217;s address is computed to be the base for the Indexes, as per OpAccessChain. The type of Base after being dereferenced with Element is still the same as the original type of Base.
-    <br/>
-    <br/>Note: If Base is originally typed to be a pointer an array, and the desired operation is to select an element of that array, OpAccessChain should be directly used, as its first Index will select the array element.
-    */
-    @Override
-    public void visitPtrAccessChain(long resultType, long result, long base, long element, long[] indexes) {
-        newOpcode(OpPtrAccessChain, 1 + 1 + 1 + 1 + indexes.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(base);
-        buffer.putUnsignedInt(element);
-        buffer.putUnsignedInts(indexes);
-        
-    }
-    
-    /**
-    OpArrayLength
-    <br/>
-    <br/>Length of a run-time array.
-    <br/>
-    <br/>Result Type must be an OpTypeInt with 32-bit Width and 0 Signedness.
-    <br/>
-    <br/>Structure must have a type of OpTypeStruct whose last member is a run-time array.
-    <br/>
-    <br/>Array member is the last member number of Structure and must have a type from OpTypeRuntimeArray.
-    */
-    @Override
-    public void visitArrayLength(long resultType, long result, long structure, long member) {
-        newOpcode(OpArrayLength, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(structure);
-        buffer.putUnsignedInt(member);
-        
-    }
-    
-    /**
-    OpGenericPtrMemSemantics
-    <br/>
-    <br/>Result is a valid Memory Semantics which includes mask bits set for the Storage Class for the specific (non-Generic) Storage Class of Pointer. 
-    <br/>
-    <br/>Pointer must point to Generic Storage Class.
-    <br/>
-    <br/>Result Type must be an OpTypeInt with 32-bit Width and 0 Signedness.
-    */
-    @Override
-    public void visitGenericPtrMemSemantics(long resultType, long result, long pointer) {
-        newOpcode(OpGenericPtrMemSemantics, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        
-    }
-    
-    /**
-    OpInBoundsPtrAccessChain
-    <br/>
-    <br/>Has the same semantics as OpPtrAccessChain, with the addition that the resulting pointer is known to point within the base object.
-    */
-    @Override
-    public void visitInBoundsPtrAccessChain(long resultType, long result, long base, long element, long[] indexes) {
-        newOpcode(OpInBoundsPtrAccessChain, 1 + 1 + 1 + 1 + indexes.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(base);
-        buffer.putUnsignedInt(element);
-        buffer.putUnsignedInts(indexes);
-        
-    }
-    
-    /**
-    OpFunction
-    <br/>
-    <br/>Add a function.  This instruction must be immediately followed by one OpFunctionParameter instruction per each formal parameter of this function. This function&#8217;s body or declaration will terminate with the next OpFunctionEnd instruction.
-    <br/>
-    <br/>The Result &lt;id&gt; cannot be used generally by other instructions. It can only be used by OpFunctionCall,  OpEntryPoint, and decoration instructions.
-    <br/>
-    <br/>Result Type must be the same as the Return Type declared in Function Type.
-    <br/>
-    <br/>Function Type is the result of an OpTypeFunction, which declares the types of the return value and parameters of the function.
-    */
-    @Override
-    public void visitFunction(long resultType, long result, FunctionControl functionControl, long functionType) {
-        newOpcode(OpFunction, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(functionControl.getMask());
-        buffer.putUnsignedInt(functionType);
-        
-    }
-    
-    /**
-    OpFunctionParameter
-    <br/>
-    <br/>Declare a formal parameter of the current function.
-    <br/>
-    <br/>Result Type is the type of the parameter.
-    <br/>
-    <br/>This instruction must immediately follow an OpFunction or OpFunctionParameter instruction. The order of contiguous OpFunctionParameter instructions is the same order arguments will be listed in an OpFunctionCall instruction to this function. It is also the same order in which Parameter Type operands are listed in the OpTypeFunction of the Function Type operand for this function&#8217;s OpFunction instruction.
-    */
-    @Override
-    public void visitFunctionParameter(long resultType, long result) {
-        newOpcode(OpFunctionParameter, 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        
-    }
-    
-    /**
-    OpFunctionEnd
-    <br/>
-    <br/>Last instruction of a function.
-    */
-    @Override
-    public void visitFunctionEnd() {
-        newOpcode(OpFunctionEnd, 0);
-    }
-    
-    /**
-    OpFunctionCall
-    <br/>
-    <br/>Call a function.
-    <br/>
-    <br/>Result Type is the type of the return value of the function. It must be the same as the Return Type operand of the Function Type operand of the Function operand.
-    <br/>
-    <br/>Function is an OpFunction instruction.  This could be a forward reference.
-    <br/>
-    <br/>Argument N is the object to copy to parameter N of Function.
-    <br/>
-    <br/>Note: A forward call is possible because there is no missing type information: Result Type must match the Return Type of the function, and the calling argument types must match the formal parameter types.
-    */
-    @Override
-    public void visitFunctionCall(long resultType, long result, long function, long[] arguments) {
-        newOpcode(OpFunctionCall, 1 + 1 + 1 + arguments.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(function);
-        buffer.putUnsignedInts(arguments);
-        
-    }
     
     /**
     OpSampledImage
@@ -1407,15 +470,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Sampler must be an object whose type is OpTypeSampler.
     */
-    @Override
-    public void visitSampledImage(long resultType, long result, long image, long sampler) {
-        newOpcode(OpSampledImage, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(image);
-        buffer.putUnsignedInt(sampler);
-        
-    }
+    void visitSampledImage(long resultType, long result, long image, long sampler);
+    
     
     /**
     OpImageSampleImplicitLod
@@ -1432,22 +488,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model. In addition, it consumes an implicit derivative that can be affected by code motion.
     */
-    @Override
-    public void visitImageSampleImplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageSampleImplicitLod, 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageSampleImplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageSampleExplicitLod
@@ -1462,26 +504,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands. At least one operand setting the level of detail must be present.
     */
-    @Override
-    public void visitImageSampleExplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray) {
-        newOpcode(OpImageSampleExplicitLod, 1 + 1 + 1 + 1 + 1 + 1 + (optionalLongArray != null ? optionalLongArray.length : 0));
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        
-        buffer.putUnsignedInt(imageOperands.getMask());
-        long[] imageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-        for (long o : imageOperands_operandValues) buffer.putUnsignedInt(o);
-        if(optionalLongArray != null) {
-            for(long e_optionalLongArray : optionalLongArray) {
-                buffer.putUnsignedInt(e_optionalLongArray);
-                
-            }
-            
-        }
-        
-    }
+    void visitImageSampleExplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray);
+    
     
     /**
     OpImageSampleDrefImplicitLod
@@ -1500,23 +524,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model. In addition, it consumes an implicit derivative that can be affected by code motion.
     */
-    @Override
-    public void visitImageSampleDrefImplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageSampleDrefImplicitLod, 1 + 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(dref);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageSampleDrefImplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageSampleDrefExplicitLod
@@ -1533,27 +542,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands. At least one operand setting the level of detail must be present.
     */
-    @Override
-    public void visitImageSampleDrefExplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray) {
-        newOpcode(OpImageSampleDrefExplicitLod, 1 + 1 + 1 + 1 + 1 + 1 + 1 + (optionalLongArray != null ? optionalLongArray.length : 0));
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(dref);
-        
-        buffer.putUnsignedInt(imageOperands.getMask());
-        long[] imageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-        for (long o : imageOperands_operandValues) buffer.putUnsignedInt(o);
-        if(optionalLongArray != null) {
-            for(long e_optionalLongArray : optionalLongArray) {
-                buffer.putUnsignedInt(e_optionalLongArray);
-                
-            }
-            
-        }
-        
-    }
+    void visitImageSampleDrefExplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray);
+    
     
     /**
     OpImageSampleProjImplicitLod
@@ -1570,22 +560,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model. In addition, it consumes an implicit derivative that can be affected by code motion.
     */
-    @Override
-    public void visitImageSampleProjImplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageSampleProjImplicitLod, 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageSampleProjImplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageSampleProjExplicitLod
@@ -1600,26 +576,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands. At least one operand setting the level of detail must be present.
     */
-    @Override
-    public void visitImageSampleProjExplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray) {
-        newOpcode(OpImageSampleProjExplicitLod, 1 + 1 + 1 + 1 + 1 + 1 + (optionalLongArray != null ? optionalLongArray.length : 0));
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        
-        buffer.putUnsignedInt(imageOperands.getMask());
-        long[] imageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-        for (long o : imageOperands_operandValues) buffer.putUnsignedInt(o);
-        if(optionalLongArray != null) {
-            for(long e_optionalLongArray : optionalLongArray) {
-                buffer.putUnsignedInt(e_optionalLongArray);
-                
-            }
-            
-        }
-        
-    }
+    void visitImageSampleProjExplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray);
+    
     
     /**
     OpImageSampleProjDrefImplicitLod
@@ -1638,23 +596,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model. In addition, it consumes an implicit derivative that can be affected by code motion.
     */
-    @Override
-    public void visitImageSampleProjDrefImplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageSampleProjDrefImplicitLod, 1 + 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(dref);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageSampleProjDrefImplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageSampleProjDrefExplicitLod
@@ -1671,27 +614,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands. At least one operand setting the level of detail must be present.
     */
-    @Override
-    public void visitImageSampleProjDrefExplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray) {
-        newOpcode(OpImageSampleProjDrefExplicitLod, 1 + 1 + 1 + 1 + 1 + 1 + 1 + (optionalLongArray != null ? optionalLongArray.length : 0));
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(dref);
-        
-        buffer.putUnsignedInt(imageOperands.getMask());
-        long[] imageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-        for (long o : imageOperands_operandValues) buffer.putUnsignedInt(o);
-        if(optionalLongArray != null) {
-            for(long e_optionalLongArray : optionalLongArray) {
-                buffer.putUnsignedInt(e_optionalLongArray);
-                
-            }
-            
-        }
-        
-    }
+    void visitImageSampleProjDrefExplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray);
+    
     
     /**
     OpImageFetch
@@ -1706,22 +630,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands.
     */
-    @Override
-    public void visitImageFetch(long resultType, long result, long image, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageFetch, 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(image);
-        buffer.putUnsignedInt(coordinate);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageFetch(long resultType, long result, long image, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageGather
@@ -1738,23 +648,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands.
     */
-    @Override
-    public void visitImageGather(long resultType, long result, long sampledImage, long coordinate, long component, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageGather, 1 + 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(component);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageGather(long resultType, long result, long sampledImage, long coordinate, long component, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageDrefGather
@@ -1771,23 +666,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands.
     */
-    @Override
-    public void visitImageDrefGather(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageDrefGather, 1 + 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(dref);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageDrefGather(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageRead
@@ -1806,22 +686,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands.
     */
-    @Override
-    public void visitImageRead(long resultType, long result, long image, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageRead, 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(image);
-        buffer.putUnsignedInt(coordinate);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageRead(long resultType, long result, long image, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageWrite
@@ -1838,21 +704,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands.
     */
-    @Override
-    public void visitImageWrite(long image, long coordinate, long texel, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageWrite, 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(image);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(texel);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageWrite(long image, long coordinate, long texel, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImage
@@ -1863,14 +716,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Sampled Image must have type OpTypeSampledImage whose Image Type is the same as Result Type.
     */
-    @Override
-    public void visitImage(long resultType, long result, long sampledImage) {
-        newOpcode(OpImage, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        
-    }
+    void visitImage(long resultType, long result, long sampledImage);
+    
     
     /**
     OpImageQueryFormat
@@ -1881,14 +728,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image must be an object whose type is OpTypeImage.
     */
-    @Override
-    public void visitImageQueryFormat(long resultType, long result, long image) {
-        newOpcode(OpImageQueryFormat, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(image);
-        
-    }
+    void visitImageQueryFormat(long resultType, long result, long image);
+    
     
     /**
     OpImageQueryOrder
@@ -1899,14 +740,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image must be an object whose type is OpTypeImage.
     */
-    @Override
-    public void visitImageQueryOrder(long resultType, long result, long image) {
-        newOpcode(OpImageQueryOrder, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(image);
-        
-    }
+    void visitImageQueryOrder(long resultType, long result, long image);
+    
     
     /**
     OpImageQuerySizeLod
@@ -1923,15 +758,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Level of Detail is used to compute which mipmap level to query, as described in the API specification.
     */
-    @Override
-    public void visitImageQuerySizeLod(long resultType, long result, long image, long levelOfDetail) {
-        newOpcode(OpImageQuerySizeLod, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(image);
-        buffer.putUnsignedInt(levelOfDetail);
-        
-    }
+    void visitImageQuerySizeLod(long resultType, long result, long image, long levelOfDetail);
+    
     
     /**
     OpImageQuerySize
@@ -1946,14 +774,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image must be an object whose type is OpTypeImage. Its Dim operand must be one of Rect or Buffer, or if its MS is 1, it can be 2D, or, if its Sampled Type is 0 or 2, it can be 2D or 3D. It cannot be an image with level of detail; there is no implicit level-of-detail consumed by this instruction. See OpImageQuerySizeLod for querying images having level of detail.
     */
-    @Override
-    public void visitImageQuerySize(long resultType, long result, long image) {
-        newOpcode(OpImageQuerySize, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(image);
-        
-    }
+    void visitImageQuerySize(long resultType, long result, long image);
+    
     
     /**
     OpImageQueryLod
@@ -1972,15 +794,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model. In addition, it consumes an implicit derivative that can be affected by code motion.
     */
-    @Override
-    public void visitImageQueryLod(long resultType, long result, long sampledImage, long coordinate) {
-        newOpcode(OpImageQueryLod, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        
-    }
+    void visitImageQueryLod(long resultType, long result, long sampledImage, long coordinate);
+    
     
     /**
     OpImageQueryLevels
@@ -1991,14 +806,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image must be an object whose type is OpTypeImage. Its Dim operand must be one of 1D, 2D, 3D, or Cube.
     */
-    @Override
-    public void visitImageQueryLevels(long resultType, long result, long image) {
-        newOpcode(OpImageQueryLevels, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(image);
-        
-    }
+    void visitImageQueryLevels(long resultType, long result, long image);
+    
     
     /**
     OpImageQuerySamples
@@ -2009,14 +818,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image must be an object whose type is OpTypeImage. Its Dim operand must be one of 2D and MS of 1.
     */
-    @Override
-    public void visitImageQuerySamples(long resultType, long result, long image) {
-        newOpcode(OpImageQuerySamples, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(image);
-        
-    }
+    void visitImageQuerySamples(long resultType, long result, long image);
+    
     
     /**
     OpImageSparseSampleImplicitLod
@@ -2033,22 +836,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model. In addition, it consumes an implicit derivative that can be affected by code motion.
     */
-    @Override
-    public void visitImageSparseSampleImplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageSparseSampleImplicitLod, 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageSparseSampleImplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageSparseSampleExplicitLod
@@ -2063,26 +852,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands. At least one operand setting the level of detail must be present.
     */
-    @Override
-    public void visitImageSparseSampleExplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray) {
-        newOpcode(OpImageSparseSampleExplicitLod, 1 + 1 + 1 + 1 + 1 + 1 + (optionalLongArray != null ? optionalLongArray.length : 0));
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        
-        buffer.putUnsignedInt(imageOperands.getMask());
-        long[] imageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-        for (long o : imageOperands_operandValues) buffer.putUnsignedInt(o);
-        if(optionalLongArray != null) {
-            for(long e_optionalLongArray : optionalLongArray) {
-                buffer.putUnsignedInt(e_optionalLongArray);
-                
-            }
-            
-        }
-        
-    }
+    void visitImageSparseSampleExplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray);
+    
     
     /**
     OpImageSparseSampleDrefImplicitLod
@@ -2101,23 +872,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model. In addition, it consumes an implicit derivative that can be affected by code motion.
     */
-    @Override
-    public void visitImageSparseSampleDrefImplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageSparseSampleDrefImplicitLod, 1 + 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(dref);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageSparseSampleDrefImplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageSparseSampleDrefExplicitLod
@@ -2134,27 +890,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands. At least one operand setting the level of detail must be present.
     */
-    @Override
-    public void visitImageSparseSampleDrefExplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray) {
-        newOpcode(OpImageSparseSampleDrefExplicitLod, 1 + 1 + 1 + 1 + 1 + 1 + 1 + (optionalLongArray != null ? optionalLongArray.length : 0));
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(dref);
-        
-        buffer.putUnsignedInt(imageOperands.getMask());
-        long[] imageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-        for (long o : imageOperands_operandValues) buffer.putUnsignedInt(o);
-        if(optionalLongArray != null) {
-            for(long e_optionalLongArray : optionalLongArray) {
-                buffer.putUnsignedInt(e_optionalLongArray);
-                
-            }
-            
-        }
-        
-    }
+    void visitImageSparseSampleDrefExplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray);
+    
     
     /**
     OpImageSparseSampleProjImplicitLod
@@ -2163,22 +900,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Sample a sparse image with a projective coordinate and an implicit level of detail.
     */
-    @Override
-    public void visitImageSparseSampleProjImplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageSparseSampleProjImplicitLod, 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageSparseSampleProjImplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageSparseSampleProjExplicitLod
@@ -2187,26 +910,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Sample a sparse image with a projective coordinate using an explicit level of detail.
     */
-    @Override
-    public void visitImageSparseSampleProjExplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray) {
-        newOpcode(OpImageSparseSampleProjExplicitLod, 1 + 1 + 1 + 1 + 1 + 1 + (optionalLongArray != null ? optionalLongArray.length : 0));
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        
-        buffer.putUnsignedInt(imageOperands.getMask());
-        long[] imageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-        for (long o : imageOperands_operandValues) buffer.putUnsignedInt(o);
-        if(optionalLongArray != null) {
-            for(long e_optionalLongArray : optionalLongArray) {
-                buffer.putUnsignedInt(e_optionalLongArray);
-                
-            }
-            
-        }
-        
-    }
+    void visitImageSparseSampleProjExplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray);
+    
     
     /**
     OpImageSparseSampleProjDrefImplicitLod
@@ -2215,23 +920,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Sample a sparse image with a projective coordinate, doing depth-comparison, with an implicit level of detail.
     */
-    @Override
-    public void visitImageSparseSampleProjDrefImplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageSparseSampleProjDrefImplicitLod, 1 + 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(dref);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageSparseSampleProjDrefImplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageSparseSampleProjDrefExplicitLod
@@ -2240,27 +930,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Sample a sparse image with a projective coordinate, doing depth-comparison, using an explicit level of detail.
     */
-    @Override
-    public void visitImageSparseSampleProjDrefExplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray) {
-        newOpcode(OpImageSparseSampleProjDrefExplicitLod, 1 + 1 + 1 + 1 + 1 + 1 + 1 + (optionalLongArray != null ? optionalLongArray.length : 0));
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(dref);
-        
-        buffer.putUnsignedInt(imageOperands.getMask());
-        long[] imageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-        for (long o : imageOperands_operandValues) buffer.putUnsignedInt(o);
-        if(optionalLongArray != null) {
-            for(long e_optionalLongArray : optionalLongArray) {
-                buffer.putUnsignedInt(e_optionalLongArray);
-                
-            }
-            
-        }
-        
-    }
+    void visitImageSparseSampleProjDrefExplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands imageOperands, Map<Integer, long[]> splitOperands, long[] optionalLongArray);
+    
     
     /**
     OpImageSparseFetch
@@ -2275,22 +946,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands.
     */
-    @Override
-    public void visitImageSparseFetch(long resultType, long result, long image, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageSparseFetch, 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(image);
-        buffer.putUnsignedInt(coordinate);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageSparseFetch(long resultType, long result, long image, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageSparseGather
@@ -2307,23 +964,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands.
     */
-    @Override
-    public void visitImageSparseGather(long resultType, long result, long sampledImage, long coordinate, long component, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageSparseGather, 1 + 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(component);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageSparseGather(long resultType, long result, long sampledImage, long coordinate, long component, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageSparseDrefGather
@@ -2340,23 +982,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands.
     */
-    @Override
-    public void visitImageSparseDrefGather(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageSparseDrefGather, 1 + 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(sampledImage);
-        buffer.putUnsignedInt(coordinate);
-        buffer.putUnsignedInt(dref);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageSparseDrefGather(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpImageSparseTexelsResident
@@ -2367,14 +994,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Resident Code is a value from an OpImageSparse&#8230; instruction that returns a resident code.
     */
-    @Override
-    public void visitImageSparseTexelsResident(long resultType, long result, long residentCode) {
-        newOpcode(OpImageSparseTexelsResident, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(residentCode);
-        
-    }
+    void visitImageSparseTexelsResident(long resultType, long result, long residentCode);
+    
     
     /**
     OpImageSparseRead
@@ -2391,22 +1012,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands.
     */
-    @Override
-    public void visitImageSparseRead(long resultType, long result, long image, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands) {
-        newOpcode(OpImageSparseRead, 1 + 1 + 1 + 1 + (optionalImageOperands != null ? 1 : 0) + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(image);
-        buffer.putUnsignedInt(coordinate);
-        if(optionalImageOperands != null) {
-        
-            buffer.putUnsignedInt(optionalImageOperands.getMask());
-            long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
-            for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
-            
-        }
-        
-    }
+    void visitImageSparseRead(long resultType, long result, long image, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
+    
     
     /**
     OpConvertFToU
@@ -2419,14 +1026,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitConvertFToU(long resultType, long result, long floatValue) {
-        newOpcode(OpConvertFToU, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(floatValue);
-        
-    }
+    void visitConvertFToU(long resultType, long result, long floatValue);
+    
     
     /**
     OpConvertFToS
@@ -2439,14 +1040,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitConvertFToS(long resultType, long result, long floatValue) {
-        newOpcode(OpConvertFToS, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(floatValue);
-        
-    }
+    void visitConvertFToS(long resultType, long result, long floatValue);
+    
     
     /**
     OpConvertSToF
@@ -2459,14 +1054,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitConvertSToF(long resultType, long result, long signedValue) {
-        newOpcode(OpConvertSToF, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(signedValue);
-        
-    }
+    void visitConvertSToF(long resultType, long result, long signedValue);
+    
     
     /**
     OpConvertUToF
@@ -2479,14 +1068,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitConvertUToF(long resultType, long result, long unsignedValue) {
-        newOpcode(OpConvertUToF, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(unsignedValue);
-        
-    }
+    void visitConvertUToF(long resultType, long result, long unsignedValue);
+    
     
     /**
     OpUConvert
@@ -2499,14 +1082,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitUConvert(long resultType, long result, long unsignedValue) {
-        newOpcode(OpUConvert, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(unsignedValue);
-        
-    }
+    void visitUConvert(long resultType, long result, long unsignedValue);
+    
     
     /**
     OpSConvert
@@ -2519,14 +1096,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitSConvert(long resultType, long result, long signedValue) {
-        newOpcode(OpSConvert, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(signedValue);
-        
-    }
+    void visitSConvert(long resultType, long result, long signedValue);
+    
     
     /**
     OpFConvert
@@ -2539,14 +1110,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFConvert(long resultType, long result, long floatValue) {
-        newOpcode(OpFConvert, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(floatValue);
-        
-    }
+    void visitFConvert(long resultType, long result, long floatValue);
+    
     
     /**
     OpQuantizeToF16
@@ -2563,14 +1128,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitQuantizeToF16(long resultType, long result, long value) {
-        newOpcode(OpQuantizeToF16, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitQuantizeToF16(long resultType, long result, long value);
+    
     
     /**
     OpConvertPtrToU
@@ -2579,14 +1138,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Result Type must be a scalar or vector of integer type, whose Signedness operand is 0.
     */
-    @Override
-    public void visitConvertPtrToU(long resultType, long result, long pointer) {
-        newOpcode(OpConvertPtrToU, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        
-    }
+    void visitConvertPtrToU(long resultType, long result, long pointer);
+    
     
     /**
     OpSatConvertSToU
@@ -2599,14 +1152,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitSatConvertSToU(long resultType, long result, long signedValue) {
-        newOpcode(OpSatConvertSToU, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(signedValue);
-        
-    }
+    void visitSatConvertSToU(long resultType, long result, long signedValue);
+    
     
     /**
     OpSatConvertUToS
@@ -2619,14 +1166,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitSatConvertUToS(long resultType, long result, long unsignedValue) {
-        newOpcode(OpSatConvertUToS, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(unsignedValue);
-        
-    }
+    void visitSatConvertUToS(long resultType, long result, long unsignedValue);
+    
     
     /**
     OpConvertUToPtr
@@ -2635,14 +1176,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Result Type must be an OpTypePointer. For same-width source and result, this is the same as OpBitcast.
     */
-    @Override
-    public void visitConvertUToPtr(long resultType, long result, long integerValue) {
-        newOpcode(OpConvertUToPtr, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(integerValue);
-        
-    }
+    void visitConvertUToPtr(long resultType, long result, long integerValue);
+    
     
     /**
     OpPtrCastToGeneric
@@ -2655,14 +1190,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result Type and Pointer must point to the same type.
     */
-    @Override
-    public void visitPtrCastToGeneric(long resultType, long result, long pointer) {
-        newOpcode(OpPtrCastToGeneric, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        
-    }
+    void visitPtrCastToGeneric(long resultType, long result, long pointer);
+    
     
     /**
     OpGenericCastToPtr
@@ -2675,14 +1204,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result Type and Pointer must point to the same type.
     */
-    @Override
-    public void visitGenericCastToPtr(long resultType, long result, long pointer) {
-        newOpcode(OpGenericCastToPtr, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        
-    }
+    void visitGenericCastToPtr(long resultType, long result, long pointer);
+    
     
     /**
     OpGenericCastToPtrExplicit
@@ -2695,15 +1218,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Storage must be one of the following literal values from Storage Class: Workgroup, CrossWorkgroup, or Function.
     */
-    @Override
-    public void visitGenericCastToPtrExplicit(long resultType, long result, long pointer, StorageClass storage) {
-        newOpcode(OpGenericCastToPtrExplicit, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(storage.ordinal());
-        
-    }
+    void visitGenericCastToPtrExplicit(long resultType, long result, long pointer, StorageClass storage);
+    
     
     /**
     OpBitcast
@@ -2720,14 +1236,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>If Result Type has a different number of components than Operand, the total number of bits in Result Type must equal the total number of bits in Operand. Let L be the type, either Result Type or Operand&#8217;s type, that has the larger number of components. Let S be the other type, with the smaller number of components. The number of components in L must be an integer multiple of the number of components in S. The first component (that is, the only or lowest-numbered component) of S maps to the first components of L, and so on,  up to the last component of S mapping to the last components of L. Within this mapping, any single component of S (mapping to multiple components of L) maps its lower-ordered bits to the lower-numbered components of L.
     */
-    @Override
-    public void visitBitcast(long resultType, long result, long operand) {
-        newOpcode(OpBitcast, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand);
-        
-    }
+    void visitBitcast(long resultType, long result, long operand);
+    
     
     /**
     OpVectorExtractDynamic
@@ -2742,15 +1252,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>The value read is undefined if Index&#8217;s value is less than zero or greater than or equal to the number of components in Vector.
     */
-    @Override
-    public void visitVectorExtractDynamic(long resultType, long result, long vector, long index) {
-        newOpcode(OpVectorExtractDynamic, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(vector);
-        buffer.putUnsignedInt(index);
-        
-    }
+    void visitVectorExtractDynamic(long resultType, long result, long vector, long index);
+    
     
     /**
     OpVectorInsertDynamic
@@ -2767,16 +1270,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>What is written is undefined if Index&#8217;s value is less than zero or greater than or equal to the number of components in Vector.
     */
-    @Override
-    public void visitVectorInsertDynamic(long resultType, long result, long vector, long component, long index) {
-        newOpcode(OpVectorInsertDynamic, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(vector);
-        buffer.putUnsignedInt(component);
-        buffer.putUnsignedInt(index);
-        
-    }
+    void visitVectorInsertDynamic(long resultType, long result, long vector, long component, long index);
+    
     
     /**
     OpVectorShuffle
@@ -2791,16 +1286,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Note: A vector &#8220;swizzle&#8221; can be done by using the vector for both Vector operands, or using an OpUndef for one of the Vector operands.
     */
-    @Override
-    public void visitVectorShuffle(long resultType, long result, long vector1, long vector2, long[] components) {
-        newOpcode(OpVectorShuffle, 1 + 1 + 1 + 1 + components.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(vector1);
-        buffer.putUnsignedInt(vector2);
-        buffer.putUnsignedInts(components);
-        
-    }
+    void visitVectorShuffle(long resultType, long result, long vector1, long vector2, long[] components);
+    
     
     /**
     OpCompositeConstruct
@@ -2811,14 +1298,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Constituents will become members of a structure, or elements of an array, or components of a vector, or columns of a matrix. There must be exactly one Constituent for each top-level member/element/component/column of the result, with one exception. The exception is that for constructing a vector, a contiguous subset of the scalars consumed can be represented by a vector operand instead. The Constituents must appear in the order needed by the definition of the type of the result. When constructing a vector, there must be at least two Constituent operands.
     */
-    @Override
-    public void visitCompositeConstruct(long resultType, long result, long[] constituents) {
-        newOpcode(OpCompositeConstruct, 1 + 1 + constituents.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInts(constituents);
-        
-    }
+    void visitCompositeConstruct(long resultType, long result, long[] constituents);
+    
     
     /**
     OpCompositeExtract
@@ -2831,15 +1312,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Indexes walk the type hierarchy, potentially down to component granularity, to select the part to extract. All indexes must be in bounds.  All composite constituents use zero-based numbering, as described by their OpType&#8230; instruction.
     */
-    @Override
-    public void visitCompositeExtract(long resultType, long result, long composite, long[] indexes) {
-        newOpcode(OpCompositeExtract, 1 + 1 + 1 + indexes.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(composite);
-        buffer.putUnsignedInts(indexes);
-        
-    }
+    void visitCompositeExtract(long resultType, long result, long composite, long[] indexes);
+    
     
     /**
     OpCompositeInsert
@@ -2854,16 +1328,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Indexes walk the type hierarchy of Composite to the desired depth, potentially down to component granularity, to select the part to modify. All indexes must be in bounds. All composite constituents use zero-based numbering, as described by their OpType&#8230; instruction. The type of the part selected to modify must match the type of Object.
     */
-    @Override
-    public void visitCompositeInsert(long resultType, long result, long object, long composite, long[] indexes) {
-        newOpcode(OpCompositeInsert, 1 + 1 + 1 + 1 + indexes.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(object);
-        buffer.putUnsignedInt(composite);
-        buffer.putUnsignedInts(indexes);
-        
-    }
+    void visitCompositeInsert(long resultType, long result, long object, long composite, long[] indexes);
+    
     
     /**
     OpCopyObject
@@ -2872,14 +1338,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result Type must match Operand type.  There are no other restrictions on the types.
     */
-    @Override
-    public void visitCopyObject(long resultType, long result, long operand) {
-        newOpcode(OpCopyObject, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand);
-        
-    }
+    void visitCopyObject(long resultType, long result, long operand);
+    
     
     /**
     OpTranspose
@@ -2890,14 +1350,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Matrix must have of type of OpTypeMatrix.
     */
-    @Override
-    public void visitTranspose(long resultType, long result, long matrix) {
-        newOpcode(OpTranspose, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(matrix);
-        
-    }
+    void visitTranspose(long resultType, long result, long matrix);
+    
     
     /**
     OpSNegate
@@ -2910,14 +1364,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitSNegate(long resultType, long result, long operand) {
-        newOpcode(OpSNegate, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand);
-        
-    }
+    void visitSNegate(long resultType, long result, long operand);
+    
     
     /**
     OpFNegate
@@ -2930,14 +1378,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFNegate(long resultType, long result, long operand) {
-        newOpcode(OpFNegate, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand);
-        
-    }
+    void visitFNegate(long resultType, long result, long operand);
+    
     
     /**
     OpIAdd
@@ -2950,15 +1392,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitIAdd(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpIAdd, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitIAdd(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFAdd
@@ -2971,15 +1406,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFAdd(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFAdd, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFAdd(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpISub
@@ -2992,15 +1420,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitISub(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpISub, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitISub(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFSub
@@ -3013,15 +1434,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFSub(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFSub, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFSub(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpIMul
@@ -3034,15 +1448,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitIMul(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpIMul, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitIMul(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFMul
@@ -3055,15 +1462,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFMul(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFMul, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFMul(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpUDiv
@@ -3076,15 +1476,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.  The resulting value is undefined if Operand 2 is 0.
     */
-    @Override
-    public void visitUDiv(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpUDiv, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitUDiv(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpSDiv
@@ -3097,15 +1490,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.  The resulting value is undefined if Operand 2 is 0.
     */
-    @Override
-    public void visitSDiv(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpSDiv, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitSDiv(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFDiv
@@ -3118,15 +1504,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.  The resulting value is undefined if Operand 2 is 0.
     */
-    @Override
-    public void visitFDiv(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFDiv, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFDiv(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpUMod
@@ -3139,15 +1518,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.  The resulting value is undefined if Operand 2 is 0.
     */
-    @Override
-    public void visitUMod(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpUMod, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitUMod(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpSRem
@@ -3160,15 +1532,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.  The resulting value is undefined if Operand 2 is 0.
     */
-    @Override
-    public void visitSRem(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpSRem, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitSRem(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpSMod
@@ -3181,15 +1546,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.  The resulting value is undefined if Operand 2 is 0.
     */
-    @Override
-    public void visitSMod(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpSMod, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitSMod(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFRem
@@ -3202,15 +1560,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.  The resulting value is undefined if Operand 2 is 0.
     */
-    @Override
-    public void visitFRem(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFRem, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFRem(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFMod
@@ -3223,15 +1574,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.  The resulting value is undefined if Operand 2 is 0.
     */
-    @Override
-    public void visitFMod(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFMod, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFMod(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpVectorTimesScalar
@@ -3244,15 +1588,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Scalar must have the same type as the Component Type in Result Type.
     */
-    @Override
-    public void visitVectorTimesScalar(long resultType, long result, long vector, long scalar) {
-        newOpcode(OpVectorTimesScalar, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(vector);
-        buffer.putUnsignedInt(scalar);
-        
-    }
+    void visitVectorTimesScalar(long resultType, long result, long vector, long scalar);
+    
     
     /**
     OpMatrixTimesScalar
@@ -3265,15 +1602,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Scalar must have the same type as the Component Type in Result Type.
     */
-    @Override
-    public void visitMatrixTimesScalar(long resultType, long result, long matrix, long scalar) {
-        newOpcode(OpMatrixTimesScalar, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(matrix);
-        buffer.putUnsignedInt(scalar);
-        
-    }
+    void visitMatrixTimesScalar(long resultType, long result, long matrix, long scalar);
+    
     
     /**
     OpVectorTimesMatrix
@@ -3286,15 +1616,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Matrix must be a matrix with the same Component Type as the Component Type in Result Type. Its number of columns must equal the number of components in Result Type.
     */
-    @Override
-    public void visitVectorTimesMatrix(long resultType, long result, long vector, long matrix) {
-        newOpcode(OpVectorTimesMatrix, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(vector);
-        buffer.putUnsignedInt(matrix);
-        
-    }
+    void visitVectorTimesMatrix(long resultType, long result, long vector, long matrix);
+    
     
     /**
     OpMatrixTimesVector
@@ -3307,15 +1630,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Vector must be a vector with the same Component Type as the Component Type in Result Type. Its number of components must equal the number of columns in Matrix.
     */
-    @Override
-    public void visitMatrixTimesVector(long resultType, long result, long matrix, long vector) {
-        newOpcode(OpMatrixTimesVector, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(matrix);
-        buffer.putUnsignedInt(vector);
-        
-    }
+    void visitMatrixTimesVector(long resultType, long result, long matrix, long vector);
+    
     
     /**
     OpMatrixTimesMatrix
@@ -3328,15 +1644,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>RightMatrix must be a matrix with the same Component Type as the Component Type in Result Type. Its number of columns must equal the number of columns in Result Type. Its columns must have the same number of components as the number of columns in LeftMatrix.
     */
-    @Override
-    public void visitMatrixTimesMatrix(long resultType, long result, long leftMatrix, long rightMatrix) {
-        newOpcode(OpMatrixTimesMatrix, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(leftMatrix);
-        buffer.putUnsignedInt(rightMatrix);
-        
-    }
+    void visitMatrixTimesMatrix(long resultType, long result, long leftMatrix, long rightMatrix);
+    
     
     /**
     OpOuterProduct
@@ -3349,15 +1658,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Vector 2 must be a vector with the same Component Type as the Component Type in Result Type. Its number of components must equal the number of columns in Result Type.
     */
-    @Override
-    public void visitOuterProduct(long resultType, long result, long vector1, long vector2) {
-        newOpcode(OpOuterProduct, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(vector1);
-        buffer.putUnsignedInt(vector2);
-        
-    }
+    void visitOuterProduct(long resultType, long result, long vector1, long vector2);
+    
     
     /**
     OpDot
@@ -3368,15 +1670,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Vector 1 and Vector 2 must have the same type, and their component type must be Result Type.
     */
-    @Override
-    public void visitDot(long resultType, long result, long vector1, long vector2) {
-        newOpcode(OpDot, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(vector1);
-        buffer.putUnsignedInt(vector2);
-        
-    }
+    void visitDot(long resultType, long result, long vector1, long vector2);
+    
     
     /**
     OpIAddCarry
@@ -3393,15 +1688,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Member 1 of the result gets the high-order (carry) bit of the result of the addition. That is, it gets the value 1 if the addition overflowed the component width, and 0 otherwise.
     */
-    @Override
-    public void visitIAddCarry(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpIAddCarry, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitIAddCarry(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpISubBorrow
@@ -3418,15 +1706,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Member 1 of the result gets 0 if Operand 1 &ge; Operand 2, and gets 1 otherwise.
     */
-    @Override
-    public void visitISubBorrow(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpISubBorrow, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitISubBorrow(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpUMulExtended
@@ -3443,15 +1724,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Member 1 of the result gets the high-order bits of the multiplication.
     */
-    @Override
-    public void visitUMulExtended(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpUMulExtended, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitUMulExtended(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpSMulExtended
@@ -3468,15 +1742,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Member 1 of the result gets the high-order bits of the multiplication.
     */
-    @Override
-    public void visitSMulExtended(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpSMulExtended, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitSMulExtended(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpShiftRightLogical
@@ -3491,15 +1758,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitShiftRightLogical(long resultType, long result, long base, long shift) {
-        newOpcode(OpShiftRightLogical, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(base);
-        buffer.putUnsignedInt(shift);
-        
-    }
+    void visitShiftRightLogical(long resultType, long result, long base, long shift);
+    
     
     /**
     OpShiftRightArithmetic
@@ -3514,15 +1774,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitShiftRightArithmetic(long resultType, long result, long base, long shift) {
-        newOpcode(OpShiftRightArithmetic, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(base);
-        buffer.putUnsignedInt(shift);
-        
-    }
+    void visitShiftRightArithmetic(long resultType, long result, long base, long shift);
+    
     
     /**
     OpShiftLeftLogical
@@ -3539,15 +1792,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitShiftLeftLogical(long resultType, long result, long base, long shift) {
-        newOpcode(OpShiftLeftLogical, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(base);
-        buffer.putUnsignedInt(shift);
-        
-    }
+    void visitShiftLeftLogical(long resultType, long result, long base, long shift);
+    
     
     /**
     OpBitwiseOr
@@ -3558,15 +1804,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Result Type must be a scalar or vector of integer type.  The type of Operand 1 and Operand 2  must be a scalar or vector of integer type.  They must have the same number of components as Result Type. They must have the same component width as Result Type.
     */
-    @Override
-    public void visitBitwiseOr(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpBitwiseOr, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitBitwiseOr(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpBitwiseXor
@@ -3577,15 +1816,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Result Type must be a scalar or vector of integer type.  The type of Operand 1 and Operand 2  must be a scalar or vector of integer type.  They must have the same number of components as Result Type. They must have the same component width as Result Type.
     */
-    @Override
-    public void visitBitwiseXor(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpBitwiseXor, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitBitwiseXor(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpBitwiseAnd
@@ -3596,15 +1828,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Result Type must be a scalar or vector of integer type.  The type of Operand 1 and Operand 2  must be a scalar or vector of integer type.  They must have the same number of components as Result Type. They must have the same component width as Result Type.
     */
-    @Override
-    public void visitBitwiseAnd(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpBitwiseAnd, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitBitwiseAnd(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpNot
@@ -3617,14 +1842,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Operand&#8217;s type  must be a scalar or vector of integer type.  It must have the same number of components as Result Type.  The component width must equal the component width in Result Type.
     */
-    @Override
-    public void visitNot(long resultType, long result, long operand) {
-        newOpcode(OpNot, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand);
-        
-    }
+    void visitNot(long resultType, long result, long operand);
+    
     
     /**
     OpBitFieldInsert
@@ -3647,17 +1866,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>The resulting value is undefined if Count or Offset or their sum is greater than the number of bits in the result.
     */
-    @Override
-    public void visitBitFieldInsert(long resultType, long result, long base, long insert, long offset, long count) {
-        newOpcode(OpBitFieldInsert, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(base);
-        buffer.putUnsignedInt(insert);
-        buffer.putUnsignedInt(offset);
-        buffer.putUnsignedInt(count);
-        
-    }
+    void visitBitFieldInsert(long resultType, long result, long base, long insert, long offset, long count);
+    
     
     /**
     OpBitFieldSExtract
@@ -3678,16 +1888,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>The resulting value is undefined if Count or Offset or their sum is greater than the number of bits in the result.
     */
-    @Override
-    public void visitBitFieldSExtract(long resultType, long result, long base, long offset, long count) {
-        newOpcode(OpBitFieldSExtract, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(base);
-        buffer.putUnsignedInt(offset);
-        buffer.putUnsignedInt(count);
-        
-    }
+    void visitBitFieldSExtract(long resultType, long result, long base, long offset, long count);
+    
     
     /**
     OpBitFieldUExtract
@@ -3696,16 +1898,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>The semantics are the same as with OpBitFieldSExtract with the exception that there is no sign extension. The remaining bits of the result will all be 0.
     */
-    @Override
-    public void visitBitFieldUExtract(long resultType, long result, long base, long offset, long count) {
-        newOpcode(OpBitFieldUExtract, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(base);
-        buffer.putUnsignedInt(offset);
-        buffer.putUnsignedInt(count);
-        
-    }
+    void visitBitFieldUExtract(long resultType, long result, long base, long offset, long count);
+    
     
     /**
     OpBitReverse
@@ -3720,14 +1914,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>The bit-number n of the result will be taken from bit-number Width - 1 - n of Base, where Width is the OpTypeInt operand of the Result Type.
     */
-    @Override
-    public void visitBitReverse(long resultType, long result, long base) {
-        newOpcode(OpBitReverse, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(base);
-        
-    }
+    void visitBitReverse(long resultType, long result, long base);
+    
     
     /**
     OpBitCount
@@ -3742,14 +1930,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>The result is the unsigned value that is the number of bits in Base that are 1.
     */
-    @Override
-    public void visitBitCount(long resultType, long result, long base) {
-        newOpcode(OpBitCount, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(base);
-        
-    }
+    void visitBitCount(long resultType, long result, long base);
+    
     
     /**
     OpAny
@@ -3760,14 +1942,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Vector must be a vector of Boolean type.
     */
-    @Override
-    public void visitAny(long resultType, long result, long vector) {
-        newOpcode(OpAny, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(vector);
-        
-    }
+    void visitAny(long resultType, long result, long vector);
+    
     
     /**
     OpAll
@@ -3778,14 +1954,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Vector must be a vector of Boolean type.
     */
-    @Override
-    public void visitAll(long resultType, long result, long vector) {
-        newOpcode(OpAll, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(vector);
-        
-    }
+    void visitAll(long resultType, long result, long vector);
+    
     
     /**
     OpIsNan
@@ -3798,14 +1968,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitIsNan(long resultType, long result, long x) {
-        newOpcode(OpIsNan, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitIsNan(long resultType, long result, long x);
+    
     
     /**
     OpIsInf
@@ -3818,14 +1982,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitIsInf(long resultType, long result, long x) {
-        newOpcode(OpIsInf, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitIsInf(long resultType, long result, long x);
+    
     
     /**
     OpIsFinite
@@ -3838,14 +1996,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitIsFinite(long resultType, long result, long x) {
-        newOpcode(OpIsFinite, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitIsFinite(long resultType, long result, long x);
+    
     
     /**
     OpIsNormal
@@ -3858,14 +2010,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitIsNormal(long resultType, long result, long x) {
-        newOpcode(OpIsNormal, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitIsNormal(long resultType, long result, long x);
+    
     
     /**
     OpSignBitSet
@@ -3878,14 +2024,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitSignBitSet(long resultType, long result, long x) {
-        newOpcode(OpSignBitSet, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitSignBitSet(long resultType, long result, long x);
+    
     
     /**
     OpLessOrGreater
@@ -3900,15 +2040,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitLessOrGreater(long resultType, long result, long x, long y) {
-        newOpcode(OpLessOrGreater, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(x);
-        buffer.putUnsignedInt(y);
-        
-    }
+    void visitLessOrGreater(long resultType, long result, long x, long y);
+    
     
     /**
     OpOrdered
@@ -3923,15 +2056,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitOrdered(long resultType, long result, long x, long y) {
-        newOpcode(OpOrdered, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(x);
-        buffer.putUnsignedInt(y);
-        
-    }
+    void visitOrdered(long resultType, long result, long x, long y);
+    
     
     /**
     OpUnordered
@@ -3946,15 +2072,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitUnordered(long resultType, long result, long x, long y) {
-        newOpcode(OpUnordered, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(x);
-        buffer.putUnsignedInt(y);
-        
-    }
+    void visitUnordered(long resultType, long result, long x, long y);
+    
     
     /**
     OpLogicalEqual
@@ -3969,15 +2088,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitLogicalEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpLogicalEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitLogicalEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpLogicalNotEqual
@@ -3992,15 +2104,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitLogicalNotEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpLogicalNotEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitLogicalNotEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpLogicalOr
@@ -4015,15 +2120,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitLogicalOr(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpLogicalOr, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitLogicalOr(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpLogicalAnd
@@ -4038,15 +2136,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitLogicalAnd(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpLogicalAnd, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitLogicalAnd(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpLogicalNot
@@ -4059,14 +2150,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitLogicalNot(long resultType, long result, long operand) {
-        newOpcode(OpLogicalNot, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand);
-        
-    }
+    void visitLogicalNot(long resultType, long result, long operand);
+    
     
     /**
     OpSelect
@@ -4083,16 +2168,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitSelect(long resultType, long result, long condition, long object1, long object2) {
-        newOpcode(OpSelect, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(condition);
-        buffer.putUnsignedInt(object1);
-        buffer.putUnsignedInt(object2);
-        
-    }
+    void visitSelect(long resultType, long result, long condition, long object1, long object2);
+    
     
     /**
     OpIEqual
@@ -4105,15 +2182,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitIEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpIEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitIEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpINotEqual
@@ -4126,15 +2196,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitINotEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpINotEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitINotEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpUGreaterThan
@@ -4147,15 +2210,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitUGreaterThan(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpUGreaterThan, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitUGreaterThan(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpSGreaterThan
@@ -4168,15 +2224,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitSGreaterThan(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpSGreaterThan, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitSGreaterThan(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpUGreaterThanEqual
@@ -4189,15 +2238,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitUGreaterThanEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpUGreaterThanEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitUGreaterThanEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpSGreaterThanEqual
@@ -4210,15 +2252,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitSGreaterThanEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpSGreaterThanEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitSGreaterThanEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpULessThan
@@ -4231,15 +2266,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitULessThan(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpULessThan, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitULessThan(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpSLessThan
@@ -4252,15 +2280,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitSLessThan(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpSLessThan, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitSLessThan(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpULessThanEqual
@@ -4273,15 +2294,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitULessThanEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpULessThanEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitULessThanEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpSLessThanEqual
@@ -4294,15 +2308,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitSLessThanEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpSLessThanEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitSLessThanEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFOrdEqual
@@ -4315,15 +2322,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFOrdEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFOrdEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFOrdEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFUnordEqual
@@ -4336,15 +2336,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFUnordEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFUnordEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFUnordEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFOrdNotEqual
@@ -4357,15 +2350,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFOrdNotEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFOrdNotEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFOrdNotEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFUnordNotEqual
@@ -4378,15 +2364,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFUnordNotEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFUnordNotEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFUnordNotEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFOrdLessThan
@@ -4399,15 +2378,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFOrdLessThan(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFOrdLessThan, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFOrdLessThan(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFUnordLessThan
@@ -4420,15 +2392,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFUnordLessThan(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFUnordLessThan, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFUnordLessThan(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFOrdGreaterThan
@@ -4441,15 +2406,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFOrdGreaterThan(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFOrdGreaterThan, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFOrdGreaterThan(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFUnordGreaterThan
@@ -4462,15 +2420,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFUnordGreaterThan(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFUnordGreaterThan, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFUnordGreaterThan(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFOrdLessThanEqual
@@ -4483,15 +2434,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFOrdLessThanEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFOrdLessThanEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFOrdLessThanEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFUnordLessThanEqual
@@ -4504,15 +2448,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFUnordLessThanEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFUnordLessThanEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFUnordLessThanEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFOrdGreaterThanEqual
@@ -4525,15 +2462,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFOrdGreaterThanEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFOrdGreaterThanEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFOrdGreaterThanEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpFUnordGreaterThanEqual
@@ -4546,15 +2476,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Results are computed per component.
     */
-    @Override
-    public void visitFUnordGreaterThanEqual(long resultType, long result, long operand1, long operand2) {
-        newOpcode(OpFUnordGreaterThanEqual, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(operand1);
-        buffer.putUnsignedInt(operand2);
-        
-    }
+    void visitFUnordGreaterThanEqual(long resultType, long result, long operand1, long operand2);
+    
     
     /**
     OpDPdx
@@ -4567,14 +2490,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model.
     */
-    @Override
-    public void visitDPdx(long resultType, long result, long p) {
-        newOpcode(OpDPdx, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(p);
-        
-    }
+    void visitDPdx(long resultType, long result, long p);
+    
     
     /**
     OpDPdy
@@ -4587,14 +2504,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model.
     */
-    @Override
-    public void visitDPdy(long resultType, long result, long p) {
-        newOpcode(OpDPdy, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(p);
-        
-    }
+    void visitDPdy(long resultType, long result, long p);
+    
     
     /**
     OpFwidth
@@ -4607,14 +2518,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model.
     */
-    @Override
-    public void visitFwidth(long resultType, long result, long p) {
-        newOpcode(OpFwidth, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(p);
-        
-    }
+    void visitFwidth(long resultType, long result, long p);
+    
     
     /**
     OpDPdxFine
@@ -4627,14 +2532,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model.
     */
-    @Override
-    public void visitDPdxFine(long resultType, long result, long p) {
-        newOpcode(OpDPdxFine, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(p);
-        
-    }
+    void visitDPdxFine(long resultType, long result, long p);
+    
     
     /**
     OpDPdyFine
@@ -4647,14 +2546,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model.
     */
-    @Override
-    public void visitDPdyFine(long resultType, long result, long p) {
-        newOpcode(OpDPdyFine, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(p);
-        
-    }
+    void visitDPdyFine(long resultType, long result, long p);
+    
     
     /**
     OpFwidthFine
@@ -4667,14 +2560,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model.
     */
-    @Override
-    public void visitFwidthFine(long resultType, long result, long p) {
-        newOpcode(OpFwidthFine, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(p);
-        
-    }
+    void visitFwidthFine(long resultType, long result, long p);
+    
     
     /**
     OpDPdxCoarse
@@ -4687,14 +2574,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model.
     */
-    @Override
-    public void visitDPdxCoarse(long resultType, long result, long p) {
-        newOpcode(OpDPdxCoarse, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(p);
-        
-    }
+    void visitDPdxCoarse(long resultType, long result, long p);
+    
     
     /**
     OpDPdyCoarse
@@ -4707,14 +2588,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model.
     */
-    @Override
-    public void visitDPdyCoarse(long resultType, long result, long p) {
-        newOpcode(OpDPdyCoarse, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(p);
-        
-    }
+    void visitDPdyCoarse(long resultType, long result, long p);
+    
     
     /**
     OpFwidthCoarse
@@ -4727,14 +2602,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model.
     */
-    @Override
-    public void visitFwidthCoarse(long resultType, long result, long p) {
-        newOpcode(OpFwidthCoarse, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(p);
-        
-    }
+    void visitFwidthCoarse(long resultType, long result, long p);
+    
     
     /**
     OpPhi
@@ -4749,14 +2618,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Within a block, this instruction must appear before all non-OpPhi instructions (except for OpLine, which can be mixed with OpPhi).
     */
-    @Override
-    public void visitPhi(long resultType, long result, long[] variables) {
-        newOpcode(OpPhi, 1 + 1 + variables.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInts(variables);
-        
-    }
+    void visitPhi(long resultType, long result, long[] variables);
+    
     
     /**
     OpLoopMerge
@@ -4773,15 +2636,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>See Structured Control Flow for more detail.
     */
-    @Override
-    public void visitLoopMerge(long mergeBlock, long continueTarget, long loopControl, long[] parameters) {
-        newOpcode(OpLoopMerge, 1 + 1 + 1 + parameters.length);
-        buffer.putUnsignedInt(mergeBlock);
-        buffer.putUnsignedInt(continueTarget);
-        buffer.putUnsignedInt(loopControl);
-        buffer.putUnsignedInts(parameters);
-        
-    }
+    void visitLoopMerge(long mergeBlock, long continueTarget, long loopControl, long[] parameters);
+    
     
     /**
     OpSelectionMerge
@@ -4794,13 +2650,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>See Structured Control Flow for more detail.
     */
-    @Override
-    public void visitSelectionMerge(long mergeBlock, long selectionControl) {
-        newOpcode(OpSelectionMerge, 1 + 1);
-        buffer.putUnsignedInt(mergeBlock);
-        buffer.putUnsignedInt(selectionControl);
-        
-    }
+    void visitSelectionMerge(long mergeBlock, long selectionControl);
+    
     
     /**
     OpLabel
@@ -4809,12 +2660,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Must be the first instruction of any block, and appears only as the first instruction of a block.
     */
-    @Override
-    public void visitLabel(long result) {
-        newOpcode(OpLabel, 1);
-        buffer.putUnsignedInt(result);
-        
-    }
+    void visitLabel(long result);
+    
     
     /**
     OpBranch
@@ -4825,12 +2672,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction must be the last instruction in a block.
     */
-    @Override
-    public void visitBranch(long targetLabel) {
-        newOpcode(OpBranch, 1);
-        buffer.putUnsignedInt(targetLabel);
-        
-    }
+    void visitBranch(long targetLabel);
+    
     
     /**
     OpBranchConditional
@@ -4847,15 +2690,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction must be the last instruction in a block.
     */
-    @Override
-    public void visitBranchConditional(long condition, long trueLabel, long falseLabel, long[] weights) {
-        newOpcode(OpBranchConditional, 1 + 1 + 1 + weights.length);
-        buffer.putUnsignedInt(condition);
-        buffer.putUnsignedInt(trueLabel);
-        buffer.putUnsignedInt(falseLabel);
-        buffer.putUnsignedInts(weights);
-        
-    }
+    void visitBranchConditional(long condition, long trueLabel, long falseLabel, long[] weights);
+    
     
     /**
     OpSwitch
@@ -4870,14 +2706,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction must be the last instruction in a block.
     */
-    @Override
-    public void visitSwitch(long selector, long defaultValue, long[] target) {
-        newOpcode(OpSwitch, 1 + 1 + target.length);
-        buffer.putUnsignedInt(selector);
-        buffer.putUnsignedInt(defaultValue);
-        buffer.putUnsignedInts(target);
-        
-    }
+    void visitSwitch(long selector, long defaultValue, long[] target);
+    
     
     /**
     OpKill
@@ -4890,10 +2720,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction is only valid in the Fragment Execution Model.
     */
-    @Override
-    public void visitKill() {
-        newOpcode(OpKill, 0);
-    }
+    void visitKill();
+    
     
     /**
     OpReturn
@@ -4902,10 +2730,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction must be the last instruction in a block.
     */
-    @Override
-    public void visitReturn() {
-        newOpcode(OpReturn, 0);
-    }
+    void visitReturn();
+    
     
     /**
     OpReturnValue
@@ -4916,12 +2742,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction must be the last instruction in a block.
     */
-    @Override
-    public void visitReturnValue(long value) {
-        newOpcode(OpReturnValue, 1);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitReturnValue(long value);
+    
     
     /**
     OpUnreachable
@@ -4930,10 +2752,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction must be the last instruction in a block.
     */
-    @Override
-    public void visitUnreachable() {
-        newOpcode(OpUnreachable, 0);
-    }
+    void visitUnreachable();
+    
     
     /**
     OpLifetimeStart
@@ -4944,13 +2764,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Size must be 0 if Pointer is a pointer to a non-void type or the Addresses capability is not being used. If Size is non-zero, it is the number of bytes of memory whose lifetime is starting.  Its type  must be an integer type scalar.  It is treated as unsigned; if its type has Signedness of 1, its sign bit cannot be set.
     */
-    @Override
-    public void visitLifetimeStart(long pointer, long size) {
-        newOpcode(OpLifetimeStart, 1 + 1);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(size);
-        
-    }
+    void visitLifetimeStart(long pointer, long size);
+    
     
     /**
     OpLifetimeStop
@@ -4961,13 +2776,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Size must be 0 if Pointer is a pointer to a non-void type or the Addresses capability is not being used. If Size is non-zero, it is the number of bytes of memory whose lifetime is ending.  Its type  must be an integer type scalar.  It is treated as unsigned; if its type has Signedness of 1, its sign bit cannot be set.
     */
-    @Override
-    public void visitLifetimeStop(long pointer, long size) {
-        newOpcode(OpLifetimeStop, 1 + 1);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(size);
-        
-    }
+    void visitLifetimeStop(long pointer, long size);
+    
     
     /**
     OpAtomicLoad
@@ -4978,16 +2788,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Pointer is the pointer to the memory to read. The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicLoad(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics) {
-        newOpcode(OpAtomicLoad, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        
-    }
+    void visitAtomicLoad(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics);
+    
     
     /**
     OpAtomicStore
@@ -4998,15 +2800,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Value is the value to write. The type of Value and the type pointed to by Pointer must be the same type.
     */
-    @Override
-    public void visitAtomicStore(long pointer, long scopeScope, long memorySemanticsSemantics, long value) {
-        newOpcode(OpAtomicStore, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitAtomicStore(long pointer, long scopeScope, long memorySemanticsSemantics, long value);
+    
     
     /**
     OpAtomicExchange
@@ -5022,17 +2817,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicExchange(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value) {
-        newOpcode(OpAtomicExchange, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitAtomicExchange(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value);
+    
     
     /**
     OpAtomicCompareExchange
@@ -5052,19 +2838,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.  This type must also match the type of Comparator.
     */
-    @Override
-    public void visitAtomicCompareExchange(long resultType, long result, long pointer, long scopeScope, long memorySemanticsEqual, long memorySemanticsUnequal, long value, long comparator) {
-        newOpcode(OpAtomicCompareExchange, 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsEqual);
-        buffer.putUnsignedInt(memorySemanticsUnequal);
-        buffer.putUnsignedInt(value);
-        buffer.putUnsignedInt(comparator);
-        
-    }
+    void visitAtomicCompareExchange(long resultType, long result, long pointer, long scopeScope, long memorySemanticsEqual, long memorySemanticsUnequal, long value, long comparator);
+    
     
     /**
     OpAtomicCompareExchangeWeak
@@ -5088,19 +2863,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.  This type must also match the type of Comparator.
     */
-    @Override
-    public void visitAtomicCompareExchangeWeak(long resultType, long result, long pointer, long scopeScope, long memorySemanticsEqual, long memorySemanticsUnequal, long value, long comparator) {
-        newOpcode(OpAtomicCompareExchangeWeak, 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsEqual);
-        buffer.putUnsignedInt(memorySemanticsUnequal);
-        buffer.putUnsignedInt(value);
-        buffer.putUnsignedInt(comparator);
-        
-    }
+    void visitAtomicCompareExchangeWeak(long resultType, long result, long pointer, long scopeScope, long memorySemanticsEqual, long memorySemanticsUnequal, long value, long comparator);
+    
     
     /**
     OpAtomicIIncrement
@@ -5114,16 +2878,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Result Type must be an integer type scalar.  The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicIIncrement(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics) {
-        newOpcode(OpAtomicIIncrement, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        
-    }
+    void visitAtomicIIncrement(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics);
+    
     
     /**
     OpAtomicIDecrement
@@ -5137,16 +2893,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Result Type must be an integer type scalar.  The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicIDecrement(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics) {
-        newOpcode(OpAtomicIDecrement, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        
-    }
+    void visitAtomicIDecrement(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics);
+    
     
     /**
     OpAtomicIAdd
@@ -5162,17 +2910,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicIAdd(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value) {
-        newOpcode(OpAtomicIAdd, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitAtomicIAdd(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value);
+    
     
     /**
     OpAtomicISub
@@ -5188,17 +2927,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicISub(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value) {
-        newOpcode(OpAtomicISub, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitAtomicISub(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value);
+    
     
     /**
     OpAtomicSMin
@@ -5214,17 +2944,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicSMin(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value) {
-        newOpcode(OpAtomicSMin, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitAtomicSMin(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value);
+    
     
     /**
     OpAtomicUMin
@@ -5240,17 +2961,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicUMin(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value) {
-        newOpcode(OpAtomicUMin, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitAtomicUMin(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value);
+    
     
     /**
     OpAtomicSMax
@@ -5266,17 +2978,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicSMax(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value) {
-        newOpcode(OpAtomicSMax, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitAtomicSMax(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value);
+    
     
     /**
     OpAtomicUMax
@@ -5292,17 +2995,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicUMax(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value) {
-        newOpcode(OpAtomicUMax, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitAtomicUMax(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value);
+    
     
     /**
     OpAtomicAnd
@@ -5318,17 +3012,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicAnd(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value) {
-        newOpcode(OpAtomicAnd, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitAtomicAnd(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value);
+    
     
     /**
     OpAtomicOr
@@ -5344,17 +3029,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicOr(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value) {
-        newOpcode(OpAtomicOr, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitAtomicOr(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value);
+    
     
     /**
     OpAtomicXor
@@ -5370,17 +3046,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.
     */
-    @Override
-    public void visitAtomicXor(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value) {
-        newOpcode(OpAtomicXor, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitAtomicXor(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics, long value);
+    
     
     /**
     OpAtomicFlagTestAndSet
@@ -5395,16 +3062,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Results are undefined if an atomic flag is modified  by an instruction other than OpAtomicFlagTestAndSet or OpAtomicFlagClear
     */
-    @Override
-    public void visitAtomicFlagTestAndSet(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics) {
-        newOpcode(OpAtomicFlagTestAndSet, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        
-    }
+    void visitAtomicFlagTestAndSet(long resultType, long result, long pointer, long scopeScope, long memorySemanticsSemantics);
+    
     
     /**
     OpAtomicFlagClear
@@ -5417,14 +3076,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Results are undefined if an atomic flag is modified  by an instruction other than OpAtomicFlagTestAndSet or OpAtomicFlagClear
     */
-    @Override
-    public void visitAtomicFlagClear(long pointer, long scopeScope, long memorySemanticsSemantics) {
-        newOpcode(OpAtomicFlagClear, 1 + 1 + 1);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(scopeScope);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        
-    }
+    void visitAtomicFlagClear(long pointer, long scopeScope, long memorySemanticsSemantics);
+    
     
     /**
     OpEmitVertex
@@ -5433,10 +3086,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction can only be used when only one stream is present.
     */
-    @Override
-    public void visitEmitVertex() {
-        newOpcode(OpEmitVertex, 0);
-    }
+    void visitEmitVertex();
+    
     
     /**
     OpEndPrimitive
@@ -5445,10 +3096,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction can only be used when only one stream is present.
     */
-    @Override
-    public void visitEndPrimitive() {
-        newOpcode(OpEndPrimitive, 0);
-    }
+    void visitEndPrimitive();
+    
     
     /**
     OpEmitStreamVertex
@@ -5459,12 +3108,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction can only be used when multiple streams are present.
     */
-    @Override
-    public void visitEmitStreamVertex(long stream) {
-        newOpcode(OpEmitStreamVertex, 1);
-        buffer.putUnsignedInt(stream);
-        
-    }
+    void visitEmitStreamVertex(long stream);
+    
     
     /**
     OpEndStreamPrimitive
@@ -5475,12 +3120,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>This instruction can only be used when multiple streams are present.
     */
-    @Override
-    public void visitEndStreamPrimitive(long stream) {
-        newOpcode(OpEndStreamPrimitive, 1);
-        buffer.putUnsignedInt(stream);
-        
-    }
+    void visitEndStreamPrimitive(long stream);
+    
     
     /**
     OpControlBarrier
@@ -5497,14 +3138,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>When used with the TessellationControl execution model, it also implicitly synchronizes the Output Storage Class:  Writes to Output variables performed by any invocation executed prior to a OpControlBarrier will be visible to any other invocation after return from that OpControlBarrier.
     */
-    @Override
-    public void visitControlBarrier(long scopeExecution, long scopeMemory, long memorySemanticsSemantics) {
-        newOpcode(OpControlBarrier, 1 + 1 + 1);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(scopeMemory);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        
-    }
+    void visitControlBarrier(long scopeExecution, long scopeMemory, long memorySemanticsSemantics);
+    
     
     /**
     OpMemoryBarrier
@@ -5517,13 +3152,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>To execute both a memory barrier and a control barrier, see OpControlBarrier.
     */
-    @Override
-    public void visitMemoryBarrier(long scopeMemory, long memorySemanticsSemantics) {
-        newOpcode(OpMemoryBarrier, 1 + 1);
-        buffer.putUnsignedInt(scopeMemory);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        
-    }
+    void visitMemoryBarrier(long scopeMemory, long memorySemanticsSemantics);
+    
     
     /**
     OpNamedBarrierInitialize
@@ -5534,14 +3164,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Subgroup Count must be a 32-bit integer type scalar representing the number of subgroups that must reach the current point of execution.
     */
-    @Override
-    public void visitNamedBarrierInitialize(long resultType, long result, long subgroupCount) {
-        newOpcode(OpNamedBarrierInitialize, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(subgroupCount);
-        
-    }
+    void visitNamedBarrierInitialize(long resultType, long result, long subgroupCount);
+    
     
     /**
     OpMemoryNamedBarrier
@@ -5552,14 +3176,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>If Semantics is not None, this instruction also serves as an OpMemoryBarrier instruction, and must also perform and adhere to the description and semantics of an OpMemoryBarrier instruction with the same Memory and Semantics operands.  This allows atomically specifying both a control barrier and a memory barrier (that is, without needing two instructions). If Semantics None, Memory is ignored.
     */
-    @Override
-    public void visitMemoryNamedBarrier(long namedBarrier, long scopeMemory, long memorySemanticsSemantics) {
-        newOpcode(OpMemoryNamedBarrier, 1 + 1 + 1);
-        buffer.putUnsignedInt(namedBarrier);
-        buffer.putUnsignedInt(scopeMemory);
-        buffer.putUnsignedInt(memorySemanticsSemantics);
-        
-    }
+    void visitMemoryNamedBarrier(long namedBarrier, long scopeMemory, long memorySemanticsSemantics);
+    
     
     /**
     OpGroupAsyncCopy
@@ -5592,19 +3210,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>If Event argument is not OpConstantNull, the event object supplied in event argument will be returned.
     */
-    @Override
-    public void visitGroupAsyncCopy(long resultType, long result, long scopeExecution, long destination, long source, long numElements, long stride, long event) {
-        newOpcode(OpGroupAsyncCopy, 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(destination);
-        buffer.putUnsignedInt(source);
-        buffer.putUnsignedInt(numElements);
-        buffer.putUnsignedInt(stride);
-        buffer.putUnsignedInt(event);
-        
-    }
+    void visitGroupAsyncCopy(long resultType, long result, long scopeExecution, long destination, long source, long numElements, long stride, long event);
+    
     
     /**
     OpGroupWaitEvents
@@ -5621,14 +3228,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Events List must be a pointer to OpTypeEvent.
     */
-    @Override
-    public void visitGroupWaitEvents(long scopeExecution, long numEvents, long eventsList) {
-        newOpcode(OpGroupWaitEvents, 1 + 1 + 1);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(numEvents);
-        buffer.putUnsignedInt(eventsList);
-        
-    }
+    void visitGroupWaitEvents(long scopeExecution, long numEvents, long eventsList);
+    
     
     /**
     OpGroupAll
@@ -5645,15 +3246,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Predicate must be a Boolean type.
     */
-    @Override
-    public void visitGroupAll(long resultType, long result, long scopeExecution, long predicate) {
-        newOpcode(OpGroupAll, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(predicate);
-        
-    }
+    void visitGroupAll(long resultType, long result, long scopeExecution, long predicate);
+    
     
     /**
     OpGroupAny
@@ -5670,15 +3264,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Predicate must be a Boolean type.
     */
-    @Override
-    public void visitGroupAny(long resultType, long result, long scopeExecution, long predicate) {
-        newOpcode(OpGroupAny, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(predicate);
-        
-    }
+    void visitGroupAny(long resultType, long result, long scopeExecution, long predicate);
+    
     
     /**
     OpGroupBroadcast
@@ -5697,16 +3284,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>LocalId must be an integer datatype. It can be a scalar, or a vector with 2 components or a vector with 3 components. LocalId must be the same for all invocations in the group.
     */
-    @Override
-    public void visitGroupBroadcast(long resultType, long result, long scopeExecution, long value, long localId) {
-        newOpcode(OpGroupBroadcast, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(value);
-        buffer.putUnsignedInt(localId);
-        
-    }
+    void visitGroupBroadcast(long resultType, long result, long scopeExecution, long value, long localId);
+    
     
     /**
     OpGroupIAdd
@@ -5725,16 +3304,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
-    @Override
-    public void visitGroupIAdd(long resultType, long result, long scopeExecution, long operation, long x) {
-        newOpcode(OpGroupIAdd, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(operation);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitGroupIAdd(long resultType, long result, long scopeExecution, long operation, long x);
+    
     
     /**
     OpGroupFAdd
@@ -5753,16 +3324,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
-    @Override
-    public void visitGroupFAdd(long resultType, long result, long scopeExecution, long operation, long x) {
-        newOpcode(OpGroupFAdd, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(operation);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitGroupFAdd(long resultType, long result, long scopeExecution, long operation, long x);
+    
     
     /**
     OpGroupFMin
@@ -5781,16 +3344,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
-    @Override
-    public void visitGroupFMin(long resultType, long result, long scopeExecution, long operation, long x) {
-        newOpcode(OpGroupFMin, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(operation);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitGroupFMin(long resultType, long result, long scopeExecution, long operation, long x);
+    
     
     /**
     OpGroupUMin
@@ -5809,16 +3364,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
-    @Override
-    public void visitGroupUMin(long resultType, long result, long scopeExecution, long operation, long x) {
-        newOpcode(OpGroupUMin, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(operation);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitGroupUMin(long resultType, long result, long scopeExecution, long operation, long x);
+    
     
     /**
     OpGroupSMin
@@ -5837,16 +3384,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
-    @Override
-    public void visitGroupSMin(long resultType, long result, long scopeExecution, long operation, long x) {
-        newOpcode(OpGroupSMin, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(operation);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitGroupSMin(long resultType, long result, long scopeExecution, long operation, long x);
+    
     
     /**
     OpGroupFMax
@@ -5865,16 +3404,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
-    @Override
-    public void visitGroupFMax(long resultType, long result, long scopeExecution, long operation, long x) {
-        newOpcode(OpGroupFMax, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(operation);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitGroupFMax(long resultType, long result, long scopeExecution, long operation, long x);
+    
     
     /**
     OpGroupUMax
@@ -5893,16 +3424,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
-    @Override
-    public void visitGroupUMax(long resultType, long result, long scopeExecution, long operation, long x) {
-        newOpcode(OpGroupUMax, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(operation);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitGroupUMax(long resultType, long result, long scopeExecution, long operation, long x);
+    
     
     /**
     OpGroupSMax
@@ -5921,59 +3444,32 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
-    @Override
-    public void visitGroupSMax(long resultType, long result, long scopeExecution, long operation, long x) {
-        newOpcode(OpGroupSMax, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(operation);
-        buffer.putUnsignedInt(x);
-        
-    }
+    void visitGroupSMax(long resultType, long result, long scopeExecution, long operation, long x);
+    
     
     /**
     OpSubgroupBallotKHR
     <br/>
     <br/>See extension SPV_KHR_shader_ballot
     */
-    @Override
-    public void visitSubgroupBallotKHR(long resultType, long result, long predicate) {
-        newOpcode(OpSubgroupBallotKHR, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(predicate);
-        
-    }
+    void visitSubgroupBallotKHR(long resultType, long result, long predicate);
+    
     
     /**
     OpSubgroupFirstInvocationKHR
     <br/>
     <br/>See extension SPV_KHR_shader_ballot
     */
-    @Override
-    public void visitSubgroupFirstInvocationKHR(long resultType, long result, long value) {
-        newOpcode(OpSubgroupFirstInvocationKHR, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitSubgroupFirstInvocationKHR(long resultType, long result, long value);
+    
     
     /**
     OpSubgroupReadInvocationKHR
     <br/>
     <br/>See extension SPV_KHR_shader_ballot
     */
-    @Override
-    public void visitSubgroupReadInvocationKHR(long resultType, long result, long value, long index) {
-        newOpcode(OpSubgroupReadInvocationKHR, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(value);
-        buffer.putUnsignedInt(index);
-        
-    }
+    void visitSubgroupReadInvocationKHR(long resultType, long result, long value, long index);
+    
     
     /**
     OpEnqueueMarker
@@ -5990,17 +3486,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Ret Event is a pointer to a device event which gets implicitly retained by this instruction.  It must have a type of OpTypePointer to OpTypeDeviceEvent. If Ret Event is set to null this instruction becomes a no-op.
     */
-    @Override
-    public void visitEnqueueMarker(long resultType, long result, long queue, long numEvents, long waitEvents, long retEvent) {
-        newOpcode(OpEnqueueMarker, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(queue);
-        buffer.putUnsignedInt(numEvents);
-        buffer.putUnsignedInt(waitEvents);
-        buffer.putUnsignedInt(retEvent);
-        
-    }
+    void visitEnqueueMarker(long resultType, long result, long queue, long numEvents, long waitEvents, long retEvent);
+    
     
     /**
     OpEnqueueKernel
@@ -6034,24 +3521,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Each Local Size operand corresponds (in order) to one OpTypePointer to Workgroup Storage Class parameter to the Invoke function, and specifies the number of bytes of Workgroup storage used to back the pointer during the execution of the Invoke function.
     */
-    @Override
-    public void visitEnqueueKernel(long resultType, long result, long queue, long flags, long nDRange, long numEvents, long waitEvents, long retEvent, long invoke, long param, long paramSize, long paramAlign, long[] locals) {
-        newOpcode(OpEnqueueKernel, 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + locals.length);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(queue);
-        buffer.putUnsignedInt(flags);
-        buffer.putUnsignedInt(nDRange);
-        buffer.putUnsignedInt(numEvents);
-        buffer.putUnsignedInt(waitEvents);
-        buffer.putUnsignedInt(retEvent);
-        buffer.putUnsignedInt(invoke);
-        buffer.putUnsignedInt(param);
-        buffer.putUnsignedInt(paramSize);
-        buffer.putUnsignedInt(paramAlign);
-        buffer.putUnsignedInts(locals);
-        
-    }
+    void visitEnqueueKernel(long resultType, long result, long queue, long flags, long nDRange, long numEvents, long waitEvents, long retEvent, long invoke, long param, long paramSize, long paramAlign, long[] locals);
+    
     
     /**
     OpGetKernelNDrangeSubGroupCount
@@ -6073,18 +3544,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Param Align is the alignment of Param and must be a 32-bit integer type scalar, which is treated as an unsigned integer.
     */
-    @Override
-    public void visitGetKernelNDrangeSubGroupCount(long resultType, long result, long nDRange, long invoke, long param, long paramSize, long paramAlign) {
-        newOpcode(OpGetKernelNDrangeSubGroupCount, 1 + 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(nDRange);
-        buffer.putUnsignedInt(invoke);
-        buffer.putUnsignedInt(param);
-        buffer.putUnsignedInt(paramSize);
-        buffer.putUnsignedInt(paramAlign);
-        
-    }
+    void visitGetKernelNDrangeSubGroupCount(long resultType, long result, long nDRange, long invoke, long param, long paramSize, long paramAlign);
+    
     
     /**
     OpGetKernelNDrangeMaxSubGroupSize
@@ -6106,18 +3567,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Param Align is the alignment of Param and must be a 32-bit integer type scalar, which is treated as an unsigned integer.
     */
-    @Override
-    public void visitGetKernelNDrangeMaxSubGroupSize(long resultType, long result, long nDRange, long invoke, long param, long paramSize, long paramAlign) {
-        newOpcode(OpGetKernelNDrangeMaxSubGroupSize, 1 + 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(nDRange);
-        buffer.putUnsignedInt(invoke);
-        buffer.putUnsignedInt(param);
-        buffer.putUnsignedInt(paramSize);
-        buffer.putUnsignedInt(paramAlign);
-        
-    }
+    void visitGetKernelNDrangeMaxSubGroupSize(long resultType, long result, long nDRange, long invoke, long param, long paramSize, long paramAlign);
+    
     
     /**
     OpGetKernelWorkGroupSize
@@ -6137,17 +3588,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Param Align is the alignment of Param and must be a 32-bit integer type scalar, which is treated as an unsigned integer.
     */
-    @Override
-    public void visitGetKernelWorkGroupSize(long resultType, long result, long invoke, long param, long paramSize, long paramAlign) {
-        newOpcode(OpGetKernelWorkGroupSize, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(invoke);
-        buffer.putUnsignedInt(param);
-        buffer.putUnsignedInt(paramSize);
-        buffer.putUnsignedInt(paramAlign);
-        
-    }
+    void visitGetKernelWorkGroupSize(long resultType, long result, long invoke, long param, long paramSize, long paramAlign);
+    
     
     /**
     OpGetKernelPreferredWorkGroupSizeMultiple
@@ -6167,17 +3609,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Param Align is the alignment of Param and must be a 32-bit integer type scalar, which is treated as an unsigned integer.
     */
-    @Override
-    public void visitGetKernelPreferredWorkGroupSizeMultiple(long resultType, long result, long invoke, long param, long paramSize, long paramAlign) {
-        newOpcode(OpGetKernelPreferredWorkGroupSizeMultiple, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(invoke);
-        buffer.putUnsignedInt(param);
-        buffer.putUnsignedInt(paramSize);
-        buffer.putUnsignedInt(paramAlign);
-        
-    }
+    void visitGetKernelPreferredWorkGroupSizeMultiple(long resultType, long result, long invoke, long param, long paramSize, long paramAlign);
+    
     
     /**
     OpRetainEvent
@@ -6186,12 +3619,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Event must be an event that was produced by OpEnqueueKernel, OpEnqueueMarker or OpCreateUserEvent.
     */
-    @Override
-    public void visitRetainEvent(long event) {
-        newOpcode(OpRetainEvent, 1);
-        buffer.putUnsignedInt(event);
-        
-    }
+    void visitRetainEvent(long event);
+    
     
     /**
     OpReleaseEvent
@@ -6200,12 +3629,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Event must be an event that was produced by OpEnqueueKernel, OpEnqueueMarker or OpCreateUserEvent.
     */
-    @Override
-    public void visitReleaseEvent(long event) {
-        newOpcode(OpReleaseEvent, 1);
-        buffer.putUnsignedInt(event);
-        
-    }
+    void visitReleaseEvent(long event);
+    
     
     /**
     OpCreateUserEvent
@@ -6214,13 +3639,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result Type must be OpTypeDeviceEvent.
     */
-    @Override
-    public void visitCreateUserEvent(long resultType, long result) {
-        newOpcode(OpCreateUserEvent, 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        
-    }
+    void visitCreateUserEvent(long resultType, long result);
+    
     
     /**
     OpIsValidEvent
@@ -6231,14 +3651,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Event must have a type of OpTypeDeviceEvent
     */
-    @Override
-    public void visitIsValidEvent(long resultType, long result, long event) {
-        newOpcode(OpIsValidEvent, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(event);
-        
-    }
+    void visitIsValidEvent(long resultType, long result, long event);
+    
     
     /**
     OpSetUserEventStatus
@@ -6249,13 +3663,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Status must have a type of 32-bit OpTypeInt treated as a signed integer.
     */
-    @Override
-    public void visitSetUserEventStatus(long event, long status) {
-        newOpcode(OpSetUserEventStatus, 1 + 1);
-        buffer.putUnsignedInt(event);
-        buffer.putUnsignedInt(status);
-        
-    }
+    void visitSetUserEventStatus(long event, long status);
+    
     
     /**
     OpCaptureEventProfilingInfo
@@ -6274,14 +3683,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Note: The behavior of this instruction is undefined when called multiple times for the same event.
     */
-    @Override
-    public void visitCaptureEventProfilingInfo(long event, long profilingInfo, long value) {
-        newOpcode(OpCaptureEventProfilingInfo, 1 + 1 + 1);
-        buffer.putUnsignedInt(event);
-        buffer.putUnsignedInt(profilingInfo);
-        buffer.putUnsignedInt(value);
-        
-    }
+    void visitCaptureEventProfilingInfo(long event, long profilingInfo, long value);
+    
     
     /**
     OpGetDefaultQueue
@@ -6290,13 +3693,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result Type must be an OpTypeQueue.
     */
-    @Override
-    public void visitGetDefaultQueue(long resultType, long result) {
-        newOpcode(OpGetDefaultQueue, 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        
-    }
+    void visitGetDefaultQueue(long resultType, long result);
+    
     
     /**
     OpBuildNDRange
@@ -6319,16 +3717,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>The type of GlobalWorkOffset must be the same as GlobalWorkSize.
     */
-    @Override
-    public void visitBuildNDRange(long resultType, long result, long globalWorkSize, long localWorkSize, long globalWorkOffset) {
-        newOpcode(OpBuildNDRange, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(globalWorkSize);
-        buffer.putUnsignedInt(localWorkSize);
-        buffer.putUnsignedInt(globalWorkOffset);
-        
-    }
+    void visitBuildNDRange(long resultType, long result, long globalWorkSize, long localWorkSize, long globalWorkOffset);
+    
     
     /**
     OpGetKernelLocalSizeForSubgroupCount
@@ -6350,18 +3740,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Param Align is the alignment of Param and must be a 32-bit integer type scalar, which is treated as an unsigned integer.
     */
-    @Override
-    public void visitGetKernelLocalSizeForSubgroupCount(long resultType, long result, long subgroupCount, long invoke, long param, long paramSize, long paramAlign) {
-        newOpcode(OpGetKernelLocalSizeForSubgroupCount, 1 + 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(subgroupCount);
-        buffer.putUnsignedInt(invoke);
-        buffer.putUnsignedInt(param);
-        buffer.putUnsignedInt(paramSize);
-        buffer.putUnsignedInt(paramAlign);
-        
-    }
+    void visitGetKernelLocalSizeForSubgroupCount(long resultType, long result, long subgroupCount, long invoke, long param, long paramSize, long paramAlign);
+    
     
     /**
     OpGetKernelMaxNumSubgroups
@@ -6381,17 +3761,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Param Align is the alignment of Param and must be a 32-bit integer type scalar, which is treated as an unsigned integer.
     */
-    @Override
-    public void visitGetKernelMaxNumSubgroups(long resultType, long result, long invoke, long param, long paramSize, long paramAlign) {
-        newOpcode(OpGetKernelMaxNumSubgroups, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(invoke);
-        buffer.putUnsignedInt(param);
-        buffer.putUnsignedInt(paramSize);
-        buffer.putUnsignedInt(paramAlign);
-        
-    }
+    void visitGetKernelMaxNumSubgroups(long resultType, long result, long invoke, long param, long paramSize, long paramAlign);
+    
     
     /**
     OpReadPipe
@@ -6414,17 +3785,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitReadPipe(long resultType, long result, long pipe, long pointer, long packetSize, long packetAlignment) {
-        newOpcode(OpReadPipe, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitReadPipe(long resultType, long result, long pipe, long pointer, long packetSize, long packetAlignment);
+    
     
     /**
     OpWritePipe
@@ -6447,17 +3809,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitWritePipe(long resultType, long result, long pipe, long pointer, long packetSize, long packetAlignment) {
-        newOpcode(OpWritePipe, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitWritePipe(long resultType, long result, long pipe, long pointer, long packetSize, long packetAlignment);
+    
     
     /**
     OpReservedReadPipe
@@ -6484,19 +3837,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitReservedReadPipe(long resultType, long result, long pipe, long reserveId, long index, long pointer, long packetSize, long packetAlignment) {
-        newOpcode(OpReservedReadPipe, 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(reserveId);
-        buffer.putUnsignedInt(index);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitReservedReadPipe(long resultType, long result, long pipe, long reserveId, long index, long pointer, long packetSize, long packetAlignment);
+    
     
     /**
     OpReservedWritePipe
@@ -6523,19 +3865,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitReservedWritePipe(long resultType, long result, long pipe, long reserveId, long index, long pointer, long packetSize, long packetAlignment) {
-        newOpcode(OpReservedWritePipe, 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(reserveId);
-        buffer.putUnsignedInt(index);
-        buffer.putUnsignedInt(pointer);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitReservedWritePipe(long resultType, long result, long pipe, long reserveId, long index, long pointer, long packetSize, long packetAlignment);
+    
     
     /**
     OpReserveReadPipePackets
@@ -6558,17 +3889,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitReserveReadPipePackets(long resultType, long result, long pipe, long numPackets, long packetSize, long packetAlignment) {
-        newOpcode(OpReserveReadPipePackets, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(numPackets);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitReserveReadPipePackets(long resultType, long result, long pipe, long numPackets, long packetSize, long packetAlignment);
+    
     
     /**
     OpReserveWritePipePackets
@@ -6591,17 +3913,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitReserveWritePipePackets(long resultType, long result, long pipe, long numPackets, long packetSize, long packetAlignment) {
-        newOpcode(OpReserveWritePipePackets, 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(numPackets);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitReserveWritePipePackets(long resultType, long result, long pipe, long numPackets, long packetSize, long packetAlignment);
+    
     
     /**
     OpCommitReadPipe
@@ -6622,15 +3935,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitCommitReadPipe(long pipe, long reserveId, long packetSize, long packetAlignment) {
-        newOpcode(OpCommitReadPipe, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(reserveId);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitCommitReadPipe(long pipe, long reserveId, long packetSize, long packetAlignment);
+    
     
     /**
     OpCommitWritePipe
@@ -6651,15 +3957,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitCommitWritePipe(long pipe, long reserveId, long packetSize, long packetAlignment) {
-        newOpcode(OpCommitWritePipe, 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(reserveId);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitCommitWritePipe(long pipe, long reserveId, long packetSize, long packetAlignment);
+    
     
     /**
     OpIsValidReserveId
@@ -6670,14 +3969,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Reserve Id must have a type of OpTypeReserveId.
     */
-    @Override
-    public void visitIsValidReserveId(long resultType, long result, long reserveId) {
-        newOpcode(OpIsValidReserveId, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(reserveId);
-        
-    }
+    void visitIsValidReserveId(long resultType, long result, long reserveId);
+    
     
     /**
     OpGetNumPipePackets
@@ -6698,16 +3991,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitGetNumPipePackets(long resultType, long result, long pipe, long packetSize, long packetAlignment) {
-        newOpcode(OpGetNumPipePackets, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitGetNumPipePackets(long resultType, long result, long pipe, long packetSize, long packetAlignment);
+    
     
     /**
     OpGetMaxPipePackets
@@ -6728,16 +4013,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitGetMaxPipePackets(long resultType, long result, long pipe, long packetSize, long packetAlignment) {
-        newOpcode(OpGetMaxPipePackets, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitGetMaxPipePackets(long resultType, long result, long pipe, long packetSize, long packetAlignment);
+    
     
     /**
     OpGroupReserveReadPipePackets
@@ -6768,18 +4045,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitGroupReserveReadPipePackets(long resultType, long result, long scopeExecution, long pipe, long numPackets, long packetSize, long packetAlignment) {
-        newOpcode(OpGroupReserveReadPipePackets, 1 + 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(numPackets);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitGroupReserveReadPipePackets(long resultType, long result, long scopeExecution, long pipe, long numPackets, long packetSize, long packetAlignment);
+    
     
     /**
     OpGroupReserveWritePipePackets
@@ -6810,18 +4077,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitGroupReserveWritePipePackets(long resultType, long result, long scopeExecution, long pipe, long numPackets, long packetSize, long packetAlignment) {
-        newOpcode(OpGroupReserveWritePipePackets, 1 + 1 + 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(numPackets);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitGroupReserveWritePipePackets(long resultType, long result, long scopeExecution, long pipe, long numPackets, long packetSize, long packetAlignment);
+    
     
     /**
     OpGroupCommitReadPipe
@@ -6848,16 +4105,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitGroupCommitReadPipe(long scopeExecution, long pipe, long reserveId, long packetSize, long packetAlignment) {
-        newOpcode(OpGroupCommitReadPipe, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(reserveId);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitGroupCommitReadPipe(long scopeExecution, long pipe, long reserveId, long packetSize, long packetAlignment);
+    
     
     /**
     OpGroupCommitWritePipe
@@ -6884,16 +4133,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>For concrete types, Packet Alignment should equal Packet Size.  For aggregate types, Packet Alignment should be the size of the largest primitive type in the hierarchy of types.
     */
-    @Override
-    public void visitGroupCommitWritePipe(long scopeExecution, long pipe, long reserveId, long packetSize, long packetAlignment) {
-        newOpcode(OpGroupCommitWritePipe, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(scopeExecution);
-        buffer.putUnsignedInt(pipe);
-        buffer.putUnsignedInt(reserveId);
-        buffer.putUnsignedInt(packetSize);
-        buffer.putUnsignedInt(packetAlignment);
-        
-    }
+    void visitGroupCommitWritePipe(long scopeExecution, long pipe, long reserveId, long packetSize, long packetAlignment);
+    
     
     /**
     OpConstantPipeStorage
@@ -6914,16 +4155,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Capacity is the minimum number of Packet Size blocks the resulting OpTypePipeStorage can hold.
     */
-    @Override
-    public void visitConstantPipeStorage(long resultType, long result, long size, long alignment, long capacity) {
-        newOpcode(OpConstantPipeStorage, 1 + 1 + 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(size);
-        buffer.putUnsignedInt(alignment);
-        buffer.putUnsignedInt(capacity);
-        
-    }
+    void visitConstantPipeStorage(long resultType, long result, long size, long alignment, long capacity);
+    
     
     /**
     OpCreatePipeFromPipeStorage
@@ -6936,132 +4169,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Qualifier is the pipe access qualifier.
     */
-    @Override
-    public void visitCreatePipeFromPipeStorage(long resultType, long result, long pipeStorage) {
-        newOpcode(OpCreatePipeFromPipeStorage, 1 + 1 + 1);
-        buffer.putUnsignedInt(resultType);
-        buffer.putUnsignedInt(result);
-        buffer.putUnsignedInt(pipeStorage);
-        
-    }
-    @Override
-    public void visitIntDecoration(Decoration decoration, long target, long value) {
-        newOpcode(OpDecorate, 3);
-        buffer.putUnsignedInt(target);
-        buffer.putUnsignedInt(decoration.ordinal());
-        buffer.putUnsignedInt(value);
-    }
+    void visitCreatePipeFromPipeStorage(long resultType, long result, long pipeStorage);
     
-    @Override
-    public void visitFunctionParameterAttributeDecoration(long target, FunctionParameterAttribute attribute) {
-        newOpcode(OpDecorate, 3);
-        buffer.putUnsignedInt(target);
-        buffer.putUnsignedInt(Decoration.FuncParamAttr.ordinal());
-        buffer.putUnsignedInt(attribute.ordinal());
-    }
-    
-    @Override
-    public void visitFPRoundingModeDecoration(long target, FPRoundingMode roundingMode) {
-        newOpcode(OpDecorate, 3);
-        buffer.putUnsignedInt(target);
-        buffer.putUnsignedInt(Decoration.FPRoundingMode.ordinal());
-        buffer.putUnsignedInt(roundingMode.ordinal());
-    }
-    
-    @Override
-    public void visitFPFastMathModeDecoration(long target, FPFastMathMode fastMathMode) {
-        newOpcode(OpDecorate, 3);
-        buffer.putUnsignedInt(target);
-        buffer.putUnsignedInt(Decoration.FPFastMathMode.ordinal());
-        buffer.putUnsignedInt(fastMathMode.getMask());
-    }
-    
-    @Override
-    public void visitLinkageAttributesDecoration(long target, String name, LinkageType type) {
-        newOpcode(OpDecorate, 3);
-        buffer.putUnsignedInt(target);
-        buffer.putUnsignedInt(Decoration.LinkageAttributes.ordinal());
-        buffer.putUnsignedInt(type.ordinal());
-    }
-    
-    @Override
-    public void visitDecoration(long target, Decoration decoration) {
-        newOpcode(OpDecorate, 2);
-        buffer.putUnsignedInt(target);
-        buffer.putUnsignedInt(decoration.ordinal());
-    }
-    
-    @Override
-    public void visitIntMemberDecoration(Decoration decoration, long structureType, long member, long value) {
-        newOpcode(OpMemberDecorate, 4);
-        buffer.putUnsignedInt(structureType);
-        buffer.putUnsignedInt(member);
-        buffer.putUnsignedInt(decoration.ordinal());
-        buffer.putUnsignedInt(value);
-    }
-    
-    @Override
-    public void visitFunctionParameterAttributeMemberDecoration(long structureType, long member, FunctionParameterAttribute attribute) {
-        newOpcode(OpMemberDecorate, 4);
-        buffer.putUnsignedInt(structureType);
-        buffer.putUnsignedInt(member);
-        buffer.putUnsignedInt(Decoration.FuncParamAttr.ordinal());
-        buffer.putUnsignedInt(attribute.ordinal());
-    }
-    
-    @Override
-    public void visitFPRoundingModeMemberDecoration(long structureType, long member, FPRoundingMode roundingMode) {
-        newOpcode(OpMemberDecorate, 4);
-        buffer.putUnsignedInt(structureType);
-        buffer.putUnsignedInt(member);
-        buffer.putUnsignedInt(Decoration.FPRoundingMode.ordinal());
-        buffer.putUnsignedInt(roundingMode.ordinal());
-    }
-    
-    @Override
-    public void visitFPFastMathModeMemberDecoration(long structureType, long member, FPFastMathMode mathMode) {
-        newOpcode(OpMemberDecorate, 4);
-        buffer.putUnsignedInt(structureType);
-        buffer.putUnsignedInt(member);
-        buffer.putUnsignedInt(Decoration.FPFastMathMode.ordinal());
-        buffer.putUnsignedInt(mathMode.getMask());
-    }
-    
-    @Override
-    public void visitLinkageAttributesMemberDecoration(long structureType, long member, String name, LinkageType linkageType) {
-        newOpcode(OpMemberDecorate, 4 + sizeOf(name));
-        buffer.putUnsignedInt(structureType);
-        buffer.putUnsignedInt(member);
-        buffer.putUnsignedInt(Decoration.LinkageAttributes.ordinal());
-        writeChars(name);
-        buffer.putUnsignedInt(linkageType.ordinal());
-    }
-    
-    @Override
-    public void visitMemberDecoration(long structureType, long member, Decoration decoration) {
-        newOpcode(OpMemberDecorate, 3);
-        buffer.putUnsignedInt(structureType);
-        buffer.putUnsignedInt(member);
-        buffer.putUnsignedInt(decoration.ordinal());
-    }
-    
-    @Override
-    public void visitDecorationGroup(long resultID) {
-        newOpcode(OpDecorationGroup, 1);
-        buffer.putUnsignedInt(resultID);
-    }
-    
-    @Override
-    public void visitGroupDecoration(long decorationGroup, long[] targets) {
-        newOpcode(OpGroupDecorate, 1 + targets.length);
-        buffer.putUnsignedInt(decorationGroup);
-        buffer.putUnsignedInts(targets);
-    }
-    
-    @Override
-    public void visitGroupMemberDecoration(long decorationGroup, long[] memberTargets) {
-        newOpcode(OpDecorationGroup, 1 + memberTargets.length);
-        buffer.putUnsignedInt(decorationGroup);
-        buffer.putUnsignedInts(memberTargets);
-    }
 }

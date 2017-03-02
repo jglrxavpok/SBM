@@ -11,6 +11,7 @@ data class ClassFunction(val name: String, val returnType: String, val argumentN
     var documentation: String? = null
     var bodyless: Boolean = false
     var exceptions = emptyList<String>()
+    var annotations = emptyList<String>()
 }
 
 enum class MemberAccess {

@@ -35,6 +35,8 @@ abstract class ClassGenerator {
             functions.forEach { f ->
                 write("\n\n")
                 f.documentation?.let { write("/**\n${f.documentation}\n*/\n") }
+                if(f.annotations.isNotEmpty())
+                    write(f.annotations.map { "@$it\n" } .reduce { a, b -> "$a$b" })
                 if( ! (f.access == MemberAccess.PUBLIC && type == ClassType.INTERFACE))
                     write(f.access.name.toLowerCase()+" ")
                 if(f.static)
