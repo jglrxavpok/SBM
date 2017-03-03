@@ -11,6 +11,6 @@ object GeneratorMain {
         SPIRVCodeWriterGenerator.generate(File("./src/main/gen/org/jglr/sbm/visitors", "CodeWriter.java"))
         SPIRVMemoryVisitorGenerator.generate(File("./src/main/gen/org/jglr/sbm/visitors", "MemoryVisitor.java"))
         SPIRVCodeVisitorGenerator.generate(File("./src/main/gen/org/jglr/sbm/visitors", "CodeVisitor.java"))
-        ModuleReaderDispatcherGenerator.generate(File("./src/main/gen/org/jglr/sbm/visitors", "ModuleReaderDispatcher0.java"))
+        ModuleReaderDispatcherGenerator.generate(File("./src/main/gen/org/jglr/sbm/visitors", "ModuleReaderDispatcher.java"))
     }
 }

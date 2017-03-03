@@ -6,7 +6,7 @@ import org.jglr.flows.io.IndentableWriter
 import java.io.StringWriter
 
 object ModuleReaderDispatcherGenerator : VisitorGenerator() {
-    override val title: String = "ModuleReaderDispatcher0"
+    override val title: String = "ModuleReaderDispatcher"
     override val packageName: String? = "org.jglr.sbm.visitors"
     override val type: ClassType = ClassType.CLASS
     override val imports: List<String> = listOf("org.jglr.sbm.*",
@@ -44,7 +44,7 @@ object ModuleReaderDispatcherGenerator : VisitorGenerator() {
                 SPIRVOpcodes.filter { op ->
                     val name = op["Name"] as String
                     when(name) {
-                        "OpDecorate", "OpMemberDecorate", "OpGroupDecorate", "OpGroupMemberDecorate", "OpExecutionMode" -> false
+                        "OpDecorate", "OpMemberDecorate", "OpGroupDecorate", "OpGroupMemberDecorate", "OpExecutionMode", "OpEntryPoint" -> false
                         else -> true
                     }
                 }.forEach { op ->
@@ -56,9 +56,7 @@ object ModuleReaderDispatcherGenerator : VisitorGenerator() {
 
                 write("\ndefault:")
                 incrementIndentation()
-                write("\nSystem.err.println(\"Unhandled: \" + Opcodes.getName(opcodeID) + \" \" + opcodeID + \" / \" + wordCount+\" at \"+reader.position);" +
-                        "\nreader.position += (wordCount-1)*4;" +
-                        "\nbreak;")
+                write("\nthrow new IllegalStateException(\"Unhandled: \" + Opcodes.getName(opcodeID) + \" \" + opcodeID + \" / \" + wordCount+\" at \"+reader.position);")
                 decrementIndentation()
                 decrementIndentation()
             write("\n}")
@@ -122,7 +120,7 @@ object ModuleReaderDispatcherGenerator : VisitorGenerator() {
             write("\n}\n")
             return
         }
-        val offsetStr = if(i != 0) "-$i" else ""
+        val offsetStr = "-${i+1}"
         val value = when(type) {
             "long" -> "reader.nextWord()"
             "long[]" -> "reader.nextWords(wordCount$offsetStr)"

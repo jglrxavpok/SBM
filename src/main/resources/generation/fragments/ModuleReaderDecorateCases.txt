@@ -34,3 +34,15 @@ case OpExecutionMode: {
                 visitor.visitExecutionMode(entryPoint, mode);
         }
         break;
+
+case OpEntryPoint: {
+                int savedPosition = reader.position;
+                ExecutionModel model = reader.nextEnumValue(ExecutionModel.values());
+                long entryPoint = reader.nextWord();
+                String name = reader.nextString();
+                int strSize = (reader.position - savedPosition) / 4;
+                int interfaceCount = wordCount - strSize - 1;
+                long[] interfaces = reader.nextWords(interfaceCount);
+                visitor.visitEntryPoint(model, entryPoint, name, interfaces);
+            }
+        break;

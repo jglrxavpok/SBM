@@ -48,7 +48,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
         throw new IOException("Magic number (0x"+Long.toHexString(SPIRV_MAGIC_NUMBER)+") not found, found: 0x"+Long.toHexString(bigEndianWord)+" and 0x"+Long.toHexString(littleEndianWord));
     }
 
-    long nextWord() throws IOException {
+    public long nextWord() throws IOException {
         return readWord(endianness);
     }
 
@@ -97,7 +97,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
         return visitor;
     }
 
-    long[] nextWords(int count) throws IOException {
+    public long[] nextWords(int count) throws IOException {
         long[] result = new long[count];
         for (int i = 0; i < count; i++) {
             result[i] = nextWord();
@@ -105,7 +105,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
         return result;
     }
 
-    ExecutionMode readMode(ExecutionMode.Type type) throws IOException {
+    public ExecutionMode readMode(ExecutionMode.Type type) throws IOException {
         switch (type) {
             case Invocations:
                 return new InvocationsExecutionMode(nextWord());
@@ -127,7 +127,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
         return new ExecutionMode(type);
     }
 
-    String nextString() throws IOException {
+    public String nextString() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         for (;;) {
             long word = nextWord();
@@ -160,7 +160,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
         return new String(bytes, "UTF-8").replace("\0", "");
     }
 
-    void visitDecoration(CodeVisitor visitor, Decoration decoration, long target, int wordCount) throws IOException {
+    public void visitDecoration(CodeVisitor visitor, Decoration decoration, long target, int wordCount) throws IOException {
         switch (decoration) {
             case SpecId:
             case ArrayStride:
@@ -203,7 +203,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
         }
     }
 
-    void visitMemberDecoration(CodeVisitor visitor, Decoration decoration, long structureType, long member, int wordCount) throws IOException {
+    public void visitMemberDecoration(CodeVisitor visitor, Decoration decoration, long structureType, long member, int wordCount) throws IOException {
         switch (decoration) {
             case SpecId:
             case ArrayStride:
@@ -246,7 +246,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
         }
     }
 
-    String nextString(int wordCount) throws IOException {
+    public String nextString(int wordCount) throws IOException {
         byte[] data = new byte[wordCount*4];
         for (int i = 0; i < wordCount; i++) {
             long word = nextWord();
@@ -271,7 +271,7 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
         return new String(data, 0, len+1, "UTF-8").replace("\0", "");
     }
 
-    <T> T nextEnumValue(T[] values) throws IOException {
+    public <T> T nextEnumValue(T[] values) throws IOException {
         long index = nextWord();
         return values[((int) index) & 0xFFFF];
     }
@@ -286,5 +286,9 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
 
     public CodeVisitor newCodeVisitor() throws IOException {
         return new CodeCollector();
+    }
+
+    public int getPosition() {
+        return position;
     }
 }

@@ -1,19 +1,22 @@
-package org.jglr.sbm.visitors;
+package sbm.old;
 
 import org.jglr.sbm.*;
 import org.jglr.sbm.decorations.Decoration;
 import org.jglr.sbm.sampler.*;
+import org.jglr.sbm.visitors.CodeVisitor;
+import org.jglr.sbm.visitors.ModuleReader;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-class ModuleReaderDispatcher implements Opcodes {
+@Deprecated
+class ModuleReaderDispatcher_Old implements Opcodes {
 
     private final ModuleReader reader;
 
-    ModuleReaderDispatcher(ModuleReader reader) {
+    ModuleReaderDispatcher_Old(ModuleReader reader) {
         this.reader = reader;
     }
 
@@ -26,7 +29,7 @@ class ModuleReaderDispatcher implements Opcodes {
     void dispatch(int opcodeID, int wordCount, CodeVisitor visitor) throws IOException {
         switch (opcodeID) {
             case OpNop:
-                // TODO: visitNop();
+                visitor.visitNop();
                 break;
 
             case OpUndef: {
@@ -271,11 +274,11 @@ class ModuleReaderDispatcher implements Opcodes {
             break;
 
             case OpEntryPoint: {
-                int savedPosition = reader.position;
+                int savedPosition = reader.getPosition();
                 ExecutionModel model = reader.nextEnumValue(ExecutionModel.values());
                 long entryPoint = reader.nextWord();
                 String name = reader.nextString();
-                int strSize = (reader.position - savedPosition) / 4;
+                int strSize = (reader.getPosition() - savedPosition) / 4;
                 int interfaceCount = wordCount - strSize - 1;
                 long[] interfaces = reader.nextWords(interfaceCount);
                 visitor.visitEntryPoint(model, entryPoint, name, interfaces);
@@ -747,8 +750,7 @@ class ModuleReaderDispatcher implements Opcodes {
             break;
 
             default:
-                System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount+" at "+reader.position);
-                reader.position += (wordCount-1)*4;
+                System.err.println("Unhandled: " + Opcodes.getName(opcodeID) + " " + opcodeID + " / " + wordCount+" at "+reader.getPosition());
                 break;
         }
     }
