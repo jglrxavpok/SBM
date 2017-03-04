@@ -9,7 +9,7 @@ public class VectorTypeInstruction extends ResultInstruction implements Resolvab
     private Type componentType;
 
     public VectorTypeInstruction(long resultID, long componentTypeID, long componentCount) {
-        super(OpTypeVec, 4, resultID);
+        super(OpTypeVector, 4, resultID);
         this.componentTypeID = componentTypeID;
         this.componentCount = componentCount;
     }
