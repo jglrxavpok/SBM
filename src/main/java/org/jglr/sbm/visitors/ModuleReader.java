@@ -86,6 +86,10 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
 
     public CodeVisitor visitCode() throws IOException {
         position = 5*4; // skip the header (20 bytes long)
+        return visitCodeLoop();
+    }
+
+    protected CodeVisitor visitCodeLoop() throws IOException {
         CodeVisitor visitor = newCodeVisitor();
         while (position < input.length) {
             long opcodeFull = nextWord();
@@ -290,5 +294,13 @@ public class ModuleReader implements ModuleVisitor, Opcodes {
 
     public int getPosition() {
         return position;
+    }
+
+    public int[] getInput() {
+        return input;
+    }
+
+    public void seek(int position) {
+        this.position = position;
     }
 }
