@@ -44,7 +44,8 @@ object ModuleReaderDispatcherGenerator : VisitorGenerator() {
                 SPIRVOpcodes.filter { op ->
                     val name = op["Name"] as String
                     when(name) {
-                        "OpDecorate", "OpMemberDecorate", "OpGroupDecorate", "OpGroupMemberDecorate", "OpExecutionMode", "OpEntryPoint" -> false
+                        // TODO: automate this
+                        "OpDecorate", "OpMemberDecorate", "OpGroupDecorate", "OpGroupMemberDecorate", "OpExecutionMode", "OpEntryPoint", "OpDecorateId" -> false
                         else -> true
                     }
                 }.forEach { op ->
@@ -95,7 +96,7 @@ object ModuleReaderDispatcherGenerator : VisitorGenerator() {
             }
         }
         val functionName = getCorrespondingVisitFunction(instruction)
-        val args = if(names.isEmpty()) "" else names.reduce { a, b -> a+", "+b }
+        val args = if(names.isEmpty()) "" else names.reduce { a, b -> "$a, $b" }
         write("visitor.$functionName($args);")
         decrementIndentation()
         write("\n}\nbreak;\n\n")

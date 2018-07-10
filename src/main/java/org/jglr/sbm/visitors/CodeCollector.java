@@ -12,6 +12,7 @@ import java.util.Map;
 
 import static org.jglr.sbm.Opcodes.*;
 
+// TODO: Automatically generate this file
 public class CodeCollector implements CodeVisitor {
 
     private final List<SpvInstruction> instructions;
@@ -1666,6 +1667,300 @@ public class CodeCollector implements CodeVisitor {
 
     }
 
+    @Override
+    public void visitFragmentMaskFetchAMD(long resultType, long result, long image, long coordinate) {
+
+    }
+
+    @Override
+    public void visitFragmentFetchAMD(long resultType, long result, long image, long coordinate, long fragmentIndex) {
+
+    }
+
+    @Override
+    public void visitDecorateStringGOOGLE(long target, long decoration) {
+
+    }
+
+    @Override
+    public void visitMemberDecorateStringGOOGLE(long structType, long member, long decoration) {
+
+    }
+
+    @Override
+    public void visitExecutionModeId(long entryPoint, ExecutionMode mode, long[] sees) {
+
+    }
+
+    @Override
+    public void visitSubgroupAllKHR(long resultType, long result, long predicate) {
+
+    }
+
+    @Override
+    public void visitSubgroupAnyKHR(long resultType, long result, long predicate) {
+
+    }
+
+    @Override
+    public void visitSubgroupAllEqualKHR(long resultType, long result, long predicate) {
+
+    }
+
+    @Override
+    public void visitGroupIAddNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+
+    }
+
+    @Override
+    public void visitGroupFAddNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+
+    }
+
+    @Override
+    public void visitGroupFMinNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+
+    }
+
+    @Override
+    public void visitGroupUMinNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+
+    }
+
+    @Override
+    public void visitGroupSMinNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+
+    }
+
+    @Override
+    public void visitGroupFMaxNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+
+    }
+
+    @Override
+    public void visitGroupUMaxNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+
+    }
+
+    @Override
+    public void visitGroupSMaxNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+
+    }
+
+    @Override
+    public void visitSubgroupShuffleINTEL(long resultType, long result, long data, long invocationId) {
+
+    }
+
+    @Override
+    public void visitSubgroupShuffleDownINTEL(long resultType, long result, long current, long next, long delta) {
+
+    }
+
+    @Override
+    public void visitSubgroupShuffleUpINTEL(long resultType, long result, long previous, long current, long delta) {
+
+    }
+
+    @Override
+    public void visitSubgroupShuffleXorINTEL(long resultType, long result, long data, long value) {
+
+    }
+
+    @Override
+    public void visitSubgroupBlockReadINTEL(long resultType, long result, long ptr) {
+
+    }
+
+    @Override
+    public void visitSubgroupBlockWriteINTEL(long ptr, long data) {
+
+    }
+
+    @Override
+    public void visitSubgroupImageBlockReadINTEL(long resultType, long result, long image, long coordinate) {
+
+    }
+
+    @Override
+    public void visitSubgroupImageBlockWriteINTEL(long image, long coordinate, long data) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformElect(long resultType, long result, long scopeExecution) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformAll(long resultType, long result, long scopeExecution, long predicate) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformAny(long resultType, long result, long scopeExecution, long predicate) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformAllEqual(long resultType, long result, long scopeExecution, long value) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformBroadcast(long resultType, long result, long scopeExecution, long value, long id) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformBroadcastFirst(long resultType, long result, long scopeExecution, long value) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformBallot(long resultType, long result, long scopeExecution, long predicate) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformInverseBallot(long resultType, long result, long scopeExecution, long value) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformBallotBitExtract(long resultType, long result, long scopeExecution, long value, long index) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformBallotBitCount(long resultType, long result, long scopeExecution, long operation, long value) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformBallotFindLSB(long resultType, long result, long scopeExecution, long value) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformBallotFindMSB(long resultType, long result, long scopeExecution, long value) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformShuffle(long resultType, long result, long scopeExecution, long value, long id) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformShuffleXor(long resultType, long result, long scopeExecution, long value, long mask) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformShuffleUp(long resultType, long result, long scopeExecution, long value, long delta) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformShuffleDown(long resultType, long result, long scopeExecution, long value, long delta) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformIAdd(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformFAdd(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformIMul(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformFMul(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformSMin(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformUMin(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformFMin(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformSMax(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformUMax(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformFMax(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformBitwiseAnd(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformBitwiseOr(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformBitwiseXor(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformLogicalAnd(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformLogicalOr(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformLogicalXor(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformQuadBroadcast(long resultType, long result, long scopeExecution, long value, long index) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformQuadSwap(long resultType, long result, long scopeExecution, long value, long direction) {
+
+    }
+
+    @Override
+    public void visitGroupNonUniformPartitionNV(long resultType, long result, long value) {
+
+    }
 
     public List<SpvInstruction> getInstructions() {
         return instructions;

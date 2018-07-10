@@ -1,4 +1,4 @@
-// Generated from spirv-opcodesonly.json
+// Generated from spirv-opcodesonly.json on Tue Jul 10 17:21:22 CEST 2018
 package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.FunctionControl;

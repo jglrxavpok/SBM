@@ -1,4 +1,4 @@
-// Auto-generated from org.jglr.sbm.generation.SPIRVCodeVisitorGenerator
+// Auto-generated from org.jglr.sbm.generation.SPIRVCodeVisitorGenerator on Tue Jul 10 17:21:22 CEST 2018
 package org.jglr.sbm.visitors;
 
 import org.jglr.flows.io.ByteArray;
@@ -38,7 +38,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Result Type is the type of object to make.
     <br/>
-    <br/>Each consumption of Result &lt;id&gt; yields an arbitrary, possibly different bit pattern.
+    <br/>Each consumption of Result &lt;id&gt; yields an arbitrary, possibly different bit pattern or abstract value resulting in possibly different concrete, abstract, or opaque values.
     */
     void visitUndef(long resultType, long result);
     
@@ -53,6 +53,38 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>Pointer must point to a concrete type.
     */
     void visitSizeOf(long resultType, long result, long pointer);
+    
+    
+    /**
+    OpFragmentMaskFetchAMD
+    <br/>
+    <br/>TBD
+    */
+    void visitFragmentMaskFetchAMD(long resultType, long result, long image, long coordinate);
+    
+    
+    /**
+    OpFragmentFetchAMD
+    <br/>
+    <br/>TBD
+    */
+    void visitFragmentFetchAMD(long resultType, long result, long image, long coordinate, long fragmentIndex);
+    
+    
+    /**
+    OpDecorateStringGOOGLE
+    <br/>
+    <br/>TBD
+    */
+    void visitDecorateStringGOOGLE(long target, long decoration);
+    
+    
+    /**
+    OpMemberDecorateStringGOOGLE
+    <br/>
+    <br/>TBD
+    */
+    void visitMemberDecorateStringGOOGLE(long structType, long member, long decoration);
     
     
     /**
@@ -250,6 +282,8 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>Entry Point must be the Entry Point &lt;id&gt; operand of an OpEntryPoint instruction.
     <br/>
     <br/>Mode is the execution mode. See Execution Mode.
+    <br/>
+    <br/>This instruction is only valid when the Mode operand is an execution mode that takes no Extra Operands, or takes Extra Operands that are not &lt;id&gt; operands.
     */
     void visitExecutionMode(long entryPoint, ExecutionMode mode);
     
@@ -264,6 +298,20 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>See the capabilities section for more detail.
     */
     void visitCapability(Capability capability);
+    
+    
+    /**
+    OpExecutionModeId
+    <br/>
+    <br/>Declare an execution mode for an entry point, using &lt;id&gt;s as Extra Operands.
+    <br/>
+    <br/>Entry Point must be the Entry Point &lt;id&gt; operand of an OpEntryPoint instruction.
+    <br/>
+    <br/>Mode is the execution mode. See Execution Mode.
+    <br/>
+    <br/>This instruction is only valid when the Mode operand is an execution mode that takes Extra Operands that are &lt;id&gt; operands. All such &lt;id&gt; Extra Operands must be constant instructions.
+    */
+    void visitExecutionModeId(long entryPoint, ExecutionMode mode, long[] sees);
     
     
     /**
@@ -470,7 +518,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Create a sampled image, containing both a sampler and an image.
     <br/>
-    <br/>Result Type must be the OpTypeSampledImage type.
+    <br/>Result Type must be the OpTypeSampledImage type whose Image Type operand is the type of Image.
     <br/>
     <br/>Image is an object whose type is an OpTypeImage, whose Sampled operand is 0 or 1, and whose Dim operand is not SubpassData.
     <br/>
@@ -626,7 +674,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     /**
     OpImageFetch
     <br/>
-    <br/>Fetch a single texel from a sampled image.
+    <br/>Fetch a single texel from an image whose Sampled operand is 1.
     <br/>
     <br/> Result Type must be a vector of four components of floating-point type or integer type.  Its components must be the same as Sampled Type of the underlying OpTypeImage (unless that underlying Sampled Type is OpTypeVoid).
     <br/>
@@ -662,7 +710,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Gathers the requested depth-comparison from four texels.
     <br/>
-    <br/> Result Type must be a scalar of integer type or floating-point type.  It must be the same as Sampled Type of the underlying OpTypeImage. It has one component per gathered texel.
+    <br/> Result Type must be a vector of four components of floating-point type or integer type.  Its components must be the same as Sampled Type of the underlying OpTypeImage (unless that underlying Sampled Type is OpTypeVoid). It has one component per gathered texel.
     <br/>
     <br/>Sampled Image must be an object whose type is OpTypeSampledImage. Its OpTypeImage must have a Dim of 2D, Cube, or Rect.
     <br/>
@@ -760,7 +808,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>3 for 3D Dim,
     <br/>plus 1 more if the image type is arrayed. This vector is filled in with (width [, height] [, depth] [, elements]) where elements is the number of layers in an image array, or the number of cubes in a cube-map array.
     <br/>
-    <br/>Image must be an object whose type is OpTypeImage. Its Dim operand must be one of 1D, 2D, 3D, or Cube, and its MS must be 0. See OpImageQuerySize for querying image types without level of detail.
+    <br/>Image must be an object whose type is OpTypeImage. Its Dim operand must be one of 1D, 2D, 3D, or Cube, and its MS must be 0. See OpImageQuerySize for querying image types without level of detail. See the client API for additional image type restrictions.
     <br/>
     <br/>Level of Detail is used to compute which mipmap level to query, as described in the API specification.
     */
@@ -808,9 +856,9 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Query the number of mipmap levels accessible through Image.
     <br/>
-    <br/>Result Type must be a scalar integer type. The result is the number of mipmap levels, as defined by the API specification.
+    <br/>Result Type must be a scalar integer type. The result is the number of mipmap levels,as defined by the API specification.
     <br/>
-    <br/>Image must be an object whose type is OpTypeImage. Its Dim operand must be one of 1D, 2D, 3D, or Cube.
+    <br/>Image must be an object whose type is OpTypeImage. Its Dim operand must be one of 1D, 2D, 3D, or Cube. See the client API for additional image type restrictions.
     */
     void visitImageQueryLevels(long resultType, long result, long image);
     
@@ -902,8 +950,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     /**
     OpImageSparseSampleProjImplicitLod
     <br/>
-    <br/>Instruction reserved for future use.  Use of this instruction is invalid.
-    <br/>
     <br/>Sample a sparse image with a projective coordinate and an implicit level of detail.
     */
     void visitImageSparseSampleProjImplicitLod(long resultType, long result, long sampledImage, long coordinate, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
@@ -911,8 +957,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     
     /**
     OpImageSparseSampleProjExplicitLod
-    <br/>
-    <br/>Instruction reserved for future use.  Use of this instruction is invalid.
     <br/>
     <br/>Sample a sparse image with a projective coordinate using an explicit level of detail.
     */
@@ -922,8 +966,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     /**
     OpImageSparseSampleProjDrefImplicitLod
     <br/>
-    <br/>Instruction reserved for future use.  Use of this instruction is invalid.
-    <br/>
     <br/>Sample a sparse image with a projective coordinate, doing depth-comparison, with an implicit level of detail.
     */
     void visitImageSparseSampleProjDrefImplicitLod(long resultType, long result, long sampledImage, long coordinate, long dref, ImageOperands optionalImageOperands, Map<Integer, long[]> splitOperands);
@@ -931,8 +973,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     
     /**
     OpImageSparseSampleProjDrefExplicitLod
-    <br/>
-    <br/>Instruction reserved for future use.  Use of this instruction is invalid.
     <br/>
     <br/>Sample a sparse image with a projective coordinate, doing depth-comparison, using an explicit level of detail.
     */
@@ -978,7 +1018,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Gathers the requested depth-comparison from four texels of a sparse image.
     <br/>
-    <br/>Result Type must be an OpTypeStruct with two members. The first member&#8217;s type must be an integer type scalar.  It will hold a Residency Code that can be passed to OpImageSparseTexelsResident. The second member  must be a scalar of integer type or floating-point type.  It must be the same as Sampled Type of the underlying OpTypeImage. It has one component per gathered texel.
+    <br/>Result Type must be an OpTypeStruct with two members. The first member&#8217;s type must be an integer type scalar.  It will hold a Residency Code that can be passed to OpImageSparseTexelsResident. The second member  must be a vector of four components of floating-point type or integer type.  Its components must be the same as Sampled Type of the underlying OpTypeImage (unless that underlying Sampled Type is OpTypeVoid). It has one component per gathered texel.
     <br/>
     <br/>Sampled Image must be an object whose type is OpTypeSampledImage. Its OpTypeImage must have a Dim of 2D, Cube, or Rect.
     <br/>
@@ -1014,7 +1054,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Coordinate is an integer scalar or vector containing non-normalized texel coordinates (u[, v] &#8230; [, array layer]) as needed by the definition of Image. If the coordinates are outside the image, the memory location that is accessed is undefined.
     <br/>
-    <br/> The Image Format must not be Unknown, unless the StorageImageReadWithoutFormat Capability was declared.
+    <br/>The Image Dim operand must not be SubpassData. The Image Format must not be Unknown unless the StorageImageReadWithoutFormat Capability was declared.
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands.
     */
@@ -1128,7 +1168,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Value is the value to quantize. The type of Value must be the same as Result Type. 
     <br/>
-    <br/> If Value is an infinity, the result is the same infinity. If Value is a NaN, the result is a NaN, but not necessarily the same NaN. If Value is positive with a magnitude too large to represent as a 16-bit floating-point value, the result is positive infinity. If Value is negative with a magnitude too large to represent as a 16-bit floating-point value, the result is negative infinity. If the magnitude of Value is too small to represent as a normalized 16-bit floating-point value, the result is 0.
+    <br/> If Value is an infinity, the result is the same infinity. If Value is a NaN, the result is a NaN, but not necessarily the same NaN. If Value is positive with a magnitude too large to represent as a 16-bit floating-point value, the result is positive infinity. If Value is negative with a magnitude too large to represent as a 16-bit floating-point value, the result is negative infinity. If the magnitude of Value is too small to represent as a normalized 16-bit floating-point value, the result may be either +0 or -0.
     <br/>
     <br/>The RelaxedPrecision Decoration has no effect on this instruction.
     <br/>
@@ -1352,7 +1392,9 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Transpose a matrix.
     <br/>
-    <br/>Result Type must be an OpTypeMatrix, where the number of columns and the column size is the reverse of those of the type of Matrix.
+    <br/>Result Type must be an OpTypeMatrix.
+    <br/>
+    <br/>Matrix must be an object of type OpTypeMatrix. The number of columns and the column size of Matrix must be the reverse of those in Result Type. The types of the scalar components in Matrix and Result Type must be the same.
     <br/>
     <br/>Matrix must have of type of OpTypeMatrix.
     */
@@ -1674,7 +1716,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/> Result Type must be a floating-point type scalar. 
     <br/>
-    <br/>Vector 1 and Vector 2 must have the same type, and their component type must be Result Type.
+    <br/>Vector 1 and Vector 2 must be vectors of the same type, and their component type must be Result Type.
     */
     void visitDot(long resultType, long result, long vector1, long vector2);
     
@@ -2162,9 +2204,9 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     /**
     OpSelect
     <br/>
-    <br/>Select between two objects.
+    <br/>Select components from two objects.
     <br/>
-    <br/>Result Type must be a scalar or vector.
+    <br/>Result Type must be a pointer, scalar, or vector.
     <br/>
     <br/> The type of Object 1 must be the same as Result Type. Object 1 is selected as the result if Condition is true.
     <br/>
@@ -2490,7 +2532,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Same result as either OpDPdxFine or OpDPdxCoarse on P. Selection of which one is based on external factors.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -2504,7 +2546,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Same result as either OpDPdyFine or OpDPdyCoarse on P. Selection of which one is based on external factors.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -2518,7 +2560,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Result is the same as computing the sum of the absolute values of OpDPdx and OpDPdy on P.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -2532,7 +2574,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Result is the partial derivative of P with respect to the window x coordinate.Will use local differencing based on the value of P for the current fragment and its immediate neighbor(s).
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -2546,7 +2588,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Result is the partial derivative of P with respect to the window y coordinate.Will use local differencing based on the value of P for the current fragment and its immediate neighbor(s).
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -2560,7 +2602,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Result is the same as computing the sum of the absolute values of OpDPdxFine and OpDPdyFine on P.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -2574,7 +2616,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Result is the partial derivative of P with respect to the window x coordinate. Will use local differencing based on the value of P for the current fragment&#8217;s neighbors, and will possibly, but not necessarily, include the value of P for the current fragment. That is, over a given area, the implementation can compute x derivatives in fewer unique locations than would be allowed for OpDPdxFine.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -2588,7 +2630,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Result is the partial derivative of P with respect to the window y coordinate. Will use local differencing based on the value of P for the current fragment&#8217;s neighbors, and will possibly, but not necessarily, include the value of P for the current fragment. That is, over a given area, the implementation can compute y derivatives in fewer unique locations than would be allowed for OpDPdyFine.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -2602,7 +2644,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Result is the same as computing the sum of the absolute values of OpDPdxCoarse and OpDPdyCoarse on P.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -2620,7 +2662,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Result Type can be any type.
     <br/>
-    <br/>Operands are a sequence of pairs: (Variable 1, Parent 1 block), (Variable 2, Parent 2 block), &#8230; Each Parent i block is the label of an immediate predecessor in the CFG of the current block. A Parent i block must not appear more than once in the operand sequence. All Variables must have a type matching Result Type.
+    <br/>Operands are a sequence of pairs: (Variable 1, Parent 1 block), (Variable 2, Parent 2 block), &#8230; Each Parent i block is the label of an immediate predecessor in the CFG of the current block. There must be exactly one Parent i for each parent block of the current block in the CFG. All Variables must have a type matching Result Type.
     <br/>
     <br/>Within a block, this instruction must appear before all non-OpPhi instructions (except for OpLine, which can be mixed with OpPhi).
     */
@@ -2692,7 +2734,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>False Label must be an OpLabel in the current function.
     <br/>
-    <br/>Branch weights are unsigned 32-bit integer literals. There must be either no Branch Weights or exactly two branch weights. If present, the first is the weight for branching to True Label, and the second is the weight for branching to False Label. The implied probability that a branch is taken is its weight divided by the sum of the two Branch weights.
+    <br/>Branch weights are unsigned 32-bit integer literals. There must be either no Branch Weights or exactly two branch weights. If present, the first is the weight for branching to True Label, and the second is the weight for branching to False Label. The implied probability that a branch is taken is its weight divided by the sum of the two Branch weights. At least one weight must be non-zero. A weight of zero does not imply a branch is dead or permit its removal; branch weights are only hints. The two weights must not overflow a 32-bit unsigned integer when added together.
     <br/>
     <br/>This instruction must be the last instruction in a block.
     */
@@ -2831,8 +2873,8 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Perform the following steps atomically with respect to any other atomic accesses within Scope to the same location: 
     <br/>1) load through Pointer to get an Original Value,
-    <br/>2) get a New Value by selecting Value if Original Value equals Comparator or selecting Original Value otherwise, and
-    <br/>3) store the New Value back through Pointer.
+    <br/>2) get a New Value from Value only if Original Value equals Comparator, and
+    <br/>3) store the New Value back through Pointer&#8217;only if 'Original Value equaled Comparator.
     <br/>
     <br/>The instruction&#8217;s result is the Original Value.
     <br/>
@@ -2850,24 +2892,9 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     /**
     OpAtomicCompareExchangeWeak
     <br/>
-    <br/>Attempts to do the following:
+    <br/>Deprecated (use OpAtomicCompareExchange).
     <br/>
-    <br/>Perform the following steps atomically with respect to any other atomic accesses within Scope to the same location: 
-    <br/>1) load through Pointer to get an Original Value,
-    <br/>2) get a New Value by selecting Value if Original Value equals Comparator or selecting Original Value otherwise, and
-    <br/>3) store the New Value back through Pointer.
-    <br/>
-    <br/>The instruction&#8217;s result is the Original Value.
-    <br/>
-    <br/>The weak compare-and-exchange operations may fail spuriously. That is, even when Original Value equals Comparator the comparison can fail and store back the Original Value through Pointer.
-    <br/>
-    <br/> Result Type must be an integer type scalar. 
-    <br/>
-    <br/>Use Equal for the memory semantics of this instruction when Value and Original Value compare equal.
-    <br/>
-    <br/>Use Unequal for the memory semantics of this instruction when Value and Original Value compare unequal. Unequal cannot be set to Release or Acquire and Release. In addition, Unequal cannot be set to a stronger memory-order then Equal.
-    <br/>
-    <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.  This type must also match the type of Comparator.
+    <br/>Has the same semantics as OpAtomicCompareExchange.
     */
     void visitAtomicCompareExchangeWeak(long resultType, long result, long pointer, long scopeScope, long memorySemanticsEqual, long memorySemanticsUnequal, long value, long comparator);
     
@@ -3140,7 +3167,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>If Semantics is not None, this instruction also serves as an OpMemoryBarrier instruction, and must also perform and adhere to the description and semantics of an OpMemoryBarrier instruction with the same Memory and Semantics operands.  This allows atomically specifying both a control barrier and a memory barrier (that is, without needing two instructions). If Semantics is None, Memory is ignored.
     <br/>
-    <br/>It is only valid to use this instruction with TessellationControl, GLCompute, or Kernel execution models.
+    <br/>Before version 1.3, it is only valid to use this instruction with TessellationControl, GLCompute, or Kernel execution models. There is no such restriction starting with version 1.3.
     <br/>
     <br/>When used with the TessellationControl execution model, it also implicitly synchronizes the Output Storage Class:  Writes to Output variables performed by any invocation executed prior to a OpControlBarrier will be visible to any other invocation after return from that OpControlBarrier.
     */
@@ -3298,8 +3325,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>An integer add group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is 0.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -3307,6 +3332,8 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>Result Type must be a 32-bit or 64-bit integer type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -3318,8 +3345,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>A floating-point add group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is 0.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -3327,6 +3352,8 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>Result Type must be a 16-bit, 32-bit, or 64-bit floating-point type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -3338,8 +3365,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>A floating-point minimum group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is +INF.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -3347,6 +3372,8 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>Result Type must be a 16-bit, 32-bit, or 64-bit floating-point type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is +INF. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -3358,8 +3385,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>An unsigned integer minimum group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is UINT_MAX when X is 32 bits wide and ULONG_MAX when X is 64 bits wide.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -3367,6 +3392,8 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>Result Type must be a 32-bit or 64-bit integer type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is UINT_MAX when X is 32 bits wide and ULONG_MAX when X is 64 bits wide. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -3378,8 +3405,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>A signed integer minimum group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is INT_MAX when X is 32 bits wide and LONG_MAX when X is 64 bits wide.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -3387,6 +3412,8 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>Result Type must be a 32-bit or 64-bit integer type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is INT_MAX when X is 32 bits wide and LONG_MAX when X is 64 bits wide. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -3398,8 +3425,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>A floating-point maximum group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is -INF.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -3407,6 +3432,8 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>Result Type must be a 16-bit, 32-bit, or 64-bit floating-point type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is -INF. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -3418,8 +3445,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>An unsigned integer maximum group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is 0.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -3427,6 +3452,8 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>Result Type must be a 32-bit or 64-bit integer type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -3438,8 +3465,6 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>A signed integer maximum group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is INT_MIN when X is 32 bits wide and LONG_MIN when X is 64 bits wide.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -3447,6 +3472,8 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>X and Result Type must be a 32-bit or 64-bit OpTypeInt data type.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is INT_MIN when X is 32 bits wide and LONG_MIN when X is 64 bits wide. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -3470,11 +3497,163 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     
     
     /**
+    OpSubgroupAllKHR
+    <br/>
+    <br/>TBD
+    */
+    void visitSubgroupAllKHR(long resultType, long result, long predicate);
+    
+    
+    /**
+    OpSubgroupAnyKHR
+    <br/>
+    <br/>TBD
+    */
+    void visitSubgroupAnyKHR(long resultType, long result, long predicate);
+    
+    
+    /**
+    OpSubgroupAllEqualKHR
+    <br/>
+    <br/>TBD
+    */
+    void visitSubgroupAllEqualKHR(long resultType, long result, long predicate);
+    
+    
+    /**
     OpSubgroupReadInvocationKHR
     <br/>
     <br/>See extension SPV_KHR_shader_ballot
     */
     void visitSubgroupReadInvocationKHR(long resultType, long result, long value, long index);
+    
+    
+    /**
+    OpGroupIAddNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    void visitGroupIAddNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x);
+    
+    
+    /**
+    OpGroupFAddNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    void visitGroupFAddNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x);
+    
+    
+    /**
+    OpGroupFMinNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    void visitGroupFMinNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x);
+    
+    
+    /**
+    OpGroupUMinNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    void visitGroupUMinNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x);
+    
+    
+    /**
+    OpGroupSMinNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    void visitGroupSMinNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x);
+    
+    
+    /**
+    OpGroupFMaxNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    void visitGroupFMaxNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x);
+    
+    
+    /**
+    OpGroupUMaxNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    void visitGroupUMaxNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x);
+    
+    
+    /**
+    OpGroupSMaxNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    void visitGroupSMaxNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x);
+    
+    
+    /**
+    OpSubgroupShuffleINTEL
+    <br/>
+    <br/>TBD
+    */
+    void visitSubgroupShuffleINTEL(long resultType, long result, long data, long invocationId);
+    
+    
+    /**
+    OpSubgroupShuffleDownINTEL
+    <br/>
+    <br/>TBD
+    */
+    void visitSubgroupShuffleDownINTEL(long resultType, long result, long current, long next, long delta);
+    
+    
+    /**
+    OpSubgroupShuffleUpINTEL
+    <br/>
+    <br/>TBD
+    */
+    void visitSubgroupShuffleUpINTEL(long resultType, long result, long previous, long current, long delta);
+    
+    
+    /**
+    OpSubgroupShuffleXorINTEL
+    <br/>
+    <br/>TBD
+    */
+    void visitSubgroupShuffleXorINTEL(long resultType, long result, long data, long value);
+    
+    
+    /**
+    OpSubgroupBlockReadINTEL
+    <br/>
+    <br/>TBD
+    */
+    void visitSubgroupBlockReadINTEL(long resultType, long result, long ptr);
+    
+    
+    /**
+    OpSubgroupBlockWriteINTEL
+    <br/>
+    <br/>TBD
+    */
+    void visitSubgroupBlockWriteINTEL(long ptr, long data);
+    
+    
+    /**
+    OpSubgroupImageBlockReadINTEL
+    <br/>
+    <br/>TBD
+    */
+    void visitSubgroupImageBlockReadINTEL(long resultType, long result, long image, long coordinate);
+    
+    
+    /**
+    OpSubgroupImageBlockWriteINTEL
+    <br/>
+    <br/>TBD
+    */
+    void visitSubgroupImageBlockWriteINTEL(long image, long coordinate, long data);
     
     
     /**
@@ -3506,7 +3685,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Flags must be an integer type scalar.  The content of Flags is interpreted as Kernel Enqueue Flags mask.
     <br/>
-    <br/>ND Range must have a type of OpTypeStruct created by OpBuildNDRange.
+    <br/>The type of ND Range must be an OpTypeStruct whose members are as described by the Result Type of OpBuildNDRange.
     <br/>
     <br/>Num Events specifies the number of event objects in the wait list pointed to by Wait Events and must be 32-bit integer type scalar, which is treated as an unsigned integer.
     <br/>
@@ -3537,7 +3716,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Result Type must be a 32-bit integer type scalar.
     <br/>
-    <br/>ND Range must have a type of OpTypeStruct created by OpBuildNDRange.
+    <br/>The type of ND Range must be an OpTypeStruct whose members are as described by the Result Type of OpBuildNDRange.
     <br/>
     <br/>Invoke must be an OpFunction whose OpTypeFunction operand has:
     <br/>- Result Type must be OpTypeVoid.
@@ -3560,7 +3739,7 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>
     <br/>Result Type must be a 32-bit integer type scalar.
     <br/>
-    <br/>ND Range must have a type of OpTypeStruct created by OpBuildNDRange.
+    <br/>The type of ND Range must be an OpTypeStruct whose members are as described by the Result Type of OpBuildNDRange.
     <br/>
     <br/>Invoke must be an OpFunction whose OpTypeFunction operand has:
     <br/>- Result Type must be OpTypeVoid.
@@ -4176,5 +4355,612 @@ public interface CodeVisitor extends TypeVisitor, DecorationVisitor, ConstantVis
     <br/>Qualifier is the pipe access qualifier.
     */
     void visitCreatePipeFromPipeStorage(long resultType, long result, long pipeStorage);
+    
+    
+    /**
+    OpGroupNonUniformElect
+    <br/>
+    <br/>Result is true only in the active invocation with the lowest id in the group, otherwise result is false.
+    <br/>
+    <br/>Result Type must be a Boolean type.
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    */
+    void visitGroupNonUniformElect(long resultType, long result, long scopeExecution);
+    
+    
+    /**
+    OpGroupNonUniformAll
+    <br/>
+    <br/>Evaluates a predicate for all active invocations in the group, resulting in true if predicate evaluates to true for all active invocations in the group, otherwise the result is false.
+    <br/>
+    <br/>Result Type must be a Boolean type.
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Predicate must be a Boolean type.
+    */
+    void visitGroupNonUniformAll(long resultType, long result, long scopeExecution, long predicate);
+    
+    
+    /**
+    OpGroupNonUniformAny
+    <br/>
+    <br/>Evaluates a predicate for all active invocations in the group, resulting in true if predicate evaluates to true for any active invocation in the group, otherwise the result is false.
+    <br/>
+    <br/>Result Type must be a Boolean type.
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Predicate must be a Boolean type.
+    */
+    void visitGroupNonUniformAny(long resultType, long result, long scopeExecution, long predicate);
+    
+    
+    /**
+    OpGroupNonUniformAllEqual
+    <br/>
+    <br/>Evaluates a value for all active invocations in the group, resulting in true if value is equal for all active invocations in the group, otherwise the result is false.
+    <br/>
+    <br/>Result Type must be a Boolean type.
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Value  must be a scalar or vector of floating-point type, integer type, or Boolean type.
+    */
+    void visitGroupNonUniformAllEqual(long resultType, long result, long scopeExecution, long value);
+    
+    
+    /**
+    OpGroupNonUniformBroadcast
+    <br/>
+    <br/>Return the Value of the invocation identified by the id Id to all active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Id  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/> Id must come from a constant instruction. 
+    <br/>
+    <br/>The resulting value is undefined if Id is an inactive invocation, or is greater than or equal to the size of the group.
+    */
+    void visitGroupNonUniformBroadcast(long resultType, long result, long scopeExecution, long value, long id);
+    
+    
+    /**
+    OpGroupNonUniformBroadcastFirst
+    <br/>
+    <br/>Return the Value of the invocation from the active invocation with the lowest id in the group to all active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type.
+    */
+    void visitGroupNonUniformBroadcastFirst(long resultType, long result, long scopeExecution, long value);
+    
+    
+    /**
+    OpGroupNonUniformBallot
+    <br/>
+    <br/>Returns a bitfield value combining the Predicate value from all invocations in the group that execute the same dynamic instance of this instruction. The bit is set to one if the corresponding invocation is active and the Predicate for that invocation evaluated to true; otherwise, it is set to zero.
+    <br/>
+    <br/>Result Type  must be a vector of four components of integer type scalar, whose Signedness operand is 0. 
+    <br/>
+    <br/>Result is a set of bitfields where the first invocation is represented in the lowest bit of the first vector component and the last (up to the size of the group) is the higher bit number of the last bitmask needed to represent all bits of the group invocations. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Predicate must be a Boolean type.
+    */
+    void visitGroupNonUniformBallot(long resultType, long result, long scopeExecution, long predicate);
+    
+    
+    /**
+    OpGroupNonUniformInverseBallot
+    <br/>
+    <br/>Evaluates a value for all active invocations in the group, resulting in true if the bit in Value for the corresponding invocation is set to one, otherwise the result is false.
+    <br/>
+    <br/>Result Type must be a Boolean type.
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Value  must be a vector of four components of integer type scalar, whose Signedness operand is 0. 
+    <br/>
+    <br/>Value must be the same for all invocations that execute the same dynamic instance of this instruction.
+    <br/>
+    <br/>Value is a set of bitfields where the first invocation is represented in the lowest bit of the first vector component and the last (up to the size of the group) is the higher bit number of the last bitmask needed to represent all bits of the group invocations.
+    */
+    void visitGroupNonUniformInverseBallot(long resultType, long result, long scopeExecution, long value);
+    
+    
+    /**
+    OpGroupNonUniformBallotBitExtract
+    <br/>
+    <br/>Evaluates a value for all active invocations in the group, resulting in true if the bit in Value that corresponds to Index is set to one, otherwise the result is false.
+    <br/>
+    <br/>Result Type must be a Boolean type.
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Value  must be a vector of four components of integer type scalar, whose Signedness operand is 0. 
+    <br/>
+    <br/>Value is a set of bitfields where the first invocation is represented in the lowest bit of the first vector component and the last (up to the size of the group) is the higher bit number of the last bitmask needed to represent all bits of the group invocations. 
+    <br/>
+    <br/>Index  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>The resulting value is undefined if Index is an inactive invocation, or is greater than or equal to the size of the group.
+    */
+    void visitGroupNonUniformBallotBitExtract(long resultType, long result, long scopeExecution, long value, long index);
+    
+    
+    /**
+    OpGroupNonUniformBallotBitCount
+    <br/>
+    <br/>A group operation that returns the number of bits that are set to 1 in Value, only considering the bits in Value required to represent all bits of the group&#8217;s invocations.
+    <br/>
+    <br/>Result Type  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. 
+    <br/>
+    <br/>Value  must be a vector of four components of integer type scalar, whose Signedness operand is 0. 
+    <br/>
+    <br/>Value is a set of bitfields where the first invocation is represented in the lowest bit of the first vector component and the last (up to the size of the group) is the higher bit number of the last bitmask needed to represent all bits of the group invocations.
+    */
+    void visitGroupNonUniformBallotBitCount(long resultType, long result, long scopeExecution, long operation, long value);
+    
+    
+    /**
+    OpGroupNonUniformBallotFindLSB
+    <br/>
+    <br/>Find the least significant bit set to 1 in Value, considering only the bits in Value required to represent all bits of the group&#8217;s invocations. If none of the considered bits is set to 1, the result is undefined.
+    <br/>
+    <br/>Result Type  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Value  must be a vector of four components of integer type scalar, whose Signedness operand is 0. 
+    <br/>
+    <br/>Value is a set of bitfields where the first invocation is represented in the lowest bit of the first vector component and the last (up to the size of the group) is the higher bit number of the last bitmask needed to represent all bits of the group invocations.
+    */
+    void visitGroupNonUniformBallotFindLSB(long resultType, long result, long scopeExecution, long value);
+    
+    
+    /**
+    OpGroupNonUniformBallotFindMSB
+    <br/>
+    <br/>Find the most significant bit set to 1 in Value, considering only the bits in Value required to represent all bits of the group&#8217;s invocations.  If none of the considered bits is set to 1, the result is undefined.
+    <br/>
+    <br/>Result Type  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Value  must be a vector of four components of integer type scalar, whose Signedness operand is 0. 
+    <br/>
+    <br/>Value is a set of bitfields where the first invocation is represented in the lowest bit of the first vector component and the last (up to the size of the group) is the higher bit number of the last bitmask needed to represent all bits of the group invocations.
+    */
+    void visitGroupNonUniformBallotFindMSB(long resultType, long result, long scopeExecution, long value);
+    
+    
+    /**
+    OpGroupNonUniformShuffle
+    <br/>
+    <br/>Return the Value of the invocation identified by the id Id.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Id  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>The resulting value is undefined if Id is an inactive invocation, or is greater than or equal to the size of the group.
+    */
+    void visitGroupNonUniformShuffle(long resultType, long result, long scopeExecution, long value, long id);
+    
+    
+    /**
+    OpGroupNonUniformShuffleXor
+    <br/>
+    <br/>Return the Value of the invocation identified by the current invocation&#8217;s id within the group xor&#8217;ed with Mask.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Mask  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>The resulting value is undefined if current invocation&#8217;s id within the group xor&#8217;ed with Mask is an inactive invocation, or is greater than or equal to the size of the group. 
+    <br/>
+    <br/>Mask must evaluate to a power of 2.
+    */
+    void visitGroupNonUniformShuffleXor(long resultType, long result, long scopeExecution, long value, long mask);
+    
+    
+    /**
+    OpGroupNonUniformShuffleUp
+    <br/>
+    <br/>Return the Value of the invocation identified by the current invocation&#8217;s id within the group - Delta.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Delta  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>The resulting value is undefined if current invocation&#8217;s id within the group - Delta is an inactive invocation, or is greater than or equal to the size of the group.
+    */
+    void visitGroupNonUniformShuffleUp(long resultType, long result, long scopeExecution, long value, long delta);
+    
+    
+    /**
+    OpGroupNonUniformShuffleDown
+    <br/>
+    <br/>Return the Value of the invocation identified by the current invocation&#8217;s id within the group + Delta.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Delta  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>The resulting value is undefined if current invocation&#8217;s id within the group + Delta is an inactive invocation, or is greater than or equal to the size of the group.
+    */
+    void visitGroupNonUniformShuffleDown(long resultType, long result, long scopeExecution, long value, long delta);
+    
+    
+    /**
+    OpGroupNonUniformIAdd
+    <br/>
+    <br/>An integer add group operation of all Value operands contributed active by invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformIAdd(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformFAdd
+    <br/>
+    <br/>A floating point add group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformFAdd(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformIMul
+    <br/>
+    <br/>An integer multiply group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 1. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformIMul(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformFMul
+    <br/>
+    <br/>A floating point multiply group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 1. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformFMul(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformSMin
+    <br/>
+    <br/>A signed integer minimum group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is INT_MAX. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformSMin(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformUMin
+    <br/>
+    <br/>An unsigned integer minimum group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is UINT_MAX. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformUMin(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformFMin
+    <br/>
+    <br/>A floating point minimum group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is +INF. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformFMin(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformSMax
+    <br/>
+    <br/>A signed integer maximum group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is INT_MIN. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformSMax(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformUMax
+    <br/>
+    <br/>An unsigned integer maximum group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformUMax(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformFMax
+    <br/>
+    <br/>A floating point maximum group operation of all Value operands contributed by active invocations in by group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is -INF. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformFMax(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformBitwiseAnd
+    <br/>
+    <br/>A bitwise and group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is ~0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformBitwiseAnd(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformBitwiseOr
+    <br/>
+    <br/>A bitwise or group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformBitwiseOr(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformBitwiseXor
+    <br/>
+    <br/>A bitwise xor group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformBitwiseXor(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformLogicalAnd
+    <br/>
+    <br/>A logical and group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is ~0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformLogicalAnd(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformLogicalOr
+    <br/>
+    <br/>A logical or group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformLogicalOr(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformLogicalXor
+    <br/>
+    <br/>A logical xor group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    void visitGroupNonUniformLogicalXor(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong);
+    
+    
+    /**
+    OpGroupNonUniformQuadBroadcast
+    <br/>
+    <br/>Return the Value of the invocation within the quad whose SubgroupLocalInvocationId % 4 is equal to Index.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Index  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/> Index must come from a constant instruction. 
+    <br/>
+    <br/>If the value of Index is greater or equal to 4, an undefined result is returned.
+    */
+    void visitGroupNonUniformQuadBroadcast(long resultType, long result, long scopeExecution, long value, long index);
+    
+    
+    /**
+    OpGroupNonUniformQuadSwap
+    <br/>
+    <br/>Swap the Value of the invocation within the quad with another invocation in the quad using Direction.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Direction is the kind of swap to perform.
+    <br/>
+    <br/>Direction  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/> Direction must come from a constant instruction. 
+    <br/>
+    <br/>The value of Direction is evaluated such that:
+    <br/>0 indicates a horizontal swap within the quad.
+    <br/>1 indicates a vertical swap within the quad.
+    <br/>2 indicates a diagonal swap within the quad.
+    */
+    void visitGroupNonUniformQuadSwap(long resultType, long result, long scopeExecution, long value, long direction);
+    
+    
+    /**
+    OpGroupNonUniformPartitionNV
+    <br/>
+    <br/>TBD
+    */
+    void visitGroupNonUniformPartitionNV(long resultType, long result, long value);
     
 }

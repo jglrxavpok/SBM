@@ -1,4 +1,4 @@
-// Generated from spirv-opcodesonly.json
+// Generated from spirv-opcodesonly.json on Tue Jul 10 17:21:22 CEST 2018
 package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.AccessQualifier;
@@ -157,8 +157,6 @@ public interface TypeVisitor {
     <br/>Element Type is the type of each element in the array. It must be a concrete type.
     <br/>
     <br/> See OpArrayLength for getting the Length of an array of this type.
-    <br/>
-    <br/>Objects of this type can only be created with OpVariable using the Uniform Storage Class.
     */
     void visitRuntimeArrayType(long result, long elementType);
     
@@ -166,7 +164,7 @@ public interface TypeVisitor {
     /**
     OpTypeStruct
     <br/>
-    <br/>Declare a new structure type: an aggregate of potentially heterogeneous members.
+    <br/>Declare a new structure type: an aggregate of zero or more potentially heterogeneous members.
     <br/>
     <br/>Member N type is the type of member N of the structure. The first member is member 0, the next is member 1, &#8230;
     <br/>

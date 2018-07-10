@@ -1,4 +1,4 @@
-// Auto-generated from org.jglr.sbm.generation.SPIRVCodeWriterGenerator
+// Auto-generated from org.jglr.sbm.generation.SPIRVCodeWriterGenerator on Tue Jul 10 17:21:22 CEST 2018
 package org.jglr.sbm.visitors;
 
 import org.jglr.flows.io.ByteArray;
@@ -84,7 +84,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result Type is the type of object to make.
     <br/>
-    <br/>Each consumption of Result &lt;id&gt; yields an arbitrary, possibly different bit pattern.
+    <br/>Each consumption of Result &lt;id&gt; yields an arbitrary, possibly different bit pattern or abstract value resulting in possibly different concrete, abstract, or opaque values.
     */
     @Override
     public void visitUndef(long resultType, long result) {
@@ -109,6 +109,64 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(resultType);
         buffer.putUnsignedInt(result);
         buffer.putUnsignedInt(pointer);
+        
+    }
+    
+    /**
+    OpFragmentMaskFetchAMD
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitFragmentMaskFetchAMD(long resultType, long result, long image, long coordinate) {
+        newOpcode(OpFragmentMaskFetchAMD, 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(image);
+        buffer.putUnsignedInt(coordinate);
+        
+    }
+    
+    /**
+    OpFragmentFetchAMD
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitFragmentFetchAMD(long resultType, long result, long image, long coordinate, long fragmentIndex) {
+        newOpcode(OpFragmentFetchAMD, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(image);
+        buffer.putUnsignedInt(coordinate);
+        buffer.putUnsignedInt(fragmentIndex);
+        
+    }
+    
+    /**
+    OpDecorateStringGOOGLE
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitDecorateStringGOOGLE(long target, long decoration) {
+        newOpcode(OpDecorateStringGOOGLE, 1 + 1);
+        buffer.putUnsignedInt(target);
+        buffer.putUnsignedInt(decoration);
+        
+    }
+    
+    /**
+    OpMemberDecorateStringGOOGLE
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitMemberDecorateStringGOOGLE(long structType, long member, long decoration) {
+        newOpcode(OpMemberDecorateStringGOOGLE, 1 + 1 + 1);
+        buffer.putUnsignedInt(structType);
+        buffer.putUnsignedInt(member);
+        buffer.putUnsignedInt(decoration);
         
     }
     
@@ -147,11 +205,11 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(sourceLanguage.ordinal());
         buffer.putUnsignedInt(version);
         if(optionalLong != -1) {
-        buffer.putUnsignedInt(optionalLong);
+            buffer.putUnsignedInt(optionalLong);
             
         }
         if(optionalString != null) {
-        writeChars(optionalString);
+            writeChars(optionalString);
             
         }
         
@@ -385,6 +443,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>Entry Point must be the Entry Point &lt;id&gt; operand of an OpEntryPoint instruction.
     <br/>
     <br/>Mode is the execution mode. See Execution Mode.
+    <br/>
+    <br/>This instruction is only valid when the Mode operand is an execution mode that takes no Extra Operands, or takes Extra Operands that are not &lt;id&gt; operands.
     */
     @Override
     public void visitExecutionMode(long entryPoint, ExecutionMode mode) {
@@ -408,6 +468,27 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     public void visitCapability(Capability capability) {
         newOpcode(OpCapability, 1);
         buffer.putUnsignedInt(capability.ordinal());
+        
+    }
+    
+    /**
+    OpExecutionModeId
+    <br/>
+    <br/>Declare an execution mode for an entry point, using &lt;id&gt;s as Extra Operands.
+    <br/>
+    <br/>Entry Point must be the Entry Point &lt;id&gt; operand of an OpEntryPoint instruction.
+    <br/>
+    <br/>Mode is the execution mode. See Execution Mode.
+    <br/>
+    <br/>This instruction is only valid when the Mode operand is an execution mode that takes Extra Operands that are &lt;id&gt; operands. All such &lt;id&gt; Extra Operands must be constant instructions.
+    */
+    @Override
+    public void visitExecutionModeId(long entryPoint, ExecutionMode mode, long[] sees) {
+        newOpcode(OpExecutionModeId, 1 + 1 + sees.length);
+        buffer.putUnsignedInt(entryPoint);
+        buffer.putUnsignedInt(mode.getType().ordinal());
+        buffer.putUnsignedInts(mode.getOperands());
+        buffer.putUnsignedInts(sees);
         
     }
     
@@ -556,7 +637,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(sampled.ordinal());
         buffer.putUnsignedInt(imageFormat.ordinal());
         if(optionalAccessQualifier != null) {
-        buffer.putUnsignedInt(optionalAccessQualifier.ordinal());
+            buffer.putUnsignedInt(optionalAccessQualifier.ordinal());
             
         }
         
@@ -617,8 +698,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>Element Type is the type of each element in the array. It must be a concrete type.
     <br/>
     <br/> See OpArrayLength for getting the Length of an array of this type.
-    <br/>
-    <br/>Objects of this type can only be created with OpVariable using the Uniform Storage Class.
     */
     @Override
     public void visitRuntimeArrayType(long result, long elementType) {
@@ -631,7 +710,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     /**
     OpTypeStruct
     <br/>
-    <br/>Declare a new structure type: an aggregate of potentially heterogeneous members.
+    <br/>Declare a new structure type: an aggregate of zero or more potentially heterogeneous members.
     <br/>
     <br/>Member N type is the type of member N of the structure. The first member is member 0, the next is member 1, &#8230;
     <br/>
@@ -1068,7 +1147,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Allocate an object in memory, resulting in a pointer to it, which can be used with OpLoad and OpStore.
     <br/>
-    <br/> Result Type must be an OpTypePointer. Its Type operand is the type of object in memory.
+    <br/> Result Type must be an OpTypePointer. Its Type operand is the type of object in memory. Its Storage Class operand must be the same as the Storage Class operand of the result type.
     <br/>
     <br/>Storage Class is the Storage Class of the memory holding the object. It cannot be Generic.
     <br/>
@@ -1081,7 +1160,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(result);
         buffer.putUnsignedInt(storageClass.ordinal());
         if(optionalLong != -1) {
-        buffer.putUnsignedInt(optionalLong);
+            buffer.putUnsignedInt(optionalLong);
             
         }
         
@@ -1111,7 +1190,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>If Arrayed is 1:
     <br/>1D: 2 components
     <br/>2D: 3 components
-    <br/>Cube: 4 components
+    <br/>Cube: 3 components; the face and layer combine into the 3rd component, layer_face, such that face is layer_face % 6 and layer is floor(layer_face / 6)
     <br/>
     <br/>Sample must be an integer type scalar. It specifies which sample to select at the given coordinate.  It must be a valid &lt;id&gt; for the value 0 if the OpTypeImage has MS of 0.
     */
@@ -1144,7 +1223,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(result);
         buffer.putUnsignedInt(pointer);
         if(optionalMemoryAccess != null) {
-        buffer.putUnsignedInt(optionalMemoryAccess.getMask());
+            buffer.putUnsignedInt(optionalMemoryAccess.getMask());
             
         }
         
@@ -1167,7 +1246,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(pointer);
         buffer.putUnsignedInt(object);
         if(optionalMemoryAccess != null) {
-        buffer.putUnsignedInt(optionalMemoryAccess.getMask());
+            buffer.putUnsignedInt(optionalMemoryAccess.getMask());
             
         }
         
@@ -1186,7 +1265,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(target);
         buffer.putUnsignedInt(source);
         if(optionalMemoryAccess != null) {
-        buffer.putUnsignedInt(optionalMemoryAccess.getMask());
+            buffer.putUnsignedInt(optionalMemoryAccess.getMask());
             
         }
         
@@ -1208,7 +1287,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(source);
         buffer.putUnsignedInt(size);
         if(optionalMemoryAccess != null) {
-        buffer.putUnsignedInt(optionalMemoryAccess.getMask());
+            buffer.putUnsignedInt(optionalMemoryAccess.getMask());
             
         }
         
@@ -1257,7 +1336,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Has the same semantics as OpAccessChain, with the addition of the Element operand.
     <br/>
-    <br/>Element is used to do the initial dereference of Base: Base is treated as the address of the first element of an array, and the Element element&#8217;s address is computed to be the base for the Indexes, as per OpAccessChain. The type of Base after being dereferenced with Element is still the same as the original type of Base.
+    <br/>Element is used to do the initial dereference of Base: Base is treated as the address of the first element of an array, and the Element element&#8217;s address is computed to be the base for the Indexes, as per OpAccessChain. The type of Base after being dereferenced with Element is still the same as the original type of Base. When the type of Base is decorated with ArrayStride, this array is dereferenced as an array whose stride is the Base-type&#8217;s Array Stride.
     <br/>
     <br/>Note: If Base is originally typed to be a pointer an array, and the desired operation is to select an element of that array, OpAccessChain should be directly used, as its first Index will select the array element.
     */
@@ -1279,9 +1358,9 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result Type must be an OpTypeInt with 32-bit Width and 0 Signedness.
     <br/>
-    <br/>Structure must have a type of OpTypeStruct whose last member is a run-time array.
+    <br/>Structure must be a pointer to an OpTypeStruct whose last member is a run-time array.
     <br/>
-    <br/>Array member is the last member number of Structure and must have a type from OpTypeRuntimeArray.
+    <br/>Array member is the index of the last member of the structure that Structure points to. That member&#8217;s type must be from OpTypeRuntimeArray.
     */
     @Override
     public void visitArrayLength(long resultType, long result, long structure, long member) {
@@ -1403,7 +1482,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Create a sampled image, containing both a sampler and an image.
     <br/>
-    <br/>Result Type must be the OpTypeSampledImage type.
+    <br/>Result Type must be the OpTypeSampledImage type whose Image Type operand is the type of Image.
     <br/>
     <br/>Image is an object whose type is an OpTypeImage, whose Sampled operand is 0 or 1, and whose Dim operand is not SubpassData.
     <br/>
@@ -1442,7 +1521,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(sampledImage);
         buffer.putUnsignedInt(coordinate);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -1511,7 +1590,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(coordinate);
         buffer.putUnsignedInt(dref);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -1580,7 +1659,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(sampledImage);
         buffer.putUnsignedInt(coordinate);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -1649,7 +1728,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(coordinate);
         buffer.putUnsignedInt(dref);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -1698,7 +1777,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     /**
     OpImageFetch
     <br/>
-    <br/>Fetch a single texel from a sampled image.
+    <br/>Fetch a single texel from an image whose Sampled operand is 1.
     <br/>
     <br/> Result Type must be a vector of four components of floating-point type or integer type.  Its components must be the same as Sampled Type of the underlying OpTypeImage (unless that underlying Sampled Type is OpTypeVoid).
     <br/>
@@ -1716,7 +1795,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(image);
         buffer.putUnsignedInt(coordinate);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -1749,7 +1828,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(coordinate);
         buffer.putUnsignedInt(component);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -1763,7 +1842,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Gathers the requested depth-comparison from four texels.
     <br/>
-    <br/> Result Type must be a scalar of integer type or floating-point type.  It must be the same as Sampled Type of the underlying OpTypeImage. It has one component per gathered texel.
+    <br/> Result Type must be a vector of four components of floating-point type or integer type.  Its components must be the same as Sampled Type of the underlying OpTypeImage (unless that underlying Sampled Type is OpTypeVoid). It has one component per gathered texel.
     <br/>
     <br/>Sampled Image must be an object whose type is OpTypeSampledImage. Its OpTypeImage must have a Dim of 2D, Cube, or Rect.
     <br/>
@@ -1782,7 +1861,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(coordinate);
         buffer.putUnsignedInt(dref);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -1816,7 +1895,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(image);
         buffer.putUnsignedInt(coordinate);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -1847,7 +1926,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(coordinate);
         buffer.putUnsignedInt(texel);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -1921,7 +2000,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>3 for 3D Dim,
     <br/>plus 1 more if the image type is arrayed. This vector is filled in with (width [, height] [, depth] [, elements]) where elements is the number of layers in an image array, or the number of cubes in a cube-map array.
     <br/>
-    <br/>Image must be an object whose type is OpTypeImage. Its Dim operand must be one of 1D, 2D, 3D, or Cube, and its MS must be 0. See OpImageQuerySize for querying image types without level of detail.
+    <br/>Image must be an object whose type is OpTypeImage. Its Dim operand must be one of 1D, 2D, 3D, or Cube, and its MS must be 0. See OpImageQuerySize for querying image types without level of detail. See the client API for additional image type restrictions.
     <br/>
     <br/>Level of Detail is used to compute which mipmap level to query, as described in the API specification.
     */
@@ -1989,9 +2068,9 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Query the number of mipmap levels accessible through Image.
     <br/>
-    <br/>Result Type must be a scalar integer type. The result is the number of mipmap levels, as defined by the API specification.
+    <br/>Result Type must be a scalar integer type. The result is the number of mipmap levels,as defined by the API specification.
     <br/>
-    <br/>Image must be an object whose type is OpTypeImage. Its Dim operand must be one of 1D, 2D, 3D, or Cube.
+    <br/>Image must be an object whose type is OpTypeImage. Its Dim operand must be one of 1D, 2D, 3D, or Cube. See the client API for additional image type restrictions.
     */
     @Override
     public void visitImageQueryLevels(long resultType, long result, long image) {
@@ -2043,7 +2122,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(sampledImage);
         buffer.putUnsignedInt(coordinate);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -2112,7 +2191,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(coordinate);
         buffer.putUnsignedInt(dref);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -2161,8 +2240,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     /**
     OpImageSparseSampleProjImplicitLod
     <br/>
-    <br/>Instruction reserved for future use.  Use of this instruction is invalid.
-    <br/>
     <br/>Sample a sparse image with a projective coordinate and an implicit level of detail.
     */
     @Override
@@ -2173,7 +2250,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(sampledImage);
         buffer.putUnsignedInt(coordinate);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -2184,8 +2261,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     
     /**
     OpImageSparseSampleProjExplicitLod
-    <br/>
-    <br/>Instruction reserved for future use.  Use of this instruction is invalid.
     <br/>
     <br/>Sample a sparse image with a projective coordinate using an explicit level of detail.
     */
@@ -2213,8 +2288,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     /**
     OpImageSparseSampleProjDrefImplicitLod
     <br/>
-    <br/>Instruction reserved for future use.  Use of this instruction is invalid.
-    <br/>
     <br/>Sample a sparse image with a projective coordinate, doing depth-comparison, with an implicit level of detail.
     */
     @Override
@@ -2226,7 +2299,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(coordinate);
         buffer.putUnsignedInt(dref);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -2237,8 +2310,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     
     /**
     OpImageSparseSampleProjDrefExplicitLod
-    <br/>
-    <br/>Instruction reserved for future use.  Use of this instruction is invalid.
     <br/>
     <br/>Sample a sparse image with a projective coordinate, doing depth-comparison, using an explicit level of detail.
     */
@@ -2285,7 +2356,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(image);
         buffer.putUnsignedInt(coordinate);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -2318,7 +2389,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(coordinate);
         buffer.putUnsignedInt(component);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -2332,7 +2403,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Gathers the requested depth-comparison from four texels of a sparse image.
     <br/>
-    <br/>Result Type must be an OpTypeStruct with two members. The first member&#8217;s type must be an integer type scalar.  It will hold a Residency Code that can be passed to OpImageSparseTexelsResident. The second member  must be a scalar of integer type or floating-point type.  It must be the same as Sampled Type of the underlying OpTypeImage. It has one component per gathered texel.
+    <br/>Result Type must be an OpTypeStruct with two members. The first member&#8217;s type must be an integer type scalar.  It will hold a Residency Code that can be passed to OpImageSparseTexelsResident. The second member  must be a vector of four components of floating-point type or integer type.  Its components must be the same as Sampled Type of the underlying OpTypeImage (unless that underlying Sampled Type is OpTypeVoid). It has one component per gathered texel.
     <br/>
     <br/>Sampled Image must be an object whose type is OpTypeSampledImage. Its OpTypeImage must have a Dim of 2D, Cube, or Rect.
     <br/>
@@ -2351,7 +2422,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(coordinate);
         buffer.putUnsignedInt(dref);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -2389,7 +2460,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Coordinate is an integer scalar or vector containing non-normalized texel coordinates (u[, v] &#8230; [, array layer]) as needed by the definition of Image. If the coordinates are outside the image, the memory location that is accessed is undefined.
     <br/>
-    <br/> The Image Format must not be Unknown, unless the StorageImageReadWithoutFormat Capability was declared.
+    <br/>The Image Dim operand must not be SubpassData. The Image Format must not be Unknown unless the StorageImageReadWithoutFormat Capability was declared.
     <br/>
     <br/>Image Operands encodes what operands follow, as per Image Operands.
     */
@@ -2401,7 +2472,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(image);
         buffer.putUnsignedInt(coordinate);
         if(optionalImageOperands != null) {
-        
+            
             buffer.putUnsignedInt(optionalImageOperands.getMask());
             long[] optionalImageOperands_operandValues = ImageOperands.mergeOperands(splitOperands);
             for (long o : optionalImageOperands_operandValues) buffer.putUnsignedInt(o);
@@ -2559,7 +2630,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Value is the value to quantize. The type of Value must be the same as Result Type. 
     <br/>
-    <br/> If Value is an infinity, the result is the same infinity. If Value is a NaN, the result is a NaN, but not necessarily the same NaN. If Value is positive with a magnitude too large to represent as a 16-bit floating-point value, the result is positive infinity. If Value is negative with a magnitude too large to represent as a 16-bit floating-point value, the result is negative infinity. If the magnitude of Value is too small to represent as a normalized 16-bit floating-point value, the result is 0.
+    <br/> If Value is an infinity, the result is the same infinity. If Value is a NaN, the result is a NaN, but not necessarily the same NaN. If Value is positive with a magnitude too large to represent as a 16-bit floating-point value, the result is positive infinity. If Value is negative with a magnitude too large to represent as a 16-bit floating-point value, the result is negative infinity. If the magnitude of Value is too small to represent as a normalized 16-bit floating-point value, the result may be either +0 or -0.
     <br/>
     <br/>The RelaxedPrecision Decoration has no effect on this instruction.
     <br/>
@@ -2888,7 +2959,9 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Transpose a matrix.
     <br/>
-    <br/>Result Type must be an OpTypeMatrix, where the number of columns and the column size is the reverse of those of the type of Matrix.
+    <br/>Result Type must be an OpTypeMatrix.
+    <br/>
+    <br/>Matrix must be an object of type OpTypeMatrix. The number of columns and the column size of Matrix must be the reverse of those in Result Type. The types of the scalar components in Matrix and Result Type must be the same.
     <br/>
     <br/>Matrix must have of type of OpTypeMatrix.
     */
@@ -3368,7 +3441,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/> Result Type must be a floating-point type scalar. 
     <br/>
-    <br/>Vector 1 and Vector 2 must have the same type, and their component type must be Result Type.
+    <br/>Vector 1 and Vector 2 must be vectors of the same type, and their component type must be Result Type.
     */
     @Override
     public void visitDot(long resultType, long result, long vector1, long vector2) {
@@ -4073,9 +4146,9 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     /**
     OpSelect
     <br/>
-    <br/>Select between two objects.
+    <br/>Select components from two objects.
     <br/>
-    <br/>Result Type must be a scalar or vector.
+    <br/>Result Type must be a pointer, scalar, or vector.
     <br/>
     <br/> The type of Object 1 must be the same as Result Type. Object 1 is selected as the result if Condition is true.
     <br/>
@@ -4563,7 +4636,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Same result as either OpDPdxFine or OpDPdxCoarse on P. Selection of which one is based on external factors.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -4583,7 +4656,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Same result as either OpDPdyFine or OpDPdyCoarse on P. Selection of which one is based on external factors.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -4603,7 +4676,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result is the same as computing the sum of the absolute values of OpDPdx and OpDPdy on P.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -4623,7 +4696,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result is the partial derivative of P with respect to the window x coordinate.Will use local differencing based on the value of P for the current fragment and its immediate neighbor(s).
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -4643,7 +4716,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result is the partial derivative of P with respect to the window y coordinate.Will use local differencing based on the value of P for the current fragment and its immediate neighbor(s).
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -4663,7 +4736,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result is the same as computing the sum of the absolute values of OpDPdxFine and OpDPdyFine on P.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -4683,7 +4756,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result is the partial derivative of P with respect to the window x coordinate. Will use local differencing based on the value of P for the current fragment&#8217;s neighbors, and will possibly, but not necessarily, include the value of P for the current fragment. That is, over a given area, the implementation can compute x derivatives in fewer unique locations than would be allowed for OpDPdxFine.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -4703,7 +4776,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result is the partial derivative of P with respect to the window y coordinate. Will use local differencing based on the value of P for the current fragment&#8217;s neighbors, and will possibly, but not necessarily, include the value of P for the current fragment. That is, over a given area, the implementation can compute y derivatives in fewer unique locations than would be allowed for OpDPdyFine.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -4723,7 +4796,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result is the same as computing the sum of the absolute values of OpDPdxCoarse and OpDPdyCoarse on P.
     <br/>
-    <br/> Result Type must be a scalar or vector of floating-point type. 
+    <br/> Result Type must be a scalar or vector of floating-point type.  The component width must be 32 bits.
     <br/>
     <br/> The type of P must be the same as Result Type. P is the value to take the derivative of.
     <br/>
@@ -4747,7 +4820,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result Type can be any type.
     <br/>
-    <br/>Operands are a sequence of pairs: (Variable 1, Parent 1 block), (Variable 2, Parent 2 block), &#8230; Each Parent i block is the label of an immediate predecessor in the CFG of the current block. A Parent i block must not appear more than once in the operand sequence. All Variables must have a type matching Result Type.
+    <br/>Operands are a sequence of pairs: (Variable 1, Parent 1 block), (Variable 2, Parent 2 block), &#8230; Each Parent i block is the label of an immediate predecessor in the CFG of the current block. There must be exactly one Parent i for each parent block of the current block in the CFG. All Variables must have a type matching Result Type.
     <br/>
     <br/>Within a block, this instruction must appear before all non-OpPhi instructions (except for OpLine, which can be mixed with OpPhi).
     */
@@ -4845,7 +4918,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>False Label must be an OpLabel in the current function.
     <br/>
-    <br/>Branch weights are unsigned 32-bit integer literals. There must be either no Branch Weights or exactly two branch weights. If present, the first is the weight for branching to True Label, and the second is the weight for branching to False Label. The implied probability that a branch is taken is its weight divided by the sum of the two Branch weights.
+    <br/>Branch weights are unsigned 32-bit integer literals. There must be either no Branch Weights or exactly two branch weights. If present, the first is the weight for branching to True Label, and the second is the weight for branching to False Label. The implied probability that a branch is taken is its weight divided by the sum of the two Branch weights. At least one weight must be non-zero. A weight of zero does not imply a branch is dead or permit its removal; branch weights are only hints. The two weights must not overflow a 32-bit unsigned integer when added together.
     <br/>
     <br/>This instruction must be the last instruction in a block.
     */
@@ -5041,8 +5114,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Perform the following steps atomically with respect to any other atomic accesses within Scope to the same location: 
     <br/>1) load through Pointer to get an Original Value,
-    <br/>2) get a New Value by selecting Value if Original Value equals Comparator or selecting Original Value otherwise, and
-    <br/>3) store the New Value back through Pointer.
+    <br/>2) get a New Value from Value only if Original Value equals Comparator, and
+    <br/>3) store the New Value back through Pointer&#8217;only if 'Original Value equaled Comparator.
     <br/>
     <br/>The instruction&#8217;s result is the Original Value.
     <br/>
@@ -5071,24 +5144,9 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     /**
     OpAtomicCompareExchangeWeak
     <br/>
-    <br/>Attempts to do the following:
+    <br/>Deprecated (use OpAtomicCompareExchange).
     <br/>
-    <br/>Perform the following steps atomically with respect to any other atomic accesses within Scope to the same location: 
-    <br/>1) load through Pointer to get an Original Value,
-    <br/>2) get a New Value by selecting Value if Original Value equals Comparator or selecting Original Value otherwise, and
-    <br/>3) store the New Value back through Pointer.
-    <br/>
-    <br/>The instruction&#8217;s result is the Original Value.
-    <br/>
-    <br/>The weak compare-and-exchange operations may fail spuriously. That is, even when Original Value equals Comparator the comparison can fail and store back the Original Value through Pointer.
-    <br/>
-    <br/> Result Type must be an integer type scalar. 
-    <br/>
-    <br/>Use Equal for the memory semantics of this instruction when Value and Original Value compare equal.
-    <br/>
-    <br/>Use Unequal for the memory semantics of this instruction when Value and Original Value compare unequal. Unequal cannot be set to Release or Acquire and Release. In addition, Unequal cannot be set to a stronger memory-order then Equal.
-    <br/>
-    <br/> The type of Value must be the same as Result Type.  The type of the value pointed to by Pointer must be the same as Result Type.  This type must also match the type of Comparator.
+    <br/>Has the same semantics as OpAtomicCompareExchange.
     */
     @Override
     public void visitAtomicCompareExchangeWeak(long resultType, long result, long pointer, long scopeScope, long memorySemanticsEqual, long memorySemanticsUnequal, long value, long comparator) {
@@ -5495,7 +5553,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>If Semantics is not None, this instruction also serves as an OpMemoryBarrier instruction, and must also perform and adhere to the description and semantics of an OpMemoryBarrier instruction with the same Memory and Semantics operands.  This allows atomically specifying both a control barrier and a memory barrier (that is, without needing two instructions). If Semantics is None, Memory is ignored.
     <br/>
-    <br/>It is only valid to use this instruction with TessellationControl, GLCompute, or Kernel execution models.
+    <br/>Before version 1.3, it is only valid to use this instruction with TessellationControl, GLCompute, or Kernel execution models. There is no such restriction starting with version 1.3.
     <br/>
     <br/>When used with the TessellationControl execution model, it also implicitly synchronizes the Output Storage Class:  Writes to Output variables performed by any invocation executed prior to a OpControlBarrier will be visible to any other invocation after return from that OpControlBarrier.
     */
@@ -5715,8 +5773,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>An integer add group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is 0.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -5724,6 +5780,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>Result Type must be a 32-bit or 64-bit integer type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -5743,8 +5801,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>A floating-point add group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is 0.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -5752,6 +5808,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>Result Type must be a 16-bit, 32-bit, or 64-bit floating-point type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -5771,8 +5829,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>A floating-point minimum group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is +INF.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -5780,6 +5836,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>Result Type must be a 16-bit, 32-bit, or 64-bit floating-point type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is +INF. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -5799,8 +5857,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>An unsigned integer minimum group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is UINT_MAX when X is 32 bits wide and ULONG_MAX when X is 64 bits wide.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -5808,6 +5864,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>Result Type must be a 32-bit or 64-bit integer type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is UINT_MAX when X is 32 bits wide and ULONG_MAX when X is 64 bits wide. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -5827,8 +5885,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>A signed integer minimum group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is INT_MAX when X is 32 bits wide and LONG_MAX when X is 64 bits wide.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -5836,6 +5892,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>Result Type must be a 32-bit or 64-bit integer type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is INT_MAX when X is 32 bits wide and LONG_MAX when X is 64 bits wide. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -5855,8 +5913,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>A floating-point maximum group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is -INF.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -5864,6 +5920,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>Result Type must be a 16-bit, 32-bit, or 64-bit floating-point type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is -INF. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -5883,8 +5941,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>An unsigned integer maximum group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is 0.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -5892,6 +5948,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>Result Type must be a 32-bit or 64-bit integer type scalar.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -5911,8 +5969,6 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>A signed integer maximum group operation specified for all values of X specified by invocations in the group.
     <br/>
-    <br/>The identity I is INT_MIN when X is 32 bits wide and LONG_MIN when X is 64 bits wide.
-    <br/>
     <br/>All invocations of this module within Execution must reach this point of execution.
     <br/>
     <br/>This instruction is only guaranteed to work correctly if placed strictly within uniform control flow within Execution. This ensures that if any invocation executes it, all invocations will execute it. If placed elsewhere, an invocation may stall indefinitely.
@@ -5920,6 +5976,8 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>X and Result Type must be a 32-bit or 64-bit OpTypeInt data type.
     <br/>
     <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is INT_MIN when X is 32 bits wide and LONG_MIN when X is 64 bits wide. 
     <br/>
     <br/> The type of X must be the same as Result Type.
     */
@@ -5963,6 +6021,48 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     }
     
     /**
+    OpSubgroupAllKHR
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitSubgroupAllKHR(long resultType, long result, long predicate) {
+        newOpcode(OpSubgroupAllKHR, 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(predicate);
+        
+    }
+    
+    /**
+    OpSubgroupAnyKHR
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitSubgroupAnyKHR(long resultType, long result, long predicate) {
+        newOpcode(OpSubgroupAnyKHR, 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(predicate);
+        
+    }
+    
+    /**
+    OpSubgroupAllEqualKHR
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitSubgroupAllEqualKHR(long resultType, long result, long predicate) {
+        newOpcode(OpSubgroupAllEqualKHR, 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(predicate);
+        
+    }
+    
+    /**
     OpSubgroupReadInvocationKHR
     <br/>
     <br/>See extension SPV_KHR_shader_ballot
@@ -5974,6 +6074,252 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(result);
         buffer.putUnsignedInt(value);
         buffer.putUnsignedInt(index);
+        
+    }
+    
+    /**
+    OpGroupIAddNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitGroupIAddNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+        newOpcode(OpGroupIAddNonUniformAMD, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(x);
+        
+    }
+    
+    /**
+    OpGroupFAddNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitGroupFAddNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+        newOpcode(OpGroupFAddNonUniformAMD, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(x);
+        
+    }
+    
+    /**
+    OpGroupFMinNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitGroupFMinNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+        newOpcode(OpGroupFMinNonUniformAMD, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(x);
+        
+    }
+    
+    /**
+    OpGroupUMinNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitGroupUMinNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+        newOpcode(OpGroupUMinNonUniformAMD, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(x);
+        
+    }
+    
+    /**
+    OpGroupSMinNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitGroupSMinNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+        newOpcode(OpGroupSMinNonUniformAMD, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(x);
+        
+    }
+    
+    /**
+    OpGroupFMaxNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitGroupFMaxNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+        newOpcode(OpGroupFMaxNonUniformAMD, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(x);
+        
+    }
+    
+    /**
+    OpGroupUMaxNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitGroupUMaxNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+        newOpcode(OpGroupUMaxNonUniformAMD, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(x);
+        
+    }
+    
+    /**
+    OpGroupSMaxNonUniformAMD
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitGroupSMaxNonUniformAMD(long resultType, long result, long scopeExecution, long operation, long x) {
+        newOpcode(OpGroupSMaxNonUniformAMD, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(x);
+        
+    }
+    
+    /**
+    OpSubgroupShuffleINTEL
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitSubgroupShuffleINTEL(long resultType, long result, long data, long invocationId) {
+        newOpcode(OpSubgroupShuffleINTEL, 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(data);
+        buffer.putUnsignedInt(invocationId);
+        
+    }
+    
+    /**
+    OpSubgroupShuffleDownINTEL
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitSubgroupShuffleDownINTEL(long resultType, long result, long current, long next, long delta) {
+        newOpcode(OpSubgroupShuffleDownINTEL, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(current);
+        buffer.putUnsignedInt(next);
+        buffer.putUnsignedInt(delta);
+        
+    }
+    
+    /**
+    OpSubgroupShuffleUpINTEL
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitSubgroupShuffleUpINTEL(long resultType, long result, long previous, long current, long delta) {
+        newOpcode(OpSubgroupShuffleUpINTEL, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(previous);
+        buffer.putUnsignedInt(current);
+        buffer.putUnsignedInt(delta);
+        
+    }
+    
+    /**
+    OpSubgroupShuffleXorINTEL
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitSubgroupShuffleXorINTEL(long resultType, long result, long data, long value) {
+        newOpcode(OpSubgroupShuffleXorINTEL, 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(data);
+        buffer.putUnsignedInt(value);
+        
+    }
+    
+    /**
+    OpSubgroupBlockReadINTEL
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitSubgroupBlockReadINTEL(long resultType, long result, long ptr) {
+        newOpcode(OpSubgroupBlockReadINTEL, 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(ptr);
+        
+    }
+    
+    /**
+    OpSubgroupBlockWriteINTEL
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitSubgroupBlockWriteINTEL(long ptr, long data) {
+        newOpcode(OpSubgroupBlockWriteINTEL, 1 + 1);
+        buffer.putUnsignedInt(ptr);
+        buffer.putUnsignedInt(data);
+        
+    }
+    
+    /**
+    OpSubgroupImageBlockReadINTEL
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitSubgroupImageBlockReadINTEL(long resultType, long result, long image, long coordinate) {
+        newOpcode(OpSubgroupImageBlockReadINTEL, 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(image);
+        buffer.putUnsignedInt(coordinate);
+        
+    }
+    
+    /**
+    OpSubgroupImageBlockWriteINTEL
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitSubgroupImageBlockWriteINTEL(long image, long coordinate, long data) {
+        newOpcode(OpSubgroupImageBlockWriteINTEL, 1 + 1 + 1);
+        buffer.putUnsignedInt(image);
+        buffer.putUnsignedInt(coordinate);
+        buffer.putUnsignedInt(data);
         
     }
     
@@ -6015,7 +6361,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Flags must be an integer type scalar.  The content of Flags is interpreted as Kernel Enqueue Flags mask.
     <br/>
-    <br/>ND Range must have a type of OpTypeStruct created by OpBuildNDRange.
+    <br/>The type of ND Range must be an OpTypeStruct whose members are as described by the Result Type of OpBuildNDRange.
     <br/>
     <br/>Num Events specifies the number of event objects in the wait list pointed to by Wait Events and must be 32-bit integer type scalar, which is treated as an unsigned integer.
     <br/>
@@ -6062,7 +6408,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result Type must be a 32-bit integer type scalar.
     <br/>
-    <br/>ND Range must have a type of OpTypeStruct created by OpBuildNDRange.
+    <br/>The type of ND Range must be an OpTypeStruct whose members are as described by the Result Type of OpBuildNDRange.
     <br/>
     <br/>Invoke must be an OpFunction whose OpTypeFunction operand has:
     <br/>- Result Type must be OpTypeVoid.
@@ -6095,7 +6441,7 @@ public class CodeWriter implements CodeVisitor, Opcodes {
     <br/>
     <br/>Result Type must be a 32-bit integer type scalar.
     <br/>
-    <br/>ND Range must have a type of OpTypeStruct created by OpBuildNDRange.
+    <br/>The type of ND Range must be an OpTypeStruct whose members are as described by the Result Type of OpBuildNDRange.
     <br/>
     <br/>Invoke must be an OpFunction whose OpTypeFunction operand has:
     <br/>- Result Type must be OpTypeVoid.
@@ -6944,6 +7290,945 @@ public class CodeWriter implements CodeVisitor, Opcodes {
         buffer.putUnsignedInt(resultType);
         buffer.putUnsignedInt(result);
         buffer.putUnsignedInt(pipeStorage);
+        
+    }
+    
+    /**
+    OpGroupNonUniformElect
+    <br/>
+    <br/>Result is true only in the active invocation with the lowest id in the group, otherwise result is false.
+    <br/>
+    <br/>Result Type must be a Boolean type.
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    */
+    @Override
+    public void visitGroupNonUniformElect(long resultType, long result, long scopeExecution) {
+        newOpcode(OpGroupNonUniformElect, 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        
+    }
+    
+    /**
+    OpGroupNonUniformAll
+    <br/>
+    <br/>Evaluates a predicate for all active invocations in the group, resulting in true if predicate evaluates to true for all active invocations in the group, otherwise the result is false.
+    <br/>
+    <br/>Result Type must be a Boolean type.
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Predicate must be a Boolean type.
+    */
+    @Override
+    public void visitGroupNonUniformAll(long resultType, long result, long scopeExecution, long predicate) {
+        newOpcode(OpGroupNonUniformAll, 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(predicate);
+        
+    }
+    
+    /**
+    OpGroupNonUniformAny
+    <br/>
+    <br/>Evaluates a predicate for all active invocations in the group, resulting in true if predicate evaluates to true for any active invocation in the group, otherwise the result is false.
+    <br/>
+    <br/>Result Type must be a Boolean type.
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Predicate must be a Boolean type.
+    */
+    @Override
+    public void visitGroupNonUniformAny(long resultType, long result, long scopeExecution, long predicate) {
+        newOpcode(OpGroupNonUniformAny, 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(predicate);
+        
+    }
+    
+    /**
+    OpGroupNonUniformAllEqual
+    <br/>
+    <br/>Evaluates a value for all active invocations in the group, resulting in true if value is equal for all active invocations in the group, otherwise the result is false.
+    <br/>
+    <br/>Result Type must be a Boolean type.
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Value  must be a scalar or vector of floating-point type, integer type, or Boolean type.
+    */
+    @Override
+    public void visitGroupNonUniformAllEqual(long resultType, long result, long scopeExecution, long value) {
+        newOpcode(OpGroupNonUniformAllEqual, 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        
+    }
+    
+    /**
+    OpGroupNonUniformBroadcast
+    <br/>
+    <br/>Return the Value of the invocation identified by the id Id to all active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Id  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/> Id must come from a constant instruction. 
+    <br/>
+    <br/>The resulting value is undefined if Id is an inactive invocation, or is greater than or equal to the size of the group.
+    */
+    @Override
+    public void visitGroupNonUniformBroadcast(long resultType, long result, long scopeExecution, long value, long id) {
+        newOpcode(OpGroupNonUniformBroadcast, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        buffer.putUnsignedInt(id);
+        
+    }
+    
+    /**
+    OpGroupNonUniformBroadcastFirst
+    <br/>
+    <br/>Return the Value of the invocation from the active invocation with the lowest id in the group to all active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type.
+    */
+    @Override
+    public void visitGroupNonUniformBroadcastFirst(long resultType, long result, long scopeExecution, long value) {
+        newOpcode(OpGroupNonUniformBroadcastFirst, 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        
+    }
+    
+    /**
+    OpGroupNonUniformBallot
+    <br/>
+    <br/>Returns a bitfield value combining the Predicate value from all invocations in the group that execute the same dynamic instance of this instruction. The bit is set to one if the corresponding invocation is active and the Predicate for that invocation evaluated to true; otherwise, it is set to zero.
+    <br/>
+    <br/>Result Type  must be a vector of four components of integer type scalar, whose Signedness operand is 0. 
+    <br/>
+    <br/>Result is a set of bitfields where the first invocation is represented in the lowest bit of the first vector component and the last (up to the size of the group) is the higher bit number of the last bitmask needed to represent all bits of the group invocations. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Predicate must be a Boolean type.
+    */
+    @Override
+    public void visitGroupNonUniformBallot(long resultType, long result, long scopeExecution, long predicate) {
+        newOpcode(OpGroupNonUniformBallot, 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(predicate);
+        
+    }
+    
+    /**
+    OpGroupNonUniformInverseBallot
+    <br/>
+    <br/>Evaluates a value for all active invocations in the group, resulting in true if the bit in Value for the corresponding invocation is set to one, otherwise the result is false.
+    <br/>
+    <br/>Result Type must be a Boolean type.
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Value  must be a vector of four components of integer type scalar, whose Signedness operand is 0. 
+    <br/>
+    <br/>Value must be the same for all invocations that execute the same dynamic instance of this instruction.
+    <br/>
+    <br/>Value is a set of bitfields where the first invocation is represented in the lowest bit of the first vector component and the last (up to the size of the group) is the higher bit number of the last bitmask needed to represent all bits of the group invocations.
+    */
+    @Override
+    public void visitGroupNonUniformInverseBallot(long resultType, long result, long scopeExecution, long value) {
+        newOpcode(OpGroupNonUniformInverseBallot, 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        
+    }
+    
+    /**
+    OpGroupNonUniformBallotBitExtract
+    <br/>
+    <br/>Evaluates a value for all active invocations in the group, resulting in true if the bit in Value that corresponds to Index is set to one, otherwise the result is false.
+    <br/>
+    <br/>Result Type must be a Boolean type.
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Value  must be a vector of four components of integer type scalar, whose Signedness operand is 0. 
+    <br/>
+    <br/>Value is a set of bitfields where the first invocation is represented in the lowest bit of the first vector component and the last (up to the size of the group) is the higher bit number of the last bitmask needed to represent all bits of the group invocations. 
+    <br/>
+    <br/>Index  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>The resulting value is undefined if Index is an inactive invocation, or is greater than or equal to the size of the group.
+    */
+    @Override
+    public void visitGroupNonUniformBallotBitExtract(long resultType, long result, long scopeExecution, long value, long index) {
+        newOpcode(OpGroupNonUniformBallotBitExtract, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        buffer.putUnsignedInt(index);
+        
+    }
+    
+    /**
+    OpGroupNonUniformBallotBitCount
+    <br/>
+    <br/>A group operation that returns the number of bits that are set to 1 in Value, only considering the bits in Value required to represent all bits of the group&#8217;s invocations.
+    <br/>
+    <br/>Result Type  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. 
+    <br/>
+    <br/>Value  must be a vector of four components of integer type scalar, whose Signedness operand is 0. 
+    <br/>
+    <br/>Value is a set of bitfields where the first invocation is represented in the lowest bit of the first vector component and the last (up to the size of the group) is the higher bit number of the last bitmask needed to represent all bits of the group invocations.
+    */
+    @Override
+    public void visitGroupNonUniformBallotBitCount(long resultType, long result, long scopeExecution, long operation, long value) {
+        newOpcode(OpGroupNonUniformBallotBitCount, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        
+    }
+    
+    /**
+    OpGroupNonUniformBallotFindLSB
+    <br/>
+    <br/>Find the least significant bit set to 1 in Value, considering only the bits in Value required to represent all bits of the group&#8217;s invocations. If none of the considered bits is set to 1, the result is undefined.
+    <br/>
+    <br/>Result Type  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Value  must be a vector of four components of integer type scalar, whose Signedness operand is 0. 
+    <br/>
+    <br/>Value is a set of bitfields where the first invocation is represented in the lowest bit of the first vector component and the last (up to the size of the group) is the higher bit number of the last bitmask needed to represent all bits of the group invocations.
+    */
+    @Override
+    public void visitGroupNonUniformBallotFindLSB(long resultType, long result, long scopeExecution, long value) {
+        newOpcode(OpGroupNonUniformBallotFindLSB, 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        
+    }
+    
+    /**
+    OpGroupNonUniformBallotFindMSB
+    <br/>
+    <br/>Find the most significant bit set to 1 in Value, considering only the bits in Value required to represent all bits of the group&#8217;s invocations.  If none of the considered bits is set to 1, the result is undefined.
+    <br/>
+    <br/>Result Type  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>Value  must be a vector of four components of integer type scalar, whose Signedness operand is 0. 
+    <br/>
+    <br/>Value is a set of bitfields where the first invocation is represented in the lowest bit of the first vector component and the last (up to the size of the group) is the higher bit number of the last bitmask needed to represent all bits of the group invocations.
+    */
+    @Override
+    public void visitGroupNonUniformBallotFindMSB(long resultType, long result, long scopeExecution, long value) {
+        newOpcode(OpGroupNonUniformBallotFindMSB, 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        
+    }
+    
+    /**
+    OpGroupNonUniformShuffle
+    <br/>
+    <br/>Return the Value of the invocation identified by the id Id.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Id  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>The resulting value is undefined if Id is an inactive invocation, or is greater than or equal to the size of the group.
+    */
+    @Override
+    public void visitGroupNonUniformShuffle(long resultType, long result, long scopeExecution, long value, long id) {
+        newOpcode(OpGroupNonUniformShuffle, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        buffer.putUnsignedInt(id);
+        
+    }
+    
+    /**
+    OpGroupNonUniformShuffleXor
+    <br/>
+    <br/>Return the Value of the invocation identified by the current invocation&#8217;s id within the group xor&#8217;ed with Mask.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Mask  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>The resulting value is undefined if current invocation&#8217;s id within the group xor&#8217;ed with Mask is an inactive invocation, or is greater than or equal to the size of the group. 
+    <br/>
+    <br/>Mask must evaluate to a power of 2.
+    */
+    @Override
+    public void visitGroupNonUniformShuffleXor(long resultType, long result, long scopeExecution, long value, long mask) {
+        newOpcode(OpGroupNonUniformShuffleXor, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        buffer.putUnsignedInt(mask);
+        
+    }
+    
+    /**
+    OpGroupNonUniformShuffleUp
+    <br/>
+    <br/>Return the Value of the invocation identified by the current invocation&#8217;s id within the group - Delta.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Delta  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>The resulting value is undefined if current invocation&#8217;s id within the group - Delta is an inactive invocation, or is greater than or equal to the size of the group.
+    */
+    @Override
+    public void visitGroupNonUniformShuffleUp(long resultType, long result, long scopeExecution, long value, long delta) {
+        newOpcode(OpGroupNonUniformShuffleUp, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        buffer.putUnsignedInt(delta);
+        
+    }
+    
+    /**
+    OpGroupNonUniformShuffleDown
+    <br/>
+    <br/>Return the Value of the invocation identified by the current invocation&#8217;s id within the group + Delta.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Delta  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>The resulting value is undefined if current invocation&#8217;s id within the group + Delta is an inactive invocation, or is greater than or equal to the size of the group.
+    */
+    @Override
+    public void visitGroupNonUniformShuffleDown(long resultType, long result, long scopeExecution, long value, long delta) {
+        newOpcode(OpGroupNonUniformShuffleDown, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        buffer.putUnsignedInt(delta);
+        
+    }
+    
+    /**
+    OpGroupNonUniformIAdd
+    <br/>
+    <br/>An integer add group operation of all Value operands contributed active by invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformIAdd(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformIAdd, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformFAdd
+    <br/>
+    <br/>A floating point add group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformFAdd(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformFAdd, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformIMul
+    <br/>
+    <br/>An integer multiply group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 1. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformIMul(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformIMul, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformFMul
+    <br/>
+    <br/>A floating point multiply group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 1. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformFMul(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformFMul, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformSMin
+    <br/>
+    <br/>A signed integer minimum group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is INT_MAX. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformSMin(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformSMin, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformUMin
+    <br/>
+    <br/>An unsigned integer minimum group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is UINT_MAX. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformUMin(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformUMin, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformFMin
+    <br/>
+    <br/>A floating point minimum group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is +INF. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformFMin(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformFMin, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformSMax
+    <br/>
+    <br/>A signed integer maximum group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is INT_MIN. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformSMax(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformSMax, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformUMax
+    <br/>
+    <br/>An unsigned integer maximum group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformUMax(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformUMax, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformFMax
+    <br/>
+    <br/>A floating point maximum group operation of all Value operands contributed by active invocations in by group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is -INF. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformFMax(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformFMax, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformBitwiseAnd
+    <br/>
+    <br/>A bitwise and group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is ~0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformBitwiseAnd(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformBitwiseAnd, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformBitwiseOr
+    <br/>
+    <br/>A bitwise or group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformBitwiseOr(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformBitwiseOr, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformBitwiseXor
+    <br/>
+    <br/>A bitwise xor group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of integer type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformBitwiseXor(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformBitwiseXor, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformLogicalAnd
+    <br/>
+    <br/>A logical and group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is ~0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformLogicalAnd(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformLogicalAnd, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformLogicalOr
+    <br/>
+    <br/>A logical or group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformLogicalOr(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformLogicalOr, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformLogicalXor
+    <br/>
+    <br/>A logical xor group operation of all Value operands contributed by active invocations in the group.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/>The identity I for Operation is 0. If Operation is ClusteredReduce, ClusterSize must be specified. 
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>ClusterSize is the size of cluster to use. ClusterSize must be a scalar of integer type, whose Signedness operand is 0. ClusterSize must come from a constant instruction. ClusterSize must be at least 1, and must be a power of 2. If ClusterSize is greater than the declared SubGroupSize, executing this instruction results in undefined behavior.
+    */
+    @Override
+    public void visitGroupNonUniformLogicalXor(long resultType, long result, long scopeExecution, long operation, long value, long optionalLong) {
+        newOpcode(OpGroupNonUniformLogicalXor, 1 + 1 + 1 + 1 + 1 + (optionalLong == -1 ? 0 : 1));
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(operation);
+        buffer.putUnsignedInt(value);
+        if(optionalLong != -1) {
+            buffer.putUnsignedInt(optionalLong);
+            
+        }
+        
+    }
+    
+    /**
+    OpGroupNonUniformQuadBroadcast
+    <br/>
+    <br/>Return the Value of the invocation within the quad whose SubgroupLocalInvocationId % 4 is equal to Index.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Index  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/> Index must come from a constant instruction. 
+    <br/>
+    <br/>If the value of Index is greater or equal to 4, an undefined result is returned.
+    */
+    @Override
+    public void visitGroupNonUniformQuadBroadcast(long resultType, long result, long scopeExecution, long value, long index) {
+        newOpcode(OpGroupNonUniformQuadBroadcast, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        buffer.putUnsignedInt(index);
+        
+    }
+    
+    /**
+    OpGroupNonUniformQuadSwap
+    <br/>
+    <br/>Swap the Value of the invocation within the quad with another invocation in the quad using Direction.
+    <br/>
+    <br/>Result Type  must be a scalar or vector of floating-point type, integer type, or Boolean type. 
+    <br/>
+    <br/>Execution must be Workgroup or Subgroup Scope.
+    <br/>
+    <br/> The type of Value must be the same as Result Type. 
+    <br/>
+    <br/>Direction is the kind of swap to perform.
+    <br/>
+    <br/>Direction  must be a scalar of integer type, whose Signedness operand is 0. 
+    <br/>
+    <br/> Direction must come from a constant instruction. 
+    <br/>
+    <br/>The value of Direction is evaluated such that:
+    <br/>0 indicates a horizontal swap within the quad.
+    <br/>1 indicates a vertical swap within the quad.
+    <br/>2 indicates a diagonal swap within the quad.
+    */
+    @Override
+    public void visitGroupNonUniformQuadSwap(long resultType, long result, long scopeExecution, long value, long direction) {
+        newOpcode(OpGroupNonUniformQuadSwap, 1 + 1 + 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(scopeExecution);
+        buffer.putUnsignedInt(value);
+        buffer.putUnsignedInt(direction);
+        
+    }
+    
+    /**
+    OpGroupNonUniformPartitionNV
+    <br/>
+    <br/>TBD
+    */
+    @Override
+    public void visitGroupNonUniformPartitionNV(long resultType, long result, long value) {
+        newOpcode(OpGroupNonUniformPartitionNV, 1 + 1 + 1);
+        buffer.putUnsignedInt(resultType);
+        buffer.putUnsignedInt(result);
+        buffer.putUnsignedInt(value);
         
     }
     @Override

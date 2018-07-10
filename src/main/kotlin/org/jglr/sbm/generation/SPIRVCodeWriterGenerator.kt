@@ -109,7 +109,7 @@ object SPIRVCodeWriterGenerator : VisitorGenerator() {
                 "ExecutionMode" -> return "buffer.putUnsignedInt($name.getType().ordinal());\nbuffer.putUnsignedInts($name.getOperands());\n"
                 "Map<Integer, long[]>" -> return ""
                 "ImageOperands" -> return "\nbuffer.putUnsignedInt($name.getMask());\nlong[] ${name}_operandValues = ImageOperands.mergeOperands(splitOperands);\nfor (long o : ${name}_operandValues) buffer.putUnsignedInt(o);\n"
-                else -> println("Unknown: "+opType)
+                else -> error("Unsupported: $opType")
             }
         }
         val stringWriter = StringWriter()
@@ -129,11 +129,14 @@ object SPIRVCodeWriterGenerator : VisitorGenerator() {
                 write("\n}\n")
             } else if(opName.startsWith("optional")) {
                 if (opType != "long") {
-                    write("if($name != null) {\n")
+                    write("if($name != null) {")
+                    incrementIndentation()
+                    write("\n")
                 } else {
-                    write("if($name != -1) {\n")
+                    write("if($name != -1) {")
+                    incrementIndentation()
+                    write("\n")
                 }
-                incrementIndentation()
                     write(writeOperand("$$name", opType))
                 decrementIndentation()
                 write("\n}\n")

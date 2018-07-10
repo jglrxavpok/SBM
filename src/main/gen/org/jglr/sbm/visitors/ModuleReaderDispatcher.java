@@ -1,4 +1,4 @@
-// Auto-generated from org.jglr.sbm.generation.ModuleReaderDispatcherGenerator
+// Auto-generated from org.jglr.sbm.generation.ModuleReaderDispatcherGenerator on Tue Jul 10 17:21:22 CEST 2018
 package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.*;
@@ -19,7 +19,7 @@ public class ModuleReaderDispatcher implements Opcodes {
         return value != 0;
     }
     
-    public ModuleReaderDispatcher(ModuleReader reader) {
+    public  ModuleReaderDispatcher(ModuleReader reader) {
         this.reader = reader;
     }
     
@@ -42,6 +42,40 @@ public class ModuleReaderDispatcher implements Opcodes {
                 long result = reader.nextWord();
                 long pointer = reader.nextWord();
                 visitor.visitSizeOf(resultType, result, pointer);
+            }
+            break;
+            
+            case OpFragmentMaskFetchAMD: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long image = reader.nextWord();
+                long coordinate = reader.nextWord();
+                visitor.visitFragmentMaskFetchAMD(resultType, result, image, coordinate);
+            }
+            break;
+            
+            case OpFragmentFetchAMD: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long image = reader.nextWord();
+                long coordinate = reader.nextWord();
+                long fragmentIndex = reader.nextWord();
+                visitor.visitFragmentFetchAMD(resultType, result, image, coordinate, fragmentIndex);
+            }
+            break;
+            
+            case OpDecorateStringGOOGLE: {
+                long target = reader.nextWord();
+                long decoration = reader.nextWord();
+                visitor.visitDecorateStringGOOGLE(target, decoration);
+            }
+            break;
+            
+            case OpMemberDecorateStringGOOGLE: {
+                long structType = reader.nextWord();
+                long member = reader.nextWord();
+                long decoration = reader.nextWord();
+                visitor.visitMemberDecorateStringGOOGLE(structType, member, decoration);
             }
             break;
             
@@ -154,6 +188,14 @@ public class ModuleReaderDispatcher implements Opcodes {
             case OpCapability: {
                 Capability capability = reader.nextEnumValue(Capability.values());
                 visitor.visitCapability(capability);
+            }
+            break;
+            
+            case OpExecutionModeId: {
+                long entryPoint = reader.nextWord();
+                ExecutionMode mode = null /* FIXME */;
+                long[] sees = reader.nextWords(wordCount-3);
+                visitor.visitExecutionModeId(entryPoint, mode, sees);
             }
             break;
             
@@ -2613,12 +2655,186 @@ public class ModuleReaderDispatcher implements Opcodes {
             }
             break;
             
+            case OpSubgroupAllKHR: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long predicate = reader.nextWord();
+                visitor.visitSubgroupAllKHR(resultType, result, predicate);
+            }
+            break;
+            
+            case OpSubgroupAnyKHR: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long predicate = reader.nextWord();
+                visitor.visitSubgroupAnyKHR(resultType, result, predicate);
+            }
+            break;
+            
+            case OpSubgroupAllEqualKHR: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long predicate = reader.nextWord();
+                visitor.visitSubgroupAllEqualKHR(resultType, result, predicate);
+            }
+            break;
+            
             case OpSubgroupReadInvocationKHR: {
                 long resultType = reader.nextWord();
                 long result = reader.nextWord();
                 long value = reader.nextWord();
                 long index = reader.nextWord();
                 visitor.visitSubgroupReadInvocationKHR(resultType, result, value, index);
+            }
+            break;
+            
+            case OpGroupIAddNonUniformAMD: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long x = reader.nextWord();
+                visitor.visitGroupIAddNonUniformAMD(resultType, result, scopeExecution, operation, x);
+            }
+            break;
+            
+            case OpGroupFAddNonUniformAMD: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long x = reader.nextWord();
+                visitor.visitGroupFAddNonUniformAMD(resultType, result, scopeExecution, operation, x);
+            }
+            break;
+            
+            case OpGroupFMinNonUniformAMD: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long x = reader.nextWord();
+                visitor.visitGroupFMinNonUniformAMD(resultType, result, scopeExecution, operation, x);
+            }
+            break;
+            
+            case OpGroupUMinNonUniformAMD: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long x = reader.nextWord();
+                visitor.visitGroupUMinNonUniformAMD(resultType, result, scopeExecution, operation, x);
+            }
+            break;
+            
+            case OpGroupSMinNonUniformAMD: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long x = reader.nextWord();
+                visitor.visitGroupSMinNonUniformAMD(resultType, result, scopeExecution, operation, x);
+            }
+            break;
+            
+            case OpGroupFMaxNonUniformAMD: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long x = reader.nextWord();
+                visitor.visitGroupFMaxNonUniformAMD(resultType, result, scopeExecution, operation, x);
+            }
+            break;
+            
+            case OpGroupUMaxNonUniformAMD: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long x = reader.nextWord();
+                visitor.visitGroupUMaxNonUniformAMD(resultType, result, scopeExecution, operation, x);
+            }
+            break;
+            
+            case OpGroupSMaxNonUniformAMD: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long x = reader.nextWord();
+                visitor.visitGroupSMaxNonUniformAMD(resultType, result, scopeExecution, operation, x);
+            }
+            break;
+            
+            case OpSubgroupShuffleINTEL: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long data = reader.nextWord();
+                long invocationId = reader.nextWord();
+                visitor.visitSubgroupShuffleINTEL(resultType, result, data, invocationId);
+            }
+            break;
+            
+            case OpSubgroupShuffleDownINTEL: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long current = reader.nextWord();
+                long next = reader.nextWord();
+                long delta = reader.nextWord();
+                visitor.visitSubgroupShuffleDownINTEL(resultType, result, current, next, delta);
+            }
+            break;
+            
+            case OpSubgroupShuffleUpINTEL: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long previous = reader.nextWord();
+                long current = reader.nextWord();
+                long delta = reader.nextWord();
+                visitor.visitSubgroupShuffleUpINTEL(resultType, result, previous, current, delta);
+            }
+            break;
+            
+            case OpSubgroupShuffleXorINTEL: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long data = reader.nextWord();
+                long value = reader.nextWord();
+                visitor.visitSubgroupShuffleXorINTEL(resultType, result, data, value);
+            }
+            break;
+            
+            case OpSubgroupBlockReadINTEL: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long ptr = reader.nextWord();
+                visitor.visitSubgroupBlockReadINTEL(resultType, result, ptr);
+            }
+            break;
+            
+            case OpSubgroupBlockWriteINTEL: {
+                long ptr = reader.nextWord();
+                long data = reader.nextWord();
+                visitor.visitSubgroupBlockWriteINTEL(ptr, data);
+            }
+            break;
+            
+            case OpSubgroupImageBlockReadINTEL: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long image = reader.nextWord();
+                long coordinate = reader.nextWord();
+                visitor.visitSubgroupImageBlockReadINTEL(resultType, result, image, coordinate);
+            }
+            break;
+            
+            case OpSubgroupImageBlockWriteINTEL: {
+                long image = reader.nextWord();
+                long coordinate = reader.nextWord();
+                long data = reader.nextWord();
+                visitor.visitSubgroupImageBlockWriteINTEL(image, coordinate, data);
             }
             break;
             
@@ -2957,7 +3173,426 @@ public class ModuleReaderDispatcher implements Opcodes {
             }
             break;
             
+            case OpGroupNonUniformElect: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                visitor.visitGroupNonUniformElect(resultType, result, scopeExecution);
+            }
+            break;
             
+            case OpGroupNonUniformAll: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long predicate = reader.nextWord();
+                visitor.visitGroupNonUniformAll(resultType, result, scopeExecution, predicate);
+            }
+            break;
+            
+            case OpGroupNonUniformAny: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long predicate = reader.nextWord();
+                visitor.visitGroupNonUniformAny(resultType, result, scopeExecution, predicate);
+            }
+            break;
+            
+            case OpGroupNonUniformAllEqual: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                visitor.visitGroupNonUniformAllEqual(resultType, result, scopeExecution, value);
+            }
+            break;
+            
+            case OpGroupNonUniformBroadcast: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                long id = reader.nextWord();
+                visitor.visitGroupNonUniformBroadcast(resultType, result, scopeExecution, value, id);
+            }
+            break;
+            
+            case OpGroupNonUniformBroadcastFirst: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                visitor.visitGroupNonUniformBroadcastFirst(resultType, result, scopeExecution, value);
+            }
+            break;
+            
+            case OpGroupNonUniformBallot: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long predicate = reader.nextWord();
+                visitor.visitGroupNonUniformBallot(resultType, result, scopeExecution, predicate);
+            }
+            break;
+            
+            case OpGroupNonUniformInverseBallot: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                visitor.visitGroupNonUniformInverseBallot(resultType, result, scopeExecution, value);
+            }
+            break;
+            
+            case OpGroupNonUniformBallotBitExtract: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                long index = reader.nextWord();
+                visitor.visitGroupNonUniformBallotBitExtract(resultType, result, scopeExecution, value, index);
+            }
+            break;
+            
+            case OpGroupNonUniformBallotBitCount: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                visitor.visitGroupNonUniformBallotBitCount(resultType, result, scopeExecution, operation, value);
+            }
+            break;
+            
+            case OpGroupNonUniformBallotFindLSB: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                visitor.visitGroupNonUniformBallotFindLSB(resultType, result, scopeExecution, value);
+            }
+            break;
+            
+            case OpGroupNonUniformBallotFindMSB: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                visitor.visitGroupNonUniformBallotFindMSB(resultType, result, scopeExecution, value);
+            }
+            break;
+            
+            case OpGroupNonUniformShuffle: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                long id = reader.nextWord();
+                visitor.visitGroupNonUniformShuffle(resultType, result, scopeExecution, value, id);
+            }
+            break;
+            
+            case OpGroupNonUniformShuffleXor: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                long mask = reader.nextWord();
+                visitor.visitGroupNonUniformShuffleXor(resultType, result, scopeExecution, value, mask);
+            }
+            break;
+            
+            case OpGroupNonUniformShuffleUp: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                long delta = reader.nextWord();
+                visitor.visitGroupNonUniformShuffleUp(resultType, result, scopeExecution, value, delta);
+            }
+            break;
+            
+            case OpGroupNonUniformShuffleDown: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                long delta = reader.nextWord();
+                visitor.visitGroupNonUniformShuffleDown(resultType, result, scopeExecution, value, delta);
+            }
+            break;
+            
+            case OpGroupNonUniformIAdd: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformIAdd(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformFAdd: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformFAdd(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformIMul: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformIMul(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformFMul: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformFMul(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformSMin: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformSMin(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformUMin: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformUMin(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformFMin: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformFMin(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformSMax: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformSMax(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformUMax: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformUMax(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformFMax: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformFMax(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformBitwiseAnd: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformBitwiseAnd(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformBitwiseOr: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformBitwiseOr(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformBitwiseXor: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformBitwiseXor(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformLogicalAnd: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformLogicalAnd(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformLogicalOr: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformLogicalOr(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformLogicalXor: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long operation = reader.nextWord();
+                long value = reader.nextWord();
+                long optionalLong = -1;
+                if(wordCount > 6) {
+                    optionalLong = reader.nextWord();
+                    
+                }
+                visitor.visitGroupNonUniformLogicalXor(resultType, result, scopeExecution, operation, value, optionalLong);
+            }
+            break;
+            
+            case OpGroupNonUniformQuadBroadcast: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                long index = reader.nextWord();
+                visitor.visitGroupNonUniformQuadBroadcast(resultType, result, scopeExecution, value, index);
+            }
+            break;
+            
+            case OpGroupNonUniformQuadSwap: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long scopeExecution = reader.nextWord();
+                long value = reader.nextWord();
+                long direction = reader.nextWord();
+                visitor.visitGroupNonUniformQuadSwap(resultType, result, scopeExecution, value, direction);
+            }
+            break;
+            
+            case OpGroupNonUniformPartitionNV: {
+                long resultType = reader.nextWord();
+                long result = reader.nextWord();
+                long value = reader.nextWord();
+                visitor.visitGroupNonUniformPartitionNV(resultType, result, value);
+            }
+            break;
+            
+            
+            case OpDecorateId:
             case OpDecorate: {
                             long target = reader.nextWord();
                             Decoration decoration = reader.nextEnumValue(Decoration.values());

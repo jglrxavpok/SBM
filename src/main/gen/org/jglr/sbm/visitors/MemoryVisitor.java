@@ -1,4 +1,4 @@
-// Auto-generated from org.jglr.sbm.generation.SPIRVMemoryVisitorGenerator
+// Auto-generated from org.jglr.sbm.generation.SPIRVMemoryVisitorGenerator on Tue Jul 10 17:21:22 CEST 2018
 package org.jglr.sbm.visitors;
 
 import org.jglr.sbm.FunctionControl;
@@ -56,6 +56,8 @@ public interface MemoryVisitor {
     <br/>Entry Point must be the Entry Point &lt;id&gt; operand of an OpEntryPoint instruction.
     <br/>
     <br/>Mode is the execution mode. See Execution Mode.
+    <br/>
+    <br/>This instruction is only valid when the Mode operand is an execution mode that takes no Extra Operands, or takes Extra Operands that are not &lt;id&gt; operands.
     */
     void visitExecutionMode(long entryPoint, ExecutionMode mode);
     
@@ -73,11 +75,25 @@ public interface MemoryVisitor {
     
     
     /**
+    OpExecutionModeId
+    <br/>
+    <br/>Declare an execution mode for an entry point, using &lt;id&gt;s as Extra Operands.
+    <br/>
+    <br/>Entry Point must be the Entry Point &lt;id&gt; operand of an OpEntryPoint instruction.
+    <br/>
+    <br/>Mode is the execution mode. See Execution Mode.
+    <br/>
+    <br/>This instruction is only valid when the Mode operand is an execution mode that takes Extra Operands that are &lt;id&gt; operands. All such &lt;id&gt; Extra Operands must be constant instructions.
+    */
+    void visitExecutionModeId(long entryPoint, ExecutionMode mode, long[] sees);
+    
+    
+    /**
     OpVariable
     <br/>
     <br/>Allocate an object in memory, resulting in a pointer to it, which can be used with OpLoad and OpStore.
     <br/>
-    <br/> Result Type must be an OpTypePointer. Its Type operand is the type of object in memory.
+    <br/> Result Type must be an OpTypePointer. Its Type operand is the type of object in memory. Its Storage Class operand must be the same as the Storage Class operand of the result type.
     <br/>
     <br/>Storage Class is the Storage Class of the memory holding the object. It cannot be Generic.
     <br/>
@@ -110,7 +126,7 @@ public interface MemoryVisitor {
     <br/>If Arrayed is 1:
     <br/>1D: 2 components
     <br/>2D: 3 components
-    <br/>Cube: 4 components
+    <br/>Cube: 3 components; the face and layer combine into the 3rd component, layer_face, such that face is layer_face % 6 and layer is floor(layer_face / 6)
     <br/>
     <br/>Sample must be an integer type scalar. It specifies which sample to select at the given coordinate.  It must be a valid &lt;id&gt; for the value 0 if the OpTypeImage has MS of 0.
     */
@@ -196,7 +212,7 @@ public interface MemoryVisitor {
     <br/>
     <br/>Has the same semantics as OpAccessChain, with the addition of the Element operand.
     <br/>
-    <br/>Element is used to do the initial dereference of Base: Base is treated as the address of the first element of an array, and the Element element&#8217;s address is computed to be the base for the Indexes, as per OpAccessChain. The type of Base after being dereferenced with Element is still the same as the original type of Base.
+    <br/>Element is used to do the initial dereference of Base: Base is treated as the address of the first element of an array, and the Element element&#8217;s address is computed to be the base for the Indexes, as per OpAccessChain. The type of Base after being dereferenced with Element is still the same as the original type of Base. When the type of Base is decorated with ArrayStride, this array is dereferenced as an array whose stride is the Base-type&#8217;s Array Stride.
     <br/>
     <br/>Note: If Base is originally typed to be a pointer an array, and the desired operation is to select an element of that array, OpAccessChain should be directly used, as its first Index will select the array element.
     */
@@ -210,9 +226,9 @@ public interface MemoryVisitor {
     <br/>
     <br/>Result Type must be an OpTypeInt with 32-bit Width and 0 Signedness.
     <br/>
-    <br/>Structure must have a type of OpTypeStruct whose last member is a run-time array.
+    <br/>Structure must be a pointer to an OpTypeStruct whose last member is a run-time array.
     <br/>
-    <br/>Array member is the last member number of Structure and must have a type from OpTypeRuntimeArray.
+    <br/>Array member is the index of the last member of the structure that Structure points to. That member&#8217;s type must be from OpTypeRuntimeArray.
     */
     void visitArrayLength(long resultType, long result, long structure, long member);
     

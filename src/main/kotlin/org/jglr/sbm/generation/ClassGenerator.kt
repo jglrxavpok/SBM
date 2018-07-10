@@ -4,6 +4,7 @@ import org.jglr.flows.io.IndentableWriter
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
+import java.util.*
 
 abstract class ClassGenerator {
 
@@ -85,7 +86,7 @@ abstract class ClassGenerator {
     }
 
     private fun IndentableWriter.writeHeader() {
-        write("// $headerComment\n")
+        write("// $headerComment on ${Date()}\n")
         packageName?.let { write("package $packageName;\n\n") }
         imports.forEach { i -> write("import $i;\n") }
         headerDoc?.let { write("\n/**\n$headerDoc\n*/\n") }

@@ -1,3 +1,4 @@
+case OpDecorateId:
 case OpDecorate: {
                 long target = reader.nextWord();
                 Decoration decoration = reader.nextEnumValue(Decoration.values());

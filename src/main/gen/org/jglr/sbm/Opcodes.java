@@ -1,4 +1,4 @@
-// Generated from spirv-opcodesonly.json
+// Generated from spirv-opcodesonly.json on Tue Jul 10 17:21:21 CEST 2018
 package org.jglr.sbm;
 
 import java.util.HashMap;
@@ -9,6 +9,10 @@ public interface Opcodes {
     int OpNop = 0;
     int OpUndef = 1;
     int OpSizeOf = 321;
+    int OpFragmentMaskFetchAMD = 5011;
+    int OpFragmentFetchAMD = 5012;
+    int OpDecorateStringGOOGLE = 5632;
+    int OpMemberDecorateStringGOOGLE = 5633;
     int OpSourceContinued = 2;
     int OpSource = 3;
     int OpSourceExtension = 4;
@@ -23,6 +27,7 @@ public interface Opcodes {
     int OpDecorationGroup = 73;
     int OpGroupDecorate = 74;
     int OpGroupMemberDecorate = 75;
+    int OpDecorateId = 332;
     int OpExtension = 10;
     int OpExtInstImport = 11;
     int OpExtInst = 12;
@@ -30,6 +35,7 @@ public interface Opcodes {
     int OpEntryPoint = 15;
     int OpExecutionMode = 16;
     int OpCapability = 17;
+    int OpExecutionModeId = 331;
     int OpTypeVoid = 19;
     int OpTypeBool = 20;
     int OpTypeInt = 21;
@@ -279,7 +285,26 @@ public interface Opcodes {
     int OpGroupSMax = 271;
     int OpSubgroupBallotKHR = 4421;
     int OpSubgroupFirstInvocationKHR = 4422;
+    int OpSubgroupAllKHR = 4428;
+    int OpSubgroupAnyKHR = 4429;
+    int OpSubgroupAllEqualKHR = 4430;
     int OpSubgroupReadInvocationKHR = 4432;
+    int OpGroupIAddNonUniformAMD = 5000;
+    int OpGroupFAddNonUniformAMD = 5001;
+    int OpGroupFMinNonUniformAMD = 5002;
+    int OpGroupUMinNonUniformAMD = 5003;
+    int OpGroupSMinNonUniformAMD = 5004;
+    int OpGroupFMaxNonUniformAMD = 5005;
+    int OpGroupUMaxNonUniformAMD = 5006;
+    int OpGroupSMaxNonUniformAMD = 5007;
+    int OpSubgroupShuffleINTEL = 5571;
+    int OpSubgroupShuffleDownINTEL = 5572;
+    int OpSubgroupShuffleUpINTEL = 5573;
+    int OpSubgroupShuffleXorINTEL = 5574;
+    int OpSubgroupBlockReadINTEL = 5575;
+    int OpSubgroupBlockWriteINTEL = 5576;
+    int OpSubgroupImageBlockReadINTEL = 5577;
+    int OpSubgroupImageBlockWriteINTEL = 5578;
     int OpEnqueueMarker = 291;
     int OpEnqueueKernel = 292;
     int OpGetKernelNDrangeSubGroupCount = 293;
@@ -313,6 +338,41 @@ public interface Opcodes {
     int OpGroupCommitWritePipe = 288;
     int OpConstantPipeStorage = 323;
     int OpCreatePipeFromPipeStorage = 324;
+    int OpGroupNonUniformElect = 333;
+    int OpGroupNonUniformAll = 334;
+    int OpGroupNonUniformAny = 335;
+    int OpGroupNonUniformAllEqual = 336;
+    int OpGroupNonUniformBroadcast = 337;
+    int OpGroupNonUniformBroadcastFirst = 338;
+    int OpGroupNonUniformBallot = 339;
+    int OpGroupNonUniformInverseBallot = 340;
+    int OpGroupNonUniformBallotBitExtract = 341;
+    int OpGroupNonUniformBallotBitCount = 342;
+    int OpGroupNonUniformBallotFindLSB = 343;
+    int OpGroupNonUniformBallotFindMSB = 344;
+    int OpGroupNonUniformShuffle = 345;
+    int OpGroupNonUniformShuffleXor = 346;
+    int OpGroupNonUniformShuffleUp = 347;
+    int OpGroupNonUniformShuffleDown = 348;
+    int OpGroupNonUniformIAdd = 349;
+    int OpGroupNonUniformFAdd = 350;
+    int OpGroupNonUniformIMul = 351;
+    int OpGroupNonUniformFMul = 352;
+    int OpGroupNonUniformSMin = 353;
+    int OpGroupNonUniformUMin = 354;
+    int OpGroupNonUniformFMin = 355;
+    int OpGroupNonUniformSMax = 356;
+    int OpGroupNonUniformUMax = 357;
+    int OpGroupNonUniformFMax = 358;
+    int OpGroupNonUniformBitwiseAnd = 359;
+    int OpGroupNonUniformBitwiseOr = 360;
+    int OpGroupNonUniformBitwiseXor = 361;
+    int OpGroupNonUniformLogicalAnd = 362;
+    int OpGroupNonUniformLogicalOr = 363;
+    int OpGroupNonUniformLogicalXor = 364;
+    int OpGroupNonUniformQuadBroadcast = 365;
+    int OpGroupNonUniformQuadSwap = 366;
+    int OpGroupNonUniformPartitionNV = 5296;
     HashMap<Integer, String> names = new HashMap<>();
     
     
