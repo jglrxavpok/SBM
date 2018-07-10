@@ -14,3 +14,7 @@ Each visitor function name contains the corresponding instruction name with a fe
 * OpType&lt;TypeName&gt; instructions are converted to CodeVisitor::visit&lt;TypeName&gt;Type(*args...*)
 * OpExecutionMode does not have the exact same arguments as the corresponding instruction:
 the operands array is directly accessible in the ExecutionMode object.
+
+Code generation
+===============
+The `CodeWriter`, `CodeVisitor`, `FunctionVisitor`, `MemoryVisitor`, `ModuleReaderDispatcher`, `TypeVisitor` and `Opcodes` classes are generated thanks to [Spir-V Spec to Json](https://github.com/jglrxavpok/SpirvSpecToJson)
